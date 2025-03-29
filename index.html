@@ -5,8 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sai Associates - Tax & Management Consultancy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        body { font-family: Arial, sans-serif; }
         .custom-color { background-color: #038387 !important; }
+        .hero-section { 
+            height: 100vh; 
+            background: linear-gradient(rgba(3, 131, 135, 0.8), rgba(3, 131, 135, 0.8)), url('https://source.unsplash.com/1600x900/?business,consulting') no-repeat center center/cover;
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .service-card { transition: transform 0.3s ease-in-out; padding: 20px; }
+        .service-card:hover { transform: scale(1.05); }
+        .service-card i { font-size: 2rem; }
     </style>
 </head>
 <body>
@@ -27,83 +47,83 @@
         </div>
     </nav>
 
-    <header class="custom-color text-white text-center py-5" id="home">
-        <h1>Welcome to Sai Associates</h1>
-        <p>Your Trusted Partner in Tax & Management Consultancy</p>
+    <header class="hero-section" id="home">
+        <h1 class="display-3">Welcome to Sai Associates</h1>
+        <p class="lead">Your Trusted Partner in Tax & Management Consultancy</p>
     </header>
 
     <section class="container my-5" id="services">
-        <h2 class="text-center">Our Services</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Income Tax Filing</h5>
-                        <a href="https://wa.me/911353528177" class="btn btn-primary">WhatsApp Us</a>
-                    </div>
+        <h2 class="text-center mb-4">Our Services</h2>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-file-invoice-dollar text-primary"></i>
+                    <h6>Income Tax Filing</h6>
+                    <a href="https://wa.me/911353528177" class="btn btn-primary btn-sm">WhatsApp Us</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">GST Registration</h5>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwYFo8jpejh2pHNrJGJFgm_aAQUx5o6uCmiZgOhE5Bv2mlbw/viewform?usp=header" class="btn btn-primary">Apply Now</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-receipt text-warning"></i>
+                    <h6>GST Registration</h6>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwYFo8jpejh2pHNrJGJFgm_aAQUx5o6uCmiZgOhE5Bv2mlbw/viewform" class="btn btn-primary btn-sm">Apply Now</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Business Consulting</h5>
-                        <a href="https://wa.me/911353528177" class="btn btn-primary">WhatsApp Us</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-briefcase text-success"></i>
+                    <h6>Business Consulting</h6>
+                    <a href="https://wa.me/911353528177" class="btn btn-primary btn-sm">WhatsApp Us</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">DARPAN Registration</h5>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfYap1krAKEZ_k0-PvHwb2u5XvrWxxjMWJNz8BRRb0kVUnTw/viewform" class="btn btn-primary">Apply Now</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-users text-danger"></i>
+                    <h6>DARPAN Registration</h6>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfYap1krAKEZ_k0-PvHwb2u5XvrWxxjMWJNz8BRRb0kVUnTw/viewform" class="btn btn-primary btn-sm">Apply Now</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Udyam Registration</h5>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSci9bsEAuuhUVdX8RvykU4eZSObhoiWv8hgadWvQwxU0LHVgg/viewform" class="btn btn-primary">Apply Now</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-certificate text-dark"></i>
+                    <h6>Trademark Name Availability</h6>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6uUMZ4LSHUVR9LtPBdEiy7GSImZLuFi3TJghPfyEHcYrOtg/viewform" class="btn btn-primary btn-sm">Apply Now</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">FSSAI License</h5>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSePrOMqXFchlySzmyXHeMj2o-BBdvzmtBdvdL2BKQKZiN9R9g/viewform?usp=header" class="btn btn-primary">Apply Now</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-industry text-secondary"></i>
+                    <h6>Udyam Registration</h6>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSci9bsEAuuhUVdX8RvykU4eZSObhoiWv8hgadWvQwxU0LHVgg/viewform" class="btn btn-primary btn-sm">Apply Now</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Trademark Name Availability</h5>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6uUMZ4LSHUVR9LtPBdEiy7GSImZLuFi3TJghPfyEHcYrOtg/viewform?usp=header" class="btn btn-primary">Apply Now</a>
-                    </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-utensils text-info"></i>
+                    <h6>FSSAI License</h6>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSePrOMqXFchlySzmyXHeMj2o-BBdvzmtBdvdL2BKQKZiN9R9g/viewform" class="btn btn-primary btn-sm">Apply Now</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card service-card text-center">
+                    <i class="fas fa-building text-primary"></i>
+                    <h6>Company Incorporation & ROC Filings</h6>
+                    <a href="https://wa.me/911353528177" class="btn btn-primary btn-sm">WhatsApp Us</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="bg-light py-5" id="about">
-        <div class="container text-center">
-            <h2>About Us</h2>
-            <p>We are a leading consultancy firm specializing in tax, finance, and business management.</p>
-        </div>
+<section class="container my-5" id="about">
+        <h2 class="text-center mb-4">About Us</h2>
+        <p class="text-center">Sai Associates is a trusted firm specializing in tax and management consultancy. With years of expertise, we provide professional and personalized services to businesses and individuals, ensuring financial growth and compliance.</p>
     </section>
 
-    <section class="container my-5 text-center" id="contact">
-        <h2>Contact Us</h2>
-        <p>Email: SAIASSOCIATESDDUN@GMAIL.COM | Phone & WhatsApp: +91 1353528177</p>
+    <section class="container my-5" id="contact">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <p class="text-center">For inquiries, reach out to us:</p>
+        <p class="text-center"><i class="fas fa-phone"></i> +91 1353528177</p>
+        <p class="text-center"><i class="fas fa-envelope"></i> SaiAssociatesddun@gmail.com</p>
     </section>
 
     <footer class="custom-color text-white text-center py-3">
