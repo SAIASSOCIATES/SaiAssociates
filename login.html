@@ -103,24 +103,24 @@
     @keyframes slideInDown {
         from {
             transform: translateY(-100%);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateY(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
     @keyframes slideInUp {
         from {
             transform: translateY(50px);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateY(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
@@ -234,24 +234,24 @@
     @keyframes fadeInUp {
         from {
             transform: translateY(30px);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateY(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
     @keyframes slideInLeft {
         from {
             transform: translateX(-50px);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateX(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
@@ -311,12 +311,12 @@
     @keyframes zoomIn {
         from {
             transform: scale(0.8);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: scale(1);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
@@ -374,12 +374,12 @@
     @keyframes slideInRight {
         from {
             transform: translateX(50px);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateX(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
@@ -399,12 +399,12 @@
     @keyframes slideInUpFooter {
         from {
             transform: translateY(30px);
-            opacity: 0;
+        opacity: 0;
         }
 
         to {
             transform: translateY(0);
-            opacity: 1;
+        opacity: 1;
         }
     }
 
@@ -449,7 +449,8 @@
 
     /* Add this to create space above the login form */
     main.container.my-5 {
-        padding-top: 80px; /* Adjust this value as needed */
+        padding-top: 80px;
+        /* Adjust this value as needed */
     }
 /* Center the login button and style it */
     #loginForm button[type="submit"] {
@@ -499,22 +500,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     loginBtn.addEventListener("click", function (event) {
-        event.preventDefault(); // **Stop the form from reloading the page**
+        event.preventDefault();
+        // **Stop the form from reloading the page**
         
         if (!loginBtn.disabled) {
-            // Open TaxCloud in a **new fullscreen window**
-            let newWindow = window.open(
-                "https://taxcloudindia.com/entity#/", 
-                "_blank", 
-                "width=" + screen.width + ",height=" + screen.height + ",top=0,left=0"
-            );
-
-            if (newWindow) {
-                newWindow.moveTo(0, 0);
-                newWindow.resizeTo(screen.width, screen.height);
-            } else {
-                alert("Popup blocked! Please allow popups in your browser.");
-            }
+            // Store login status in sessionStorage
+            sessionStorage.setItem("loggedIn", "true");
+            // Redirect to protected services page
+            window.location.href = "protectedservices.html";
         }
     });
 });
@@ -533,11 +526,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 <a class="navbar-brand" href="#">Sai Associates</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
-                </button>
+      
+           </button>
                 <div class="collapse 
            navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+           
                     </ul>
                 </div>
             </div>
@@ -573,12 +568,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <p>&copy; 2025 SAI ASSOCIATES. All rights reserved.</p>
     </footer>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            window.location.href = "https://taxcloudindia.com/entity#/";
-        });
-    </script>
+    
 </body>
 
 </html>

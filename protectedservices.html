@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        // Check if the user is logged in, otherwise redirect to login page
+        if (!sessionStorage.getItem("loggedIn")) {
+            window.location.href = "login.html";
+        }
+
+        function openTaxCloud() {
+            // Open TaxCloud in a **new fullscreen window**
+            let newWindow = window.open(
+                "https://taxcloudindia.com/entity#/",
+                "_blank",
+                "width=" + screen.width + ",height=" + screen.height + ",top=0,left=0"
+            );
+            if (newWindow) {
+                newWindow.moveTo(0, 0);
+                newWindow.resizeTo(screen.width, screen.height);
+            } else {
+                alert("Popup blocked! Please allow popups in your browser.");
+            }
+        }
+
+        function openGoogleSheet() {
+            // Open Google Sheet in a **new fullscreen window**
+            let newWindow = window.open(
+                "https://docs.google.com/spreadsheets/d/1M-rV9mSoQpx6IevqUhh9meWONjKVUtWQ4JrztYF9sps/edit?usp=sharing",
+                "_blank",
+                "width=" + screen.width + ",height=" + screen.height + ",top=0,left=0"
+            );
+            if (newWindow) {
+                newWindow.moveTo(0, 0);
+                newWindow.resizeTo(screen.width, screen.height);
+            } else {
+                alert("Popup blocked! Please allow popups in your browser.");
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+        }
+    </script>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    /* Colored Navbar */
+    .navbar {
+        background-color: #038387 !important;
+        /* Teal background */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+        color: #fff !important;
+        font-size: 1.5rem;
+        font-weight: bold;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .navbar-nav .nav-link {
+        color: #f0f8ff !important;
+        font-size: 1.1rem;
+        margin-left: 15px;
+        font-family: 'Montserrat', sans-serif;
+        transition: color 0.3s ease;
+        /* Smooth hover transition */
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #fff !important;
+        /* Keep white on hover */
+        opacity: 0.8;
+    }
+
+    .navbar-toggler-icon {
+        background-color: transparent;
+    }
+
+    /* Main Section Styling */
+    main.container.my-5 {
+        padding-top: 80px;
+        /* Adjust this value as needed */
+    }
+
+    .login-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .login-container h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .login-container button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #038387;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .login-container button:hover {
+        background-color: #025a5d;
+    }
+
+    .logout {
+        display: block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: red;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .logout:hover {
+        text-decoration: underline;
+    }
+
+    /* Colored Footer with Animation */
+    footer {
+        background-color: #038387;
+        /* Teal background */
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        font-family: 'Montserrat', sans-serif;
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        animation: slideInUpFooter 0.5s ease-out;
+        /* Added slide-in-up animation */
+    }
+
+    @keyframes slideInUpFooter {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    Sai Associates
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Payment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.html">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <section class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-container">
+                    <h2 class="text-center mb-4">Welcome to Protected Services</h2>
+                    <button onclick="openTaxCloud()">Tax Filings</button>
+                    <button onclick="openGoogleSheet()">Credential List</button>
+                    <a href="#" class="logout" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-3">
+        <p>&copy; 2025 SAI ASSOCIATES. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
