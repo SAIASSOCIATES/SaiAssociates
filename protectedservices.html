@@ -19,7 +19,8 @@
             let newWindow = window.open(
                 "https://taxcloudindia.com/entity#/",
                 "_blank",
-                "width=" + screen.width + ",height=" + screen.height + ",top=0,left=0"
+                "width=" + screen.width + ",height=" + screen.height + 
+                ",top=0,left=0"
             );
             if (newWindow) {
                 newWindow.moveTo(0, 0);
@@ -42,6 +43,10 @@
             } else {
                 alert("Popup blocked! Please allow popups in your browser.");
             }
+        }
+
+        function openClientUploads() {
+            window.open("https://drive.google.com/drive/folders/1E0ptOmZs9usP-G1_V03jXrpq1TSX-UM77b1oU1LcVE5rdJtmp3C7NhIqfiIhBXbS5B2ABvBA?usp=drive_link", "_blank");
         }
 
         function logout() {
@@ -203,6 +208,7 @@
                     <h2 class="text-center mb-4">Welcome to Protected Services</h2>
                     <button onclick="openTaxCloud()">Tax Filings</button>
                     <button onclick="openGoogleSheet()">Credential List</button>
+                    <button onclick="openClientUploads()">Client Uploads</button>
                     <a href="#" class="logout" onclick="logout()">Logout</a>
                 </div>
             </div>
