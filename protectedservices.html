@@ -19,7 +19,7 @@
             let newWindow = window.open(
                 "https://taxcloudindia.com/entity#/",
                 "_blank",
-                "width=" + screen.width + ",height=" + screen.height + 
+                "width=" + screen.width + ",height=" + screen.height +
                 ",top=0,left=0"
             );
             if (newWindow) {
@@ -52,6 +52,14 @@
         function logout() {
             sessionStorage.removeItem("loggedIn");
             window.location.href = "login.html";
+        }
+
+        function openUploadDocuments() {
+            window.open("https://forms.gle/u5fDAceTRYMfyk5n8", "_blank");
+        }
+
+        function openAdminUploads() {
+            window.open("https://drive.google.com/drive/u/3/folders/1fxugOMSsSD8_T64ZS8HsJOPbF2-nZEmIhrEMFKYwr5pXla5tv3-AVlI-H-VeGJpPqcn95Qux", "_blank");
         }
     </script>
     <style>
@@ -119,6 +127,8 @@
         border: none;
         border-radius: 5px;
         transition: background-color 0.3s ease;
+        display: inline-block;
+        margin: 5px 10px;
     }
 
     .login-container button:hover {
@@ -190,7 +200,7 @@
                             <a class="nav-link" href="index.html">Payment</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Contact</a>
+                            <a class="nav-link" href="contact.html">Contact</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="login.html">Login</a>
@@ -209,6 +219,8 @@
                     <button onclick="openTaxCloud()">Tax Filings</button>
                     <button onclick="openGoogleSheet()">Credential List</button>
                     <button onclick="openClientUploads()">Client Uploads</button>
+                    <button onclick="openUploadDocuments()">Upload Documents</button>
+                    <button onclick="openAdminUploads()">Admin Uploads</button>
                     <a href="#" class="logout" onclick="logout()">Logout</a>
                 </div>
             </div>
