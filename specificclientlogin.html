@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Login - SAI ASSOCIATES</title>
+    <title>Client Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -63,9 +63,18 @@
         margin-bottom: 20px;
     }
 
+    .login-container input {
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 200px;
+    }
+
     .login-container button {
         padding: 10px 20px;
-        margin: 10px;
+        margin-top: 20px;
         font-size: 16px;
         cursor: pointer;
         background-color: #038387;
@@ -77,19 +86,6 @@
 
     .login-container button:hover {
         background-color: #025a5d;
-    }
-
-    .logout {
-        display: block;
-        margin-top: 20px;
-        text-decoration: none;
-        color: red;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .logout:hover {
-        text-decoration: underline;
     }
 
     /* Colored Footer with Animation */
@@ -141,16 +137,13 @@
                             <a class="nav-link" href="index.html">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Payment</a>
+                            <a class="nav-link" href="payment.html">Payment</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Contact</a>
+                            <a class="nav-link" href="contact.html">Contact</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="login.html">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="clientlogin.html">Client Login</a>
                         </li>
                     </ul>
                 </div>
@@ -163,9 +156,9 @@
             <div class="col-md-6 col-lg-4">
                 <div class="login-container">
                     <h2 class="text-center mb-4">Client Login</h2>
-                    <button id="uploadDocsBtn" class="btn btn-info">Upload Documents</button>
-                    <button id="clientLoginBtn" class="btn btn-primary" onclick="window.location.href='specificclientlogin.html'">Client Login</button>
-                    <a href="index.html" class="d-block mt-3 text-center">← Back to Home</a>
+                    <input type="text" id="clientId" placeholder="Client ID">
+                    <input type="password" id="password" placeholder="Password">
+                    <button onclick="clientLogin()">Login</button>
                 </div>
             </div>
         </section>
@@ -176,11 +169,20 @@
     </footer>
 
     <script>
-        // JavaScript to redirect to Google Form
-        const uploadDocsBtn = document.getElementById('uploadDocsBtn');
-        uploadDocsBtn.addEventListener('click', function() {
-            window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing'; // Replace with actual URL
-        });
+        function clientLogin() {
+            const clientId = document.getElementById('clientId').value;
+            const password = document.getElementById('password').value;
+
+            if (clientId === '05JGWPS1318L1ZM' && password === 'amrik@123') {
+                window.location.href = 'https://docs.google.com/spreadsheets/d/1rOKJgQmq1mGvhCBaZICbd-mmqo1mrdLXJob0Cplzoso/edit?usp=sharing'; // Updated link for client A
+            } else if (clientId === 'b' && password === 'b') {
+                window.location.href = 'https://example.com/client-b-portal'; // Replace with actual link for client B
+            } else if (clientId === 'c' && password === 'c') {
+                window.location.href = 'https://example.com/client-c-documents'; // Replace with actual link for client C
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
     </script>
 </body>
 
