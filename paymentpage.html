@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <!-- Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts - Montserrat for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic body styling to ensure full viewport height and proper layout */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background-color: #038387 !important; /* Teal background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        .navbar-brand {
+            color: #fff !important; /* White text for brand */
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif; /* Montserrat font for brand */
+        }
+
+        .navbar-nav .nav-link {
+            color: #f0f8ff !important; /* Light white for navigation links */
+            font-size: 1.1rem;
+            margin-left: 15px;
+            font-family: 'Montserrat', sans-serif;
+            transition: color 0.3s ease; /* Smooth hover transition */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff !important; /* Keep white on hover for consistency */
+            opacity: 0.8; /* Slight opacity change on hover */
+        }
+
+        .navbar-toggler-icon {
+            background-color: transparent; /* Toggler icon background */
+        }
+
+        /* Footer styling with animation */
+        footer {
+            background-color: #038387; /* Teal background */
+            color: #fff; /* White text */
+            text-align: center;
+            padding: 20px 0;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+            animation: slideInUpFooter 0.5s ease-out; /* Added slide-in-up animation */
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        /* Keyframe animation for footer slide-in effect */
+        @keyframes slideInUpFooter {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Payment container styling */
+        .payment-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex-grow: 1; /* Allow container to grow and fill space */
+        }
+
+        .payment-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Payment button styling */
+        .btn-pay {
+            background-color: #038387;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin: 5px; /* Added margin for spacing between buttons */
+        }
+
+        .btn-pay:hover {
+            background-color: #025a5d; /* Darker teal on hover */
+        }
+
+        .payment-options {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .payment-options img {
+            height: 50px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        /* QR Code container styling */
+        #qrcode {
+            display: flex;
+            flex-direction: column; /* Changed to column to stack QR and info */
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            min-height: 200px; /* Ensure space for QR code */
+        }
+
+        #qrcode img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .qr-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .loading-message {
+            font-style: italic;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Sai Associates</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#payment">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                    <li><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="clientlogin.html">Client Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Payment Container -->
+    <div class="payment-container">
+        <h2 class="mt-5">Enter Payment Details</h2>
+        <form id="paymentForm">
+            <div class="form-group">
+                <label for="amount">Amount (₹):</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="remark">Payment Remark (Optional):</label>
+                <input type="text" id="remark" name="remark">
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('gpay')">Pay with GPay</button>
+                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('paytm')">Pay with Paytm</button>
+                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('phonepe')">Pay with PhonePe</button>
+                <button type="button" class="btn btn-pay" onclick="generateQrCode()">Generate QR Code</button>
+            </div>
+        </form>
+
+        <div id="qrcode">
+            <!-- QR Code will be generated here -->
+            <p class="qr-info">Enter amount and remark, then click "Generate QR Code" to get your payment QR.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3">
+        <p>&copy; 2025 Sai Associates. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const upiId = "paytmqr28100505010110zmr8sjesym@paytm"; // Replace with your actual UPI ID
+
+        // Function to display custom messages (replaces alert)
+        function displayMessage(message, type) {
+            const messageContainer = document.createElement('div');
+            messageContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: ${type === 'error' ? '#dc3545' : '#28a745'};
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 1000;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+            `;
+            messageContainer.textContent = message;
+            document.body.appendChild(messageContainer);
+
+            setTimeout(() => {
+                messageContainer.style.opacity = 1;
+            }, 10); // Small delay to trigger transition
+
+            setTimeout(() => {
+                messageContainer.style.opacity = 0;
+                messageContainer.addEventListener('transitionend', () => messageContainer.remove());
+            }, 3000); // Message disappears after 3 seconds
+        }
+
+        function generatePaymentLink(app) {
+            const amount = document.getElementById("amount").value;
+            const remark = document.getElementById("remark").value;
+            const encodedRemark = encodeURIComponent(remark);
+
+            if (!amount) {
+                displayMessage("Please enter an amount to generate a payment link.", "error");
+                return;
+            }
+
+            let paymentLink = "";
+
+            if (app === 'gpay') {
+                paymentLink = `gpay://upi/pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
+            } else if (app === 'paytm') {
+                paymentLink = `paytmmp://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
+            } else if (app === 'phonepe') {
+                paymentLink = `phonepe://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
+            }
+
+            if (paymentLink) {
+                window.location.href = paymentLink;
+            } else {
+                displayMessage("Invalid payment app selected.", "error");
+            }
+        }
+
+        function generateQrCode() {
+            const amount = document.getElementById("amount").value;
+            const remark = document.getElementById("remark").value;
+            const encodedRemark = encodeURIComponent(remark);
+
+            const qrcodeDiv = document.getElementById("qrcode");
+            qrcodeDiv.innerHTML = '<p class="loading-message">Generating QR Code...</p>'; // Show loading message
+
+            if (!amount) {
+                displayMessage("Please enter an amount to generate a QR code.", "error");
+                qrcodeDiv.innerHTML = '<p class="qr-info">Enter amount and remark, then click "Generate QR Code" to get your payment QR.</p>'; // Reset message
+                return;
+            }
+
+            // UPI deep link for QR code
+            const qrData = `upi://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}&cu=INR`;
+
+            // Construct the API URL for QR code generation
+            // Using goqr.me API for reliable QR code image generation
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(qrData)}`;
+
+            // Clear previous content
+            qrcodeDiv.innerHTML = '';
+
+            // Create an image element
+            const qrImage = document.createElement("img");
+            qrImage.alt = "QR Code for Payment";
+            qrImage.style.width = '256px';
+            qrImage.style.height = '256px';
+            qrImage.style.borderRadius = '5px';
+            qrImage.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+
+            // Set a loading placeholder or message
+            qrImage.src = "https://placehold.co/256x256/f0f0f0/cccccc?text=Loading+QR...";
+            qrcodeDiv.appendChild(qrImage);
+
+            // Add information below the QR code placeholder
+            const qrInfoParagraph = document.createElement("p");
+            qrInfoParagraph.className = "qr-info";
+            qrInfoParagraph.innerHTML = `Scan this QR code with your preferred UPI app to pay ₹${amount}.<br>Remark: ${remark || 'N/A'}`;
+            qrcodeDiv.appendChild(qrInfoParagraph);
+
+            // Fetch the QR code image
+            fetch(qrApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.blob(); // Get the image as a blob
+                })
+                .then(blob => {
+                    const objectURL = URL.createObjectURL(blob);
+                    qrImage.src = objectURL; // Set the image source to the generated QR code
+                    qrImage.onload = () => URL.revokeObjectURL(objectURL); // Clean up the object URL
+                })
+                .catch(error => {
+                    console.error("Error fetching QR code from API:", error);
+                    displayMessage("Failed to generate QR code. Please check your internet connection.", "error");
+                    qrImage.src = "https://placehold.co/256x256/ffcccc/cc0000?text=Error+Loading+QR"; // Show error image
+                    qrInfoParagraph.textContent = "Error: Could not generate QR code."; // Update info text
+                });
+        }
+    </script>
+</body>
+
+</html>
