@@ -48,17 +48,25 @@
 
         .team-card:hover { transform: translateY(-10px); }
 
+        /* This creates a perfect 1:1 square box that scales with the screen */
         .team-img-container {
-            height: 330px; /* Increased by 10% from 300px */
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Forces the box to be a perfect square */
             overflow: hidden;
             background-color: #e9ecef;
+            border-bottom: 3px solid #038387; /* Optional: adds a nice teal accent line */
         }
 
         .team-img-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* This ensures your 1:1 images fill the box perfectly */
-            object-position: center;
+            object-fit: cover; /* Zooms the image to fill the square box completely */
+            object-position: center; /* Keeps the face/center of the image in view */
+            transition: transform 0.5s ease; /* Smooth transition for the hover effect */
+        }
+        /* Added a professional zoom effect when you hover over the card */
+        .team-card:hover .team-img-container img {
+            transform: scale(1.1); /* Zooms in slightly (10%) when hovered */
         }
 
         .team-info { padding: 20px; text-align: center; }
@@ -181,4 +189,5 @@
 </body>
 
 </html>
+
 
