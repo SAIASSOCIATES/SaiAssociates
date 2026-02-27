@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Team | Sai Associates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Keep existing styles for consistency */
+        @font-face {
+            font-family: 'Trajan Pro';
+            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; }
+
+        .navbar { background-color: #038387 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-brand { color: #fff !important; font-family: 'Trajan Pro', serif; font-size: 1.5rem; }
+        .navbar-nav .nav-link { color: #f0f8ff !important; margin-left: 15px; transition: 0.3s; }
+        .navbar-nav .nav-link:hover { color: #fff !important; opacity: 0.8; }
+
+        /* Team Section Styles */
+        .team-header {
+            padding: 120px 0 50px;
+            background: linear-gradient(rgba(3, 131, 135, 0.8), rgba(3, 131, 135, 0.9)), 
+                        url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/17.jpg');
+            background-size: cover;
+            color: white;
+            text-align: center;
+        }
+
+        .team-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 30px;
+            height: 100%;
+        }
+
+        .team-card:hover { transform: translateY(-10px); }
+
+        .team-img-container {
+            height: 300px;
+            overflow: hidden;
+            background-color: #e9ecef;
+        }
+
+        .team-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-info { padding: 20px; text-align: center; }
+        .team-name { font-weight: 700; color: #333; margin-bottom: 5px; text-transform: uppercase; }
+        .team-role { color: #038387; font-weight: 500; font-size: 0.9rem; margin-bottom: 15px; }
+
+        footer { background-color: #038387; color: #fff; text-align: center; padding: 20px 0; }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Sai Associates</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Our Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="paymentpage.html">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="team-header">
+        <div class="container">
+            <h1 class="display-4 font-trajan">Meet Our Leadership</h1>
+            <p class="lead">The experts behind our success and your financial growth.</p>
+        </div>
+    </header>
+
+    <section class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="tarandeep.png" alt="Tarandeep Singh Chawla">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Tarandeep Singh Chawla</h5>
+                        <p class="team-role">Managing Partner - Operations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="udit.png" alt="Udit Soni">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Udit Soni</h5>
+                        <p class="team-role">Partner & Finance Manager</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="aanchal.png" alt="Aanchal Ahuja">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Aanchal Ahuja</h5>
+                        <p class="team-role">Partner & Manager - HR</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="ankur.png" alt="Ankur Chawla">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Ankur Chawla</h5>
+                        <p class="team-role">Partner & Legal Manager</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="vijender.png" alt="Vijender Singh Tariyal">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Vijender Singh Tariyal</h5>
+                        <p class="team-role">Advisory Partner - Labour Compliance & Social Security</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="pankaj.png" alt="Pankaj Rawat">
+                    </div>
+                    <div class="team-info">
+                        <h5 class="team-name">Pankaj Rawat</h5>
+                        <p class="team-role">Advisory Partner - Resource & Payroll Management</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center py-3">
+        <p>&copy; 2025 Sai Associates. All Rights Reserved.</p>
+        <p style="font-size: 0.75rem; opacity: 0.8; margin-top: 10px;">
+            DNS Powered by <a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">DNS</a><a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">EXIT.COM</a>
+        </p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
