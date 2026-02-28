@@ -81,7 +81,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 400%; /* 4 images to allow seamless looping */
+            width: 400%; 
             height: 100%;
             display: flex;
             z-index: -1;
@@ -89,16 +89,16 @@
         }
 
         .bg-slider div {
-            width: 25%; /* Each image takes 1/4th of the 400% width */
+            /* FIX: Use flex property to force exactly 1/4th width, preventing them from squishing */
+            flex: 1 0 25%; 
             height: 100%;
             background-size: cover;
             background-position: center;
-            flex-shrink: 0;
         }
 
         @keyframes slideSmooth {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-75%); } /* Slide exactly 3 images over to the duplicate */
+            100% { transform: translateX(-75%); } 
         }
 
         .overlay {
@@ -274,4 +274,5 @@
         }
     </script>
 </body>
+
 </html>
