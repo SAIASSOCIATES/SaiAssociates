@@ -20,6 +20,12 @@
             min-height: 100vh; /* Ensure body takes full viewport height */
         }
 
+        @font-face {
+    font-family: 'Trajan Pro';
+    src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
         /* Navbar styling */
         .navbar {
             background-color: #038387 !important; /* Teal background */
@@ -27,11 +33,10 @@
         }
 
         .navbar-brand {
-            color: #fff !important; /* White text for brand */
-            font-size: 1.5rem;
-            font-weight: bold;
-            font-family: 'Montserrat', sans-serif; /* Montserrat font for brand */
-        }
+    color: #fff !important;
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.5rem;
+}
 
         .navbar-nav .nav-link {
             color: #f0f8ff !important; /* Light white for navigation links */
@@ -176,26 +181,24 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">Sai Associates</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#payment">Make Payment</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#about">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
-                    <li><a class="nav-link" href="login.html">Login</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="clientlogin.html">Client Login</a>
-                    </li>
-                </ul>
-            </div>
+    <div class="container">
+        <a class="navbar-brand" href="/">Sai Associates</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/paymentpage">Make Payment</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/login">Admin Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clientlogin">Client Login</a></li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Payment Container -->
     <div class="payment-container">
@@ -357,3 +360,4 @@
 </body>
 
 </html>
+
