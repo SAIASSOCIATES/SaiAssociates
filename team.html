@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Keep existing styles for consistency */
         @font-face {
             font-family: 'Trajan Pro';
             src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
@@ -42,38 +41,95 @@
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
-            margin-bottom: 40px; /* Increased from 30px */
+            margin-bottom: 40px;
             height: 100%;
         }
 
         .team-card:hover { transform: translateY(-10px); }
 
-        /* This creates a perfect 1:1 square box that scales with the screen */
         .team-img-container {
             width: 100%;
-            aspect-ratio: 1 / 1; /* Forces the box to be a perfect square */
+            aspect-ratio: 1 / 1;
             overflow: hidden;
             background-color: #e9ecef;
-            border-bottom: 3px solid #038387; /* Optional: adds a nice teal accent line */
+            border-bottom: 3px solid #038387;
         }
 
         .team-img-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Zooms the image to fill the square box completely */
-            object-position: center; /* Keeps the face/center of the image in view */
-            transition: transform 0.5s ease; /* Smooth transition for the hover effect */
-        }
-        /* Added a professional zoom effect when you hover over the card */
-        .team-card:hover .team-img-container img {
-            transform: scale(1.1); /* Zooms in slightly (10%) when hovered */
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
         }
 
-        .team-info { padding: 20px; text-align: center; }
-        .team-name { font-weight: 700; color: #333; margin-bottom: 5px; text-transform: uppercase; }
-        .team-role { color: #038387; font-weight: 500; font-size: 0.9rem; margin-bottom: 15px; }
+        .team-card:hover .team-img-container img { transform: scale(1.1); }
 
-        footer { background-color: #038387; color: #fff; text-align: center; padding: 20px 0; }
+        .team-info { padding: 25px; text-align: center; }
+        .team-name { font-weight: 700; color: #333; margin-bottom: 5px; text-transform: uppercase; font-size: 1.1rem; }
+        .team-role { color: #038387; font-weight: 600; font-size: 0.85rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Udit Special Highlight */
+        .udit-highlight { border-top: 4px solid #FFD700; }
+
+        /* Know More Button */
+        .know-more-btn {
+            background-color: transparent;
+            border: 2px solid #038387;
+            color: #038387;
+            padding: 8px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .know-more-btn:hover {
+            background-color: #038387;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(3, 131, 135, 0.3);
+        }
+
+        /* Modal & Blur Styling */
+        .modal-backdrop.show {
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background-color: #038387;
+            color: white;
+            border: none;
+            padding: 20px 30px;
+        }
+
+        .modal-body img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 5px solid #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .modal-bio-text {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.8;
+            text-align: justify;
+            padding: 0 10px;
+        }
+
+        footer { background-color: #038387; color: #fff; text-align: center; padding: 25px 0; }
     </style>
 </head>
 
@@ -99,7 +155,7 @@
 
     <header class="team-header">
         <div class="container">
-            <h1 class="display-4 font-trajan">Meet Our Leadership</h1>
+            <h1 class="display-4" style="font-family: 'Trajan Pro', serif;">Meet Our Leadership</h1>
             <p class="lead">The experts behind our success and your financial growth.</p>
         </div>
     </header>
@@ -114,6 +170,7 @@
                     <div class="team-info">
                         <h5 class="team-name">Tarandeep Singh Chawla</h5>
                         <p class="team-role">Managing Partner - Operations</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalTarandeep">Know More</button>
                     </div>
                 </div>
             </div>
@@ -122,9 +179,10 @@
                     <div class="team-img-container">
                         <img src="udit.png" alt="Udit Soni">
                     </div>
-                    <div class="team-info">
+                    <div class="team-info udit-highlight">
                         <h5 class="team-name">Udit Soni</h5>
-                        <p class="team-role">Partner & Manager - Finance</p>
+                        <p class="team-role">Partner & Chief Financial Strategist</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalUdit">Know More</button>
                     </div>
                 </div>
             </div>
@@ -136,6 +194,7 @@
                     <div class="team-info">
                         <h5 class="team-name">Aanchal Ahuja</h5>
                         <p class="team-role">Partner & Manager - HR</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalAanchal">Know More</button>
                     </div>
                 </div>
             </div>
@@ -150,6 +209,7 @@
                     <div class="team-info">
                         <h5 class="team-name">Ankur Chawla</h5>
                         <p class="team-role">Partner & Manager - Legal</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalAnkur">Know More</button>
                     </div>
                 </div>
             </div>
@@ -160,7 +220,8 @@
                     </div>
                     <div class="team-info">
                         <h5 class="team-name">Vijender Singh Tariyal</h5>
-                        <p class="team-role">Advisory Partner - Labour Law Compliances</p>
+                        <p class="team-role">Advisory Partner - Labour Compliance</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalVijender">Know More</button>
                     </div>
                 </div>
             </div>
@@ -171,25 +232,114 @@
                     </div>
                     <div class="team-info">
                         <h5 class="team-name">Pankaj Rawat</h5>
-                        <p class="team-role">Advisory Partner - Resource & Payroll Management</p>
+                        <p class="team-role">Advisory Partner - Resource & Payroll</p>
+                        <button class="know-more-btn" data-bs-toggle="modal" data-bs-target="#modalPankaj">Know More</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="text-center py-3">
+    <div class="modal fade" id="modalTarandeep" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tarandeep Singh Chawla</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="tarandeep.png" alt="Tarandeep">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Managing Partner - Operations (5+ Years Exp.)</h6>
+                    <p class="modal-bio-text">With over 5 years of mastery in strategic operations, Tarandeep is the visionary force ensuring the seamless execution of Sai Associates' mission. He specializes in optimizing complex business workflows and organizational architecture, bridging the gap between client vision and flawless operational reality.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="modalUdit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #038387;">
+                    <h5 class="modal-title">Udit Soni</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="udit.png" alt="Udit">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Partner & Chief Financial Strategist (9+ Years Exp.)</h6>
+                    <p class="modal-bio-text">With 9 years of high-stakes financial leadership, Udit is the primary architect of fiscal stability and growth at Sai Associates. A master of Tax Compliance, FP&A, and strategic consulting, he orchestrates the financial future of our clients. His ability to transform raw data into visionary growth strategies makes him our firm's most indispensable resource.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAanchal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aanchal Ahuja</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="aanchal.png" alt="Aanchal">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Partner & Manager - HR (6+ Years Exp.)</h6>
+                    <p class="modal-bio-text">Bringing 6 years of expertise in human capital development, Aanchal leads the firm’s HR and organizational initiatives. She focuses on building high-performance cultures and strategic talent management, ensuring that the human element of business remains a primary competitive advantage for our clients.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAnkur" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ankur Chawla</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="ankur.png" alt="Ankur">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Partner & Manager - Legal (8+ Years Exp.)</h6>
+                    <p class="modal-bio-text">With 8 years of specialized experience in corporate and regulatory law, Ankur provides the legal fortitude necessary for modern business operations. He is an expert in navigating the intricacies of legal frameworks, ensuring that every client is protected and fully compliant with statutory requirements.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalVijender" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vijender Singh Tariyal</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="vijender.png" alt="Vijender">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Advisory Partner - Labour Compliance (35 Years Exp.)</h6>
+                    <p class="modal-bio-text">A veteran with a distinguished career spanning 35 years, Mr. Tariyal offers unparalleled depth in Labour Laws, EPS, EPF, and ESIC compliance. His three and a half decades of experience provide our clients with a masterclass in industrial relations and social security governance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPankaj" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pankaj Rawat</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <img src="pankaj.png" alt="Pankaj">
+                    <h6 class="text-uppercase fw-bold text-dark mb-3">Advisory Partner - Resource & Payroll (12+ Years Exp.)</h6>
+                    <p class="modal-bio-text">With 12 years of specialized experience, Pankaj leads the firm’s efforts in resource optimization and complex payroll architecture. His expertise ensures that salary structures and material management systems are strategically aligned with long-term business goals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center">
         <p>&copy; 2025 Sai Associates. All Rights Reserved.</p>
-
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
-
-
-
-
-
+    </html>
