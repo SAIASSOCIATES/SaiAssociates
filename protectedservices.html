@@ -11,7 +11,7 @@
     <script>
         // Check if the user is logged in, otherwise redirect to login page
         if (!sessionStorage.getItem("loggedIn")) {
-            window.location.href = "login.html";
+            window.location.href = "/login";
         }
 
         function openTaxCloud() {
@@ -51,7 +51,7 @@
 
         function logout() {
             sessionStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
+            window.location.href = "/login";
         }
 
         function openUploadDocuments() {
@@ -66,7 +66,12 @@
     body {
         font-family: Arial, sans-serif;
     }
-
+     @font-face {
+    font-family: 'Trajan Pro';
+    src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
     /* Colored Navbar */
     .navbar {
         background-color: #038387 !important;
@@ -75,11 +80,10 @@
     }
 
     .navbar-brand {
-        color: #fff !important;
-        font-size: 1.5rem;
-        font-weight: bold;
-        font-family: 'Montserrat', sans-serif;
-    }
+    color: #fff !important;
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.5rem;
+}
 
     .navbar-nav .nav-link {
         color: #f0f8ff !important;
@@ -106,11 +110,11 @@
         /* Adjust this value as needed */
     }
 
-    .login-container {
-        text-align: center;
-        margin-top: 50px;
-    }
-
+    .login-container h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #038387;
+}
     .login-container h2 {
         font-family: 'Montserrat', sans-serif;
         font-size: 2rem;
@@ -176,60 +180,44 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="index.html">
-                    Sai Associates
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Payment</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contact.html">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.html">Login</a>
-                        </li>
-                    </ul>
-                </div>
+   <header>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sai Associates</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/paymentpage">Payment</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/protectedservices">Admin Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
     <main class="container my-5">
-        <section class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="login-container">
-                    <h2 class="text-center mb-4">Welcome to Protected Services</h2>
-                    <button onclick="openTaxCloud()">Tax Filings</button>
-                    <button onclick="openGoogleSheet()">Credential List</button>
-                    <button onclick="openClientUploads()">Client Uploads</button>
-                    <button onclick="openUploadDocuments()">Upload Documents</button>
-                    <button onclick="openAdminUploads()">Admin Uploads</button>
-                    <a href="#" class="logout" onclick="logout()">Logout</a>
-                </div>
-            </div>
-        </section>
-    </main>
+    <div class="login-container">
+        <h2 class="text-center mb-5">Admin Dashboard</h2>
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-4"><button class="w-100" onclick="openTaxCloud()"><i class="fas fa-file-invoice-dollar d-block mb-2"></i> Tax Filings</button></div>
+            <div class="col-6 col-md-4"><button class="w-100" onclick="openGoogleSheet()"><i class="fas fa-key d-block mb-2"></i> Credential List</button></div>
+            <div class="col-6 col-md-4"><button class="w-100" onclick="openClientUploads()"><i class="fas fa-folder-open d-block mb-2"></i> Client Uploads</button></div>
+            <div class="col-6 col-md-4"><button class="w-100" onclick="openUploadDocuments()"><i class="fas fa-upload d-block mb-2"></i> Upload Docs</button></div>
+            <div class="col-6 col-md-4"><button class="w-100" onclick="openAdminUploads()"><i class="fas fa-user-shield d-block mb-2"></i> Admin Uploads</button></div>
+        </div>
+        <a href="#" class="logout mt-5 d-inline-block" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Secure Logout</a>
+    </div>
+</main>
 
     <footer class="text-center py-3">
-        <p>&copy; 2025 SAI ASSOCIATES. All rights reserved.</p>
+        <p>&copy; 2025 Sai Associates. All rights reserved.</p>
     </footer>
 </body>
+
 
 </html>
