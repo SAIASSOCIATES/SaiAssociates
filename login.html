@@ -12,6 +12,12 @@
     body {
         font-family: Arial, sans-serif;
     }
+        @font-face {
+    font-family: 'Trajan Pro';
+    src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
     /* Colored Navbar */
     .navbar {
@@ -21,11 +27,10 @@
     }
 
     .navbar-brand {
-        color: #fff !important;
-        font-size: 1.5rem;
-        font-weight: bold;
-        font-family: 'Montserrat', sans-serif;
-    }
+    color: #fff !important;
+    font-family: 'Trajan Pro', serif; /* Changed to match other pages */
+    font-size: 1.5rem;
+}
 
     .navbar-nav .nav-link {
         color: #f0f8ff !important;
@@ -507,7 +512,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Store login status in sessionStorage
             sessionStorage.setItem("loggedIn", "true");
             // Redirect to protected services page
-            window.location.href = "protectedservices.html";
+            window.location.href = "/protectedservices"; // Clean URL
         }
     });
 });
@@ -522,21 +527,22 @@ document.addEventListener("DOMContentLoaded", function () {
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="#">Sai Associates</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-      
-           </button>
-                <div class="collapse 
-           navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-           
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <div class="container">
+        <a class="navbar-brand" href="/">Sai Associates</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
+                <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/login">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
     </header>
 
     <main class="container my-5">
@@ -558,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <button type="submit" class="btn btn-primary" id="loginBtn" disabled>Login</button>
 </form>
 
-                    <a href="index.html" class="d-block mt-3 text-center">← Back to Home</a>
+                    <a href="/" class="d-block mt-3 text-center" style="color: #038387; text-decoration: none;">← Back to Home</a>
                 </div>
             </div>
         </section>
@@ -570,5 +576,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
 </body>
+
 
 </html>
