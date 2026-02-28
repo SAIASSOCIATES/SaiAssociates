@@ -7,7 +7,8 @@
     <title>Client Portal | Sai Associates</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         @font-face {
             font-family: 'Trajan Pro';
@@ -16,24 +17,37 @@
             font-style: normal;
         }
 
+        :root {
+            --primary-teal: #038387;
+            --dark-teal: #025a5d;
+            --light-bg: #f4f7f6;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #f4f7f6;
+            background-color: var(--light-bg);
+            height: 100vh;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            overflow: hidden;
         }
 
         /* Navbar */
         .navbar {
-            background-color: #038387 !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--primary-teal) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        /* Apply Trajan Pro to Branding and Headings */
+        .navbar-brand, .login-content h1, .login-card h2 {
+            font-family: 'Trajan Pro', serif !important;
         }
 
         .navbar-brand {
+            font-size: 1.4rem;
             color: #fff !important;
-            font-family: 'Trajan Pro', serif;
-            font-size: 1.5rem;
         }
 
         .navbar-nav .nav-link {
@@ -42,132 +56,222 @@
             transition: 0.3s;
         }
 
-        /* Portal Cards */
-        .portal-container {
+        /* Split Screen Layout */
+        .login-wrapper {
+            display: flex;
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 80px;
+            margin-top: 56px;
         }
 
-        .portal-card {
-            background: white;
+        /* Smooth Continuous Scrolling Background Animation */
+        .login-side-image {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             text-align: center;
-            max-width: 500px;
+        }
+
+        .bg-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* 4 images to allow seamless looping */
+            height: 100%;
+            display: flex;
+            z-index: -1;
+            animation: slideSmooth 25s linear infinite;
+        }
+
+        .bg-slider div {
+            width: 25%; /* Each image takes 1/4th of the 400% width */
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        @keyframes slideSmooth {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-75%); } /* Slide exactly 3 images over to the duplicate */
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            /* Reduced opacity significantly to show images clearly */
+            background: linear-gradient(rgba(3, 131, 135, 0.4), rgba(2, 90, 93, 0.6));
+            z-index: 0;
         }
 
-        .portal-card h2 {
-            font-weight: 700;
-            color: #038387;
-            margin-bottom: 30px;
-            font-family: 'Trajan Pro', serif;
+        .login-content { position: relative; z-index: 1; animation: fadeInUp 1s ease; }
+        
+        .login-content h1 { font-size: 2.8rem; margin-bottom: 15px; }
+
+        /* Form Styling */
+        .login-side-form {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
         }
 
-        .btn-portal {
+        .login-card { max-width: 400px; width: 100%; margin: 0 auto; }
+        .login-card h2 { font-weight: 700; color: var(--primary-teal); }
+
+        .btn-custom {
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            font-weight: 600;
             text-decoration: none;
+        }
+
+        .btn-login { background-color: var(--primary-teal); color: white; border: none; }
+        .btn-login:hover { background-color: var(--dark-teal); transform: translateY(-2px); color: white; }
+
+        .btn-upload { background-color: #e3f2fd; color: #0d47a1; border: 2px solid transparent; }
+        .btn-upload:hover { background-color: #0d47a1; color: white; }
+
+        /* WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
             transition: 0.3s;
-            border: 2px solid transparent;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); color: white; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .btn-upload {
-            background-color: #e3f2fd;
-            color: #0d47a1;
-        }
-
-        .btn-upload:hover {
-            background-color: #0d47a1;
-            color: white;
-        }
-
-        .btn-login-gate {
-            background-color: #038387;
-            color: white;
-        }
-
-        .btn-login-gate:hover {
-            background-color: #025a5d;
-            transform: translateY(-3px);
-            color: white;
-        }
-
-        .btn-portal i {
-            font-size: 1.5rem;
-            margin-right: 15px;
-        }
-
-        footer {
-            background-color: #038387;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: auto;
+        @media (max-width: 992px) {
+            .login-side-image { display: none; }
+            body { overflow-y: auto; }
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/">Sai Associates</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">SAI ASSOCIATES</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Admin Login</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/clientlogin">Client Portal</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-wrapper">
+        <div class="login-side-image">
+            <div class="bg-slider">
+                <div style="background-image: url('https://images.unsplash.com/photo-1454165833762-01d670e60979?q=80&w=2070');"></div>
+                <div style="background-image: url('https://images.unsplash.com/photo-1554224155-169641357599?q=80&w=2070');"></div>
+                <div style="background-image: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2070');"></div>
+                <div style="background-image: url('https://images.unsplash.com/photo-1454165833762-01d670e60979?q=80&w=2070');"></div>
+            </div>
+            <div class="overlay"></div>
+            <div class="login-content">
+                <i class="fas fa-user-shield fa-4x mb-4"></i>
+                <h1>Secure Client Access</h1>
+                <p class="lead fw-bold">Your encrypted gateway to tax filings and financial documents.</p>
+            </div>
+        </div>
+
+        <div class="login-side-form">
+            <div class="login-card">
+                <h2>Welcome Back</h2>
+                <p class="text-muted">Enter your Client ID to access your dashboard.</p>
+                
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="clientId" placeholder="Client ID">
+                    <label for="clientId">Client ID</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Password">
+                    <label for="password">Password</label>
+                </div>
+
+                <button class="btn-custom btn-login" onclick="clientLogin()">
+                    <i class="fas fa-sign-in-alt me-2"></i> Access Dashboard
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Admin Login</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/clientlogin">Client Login</a></li>
-                    </ul>
+
+                <div class="text-center my-3"><span class="text-muted small fw-bold">OR</span></div>
+
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" 
+                   target="_blank" class="btn-custom btn-upload">
+                    <i class="fas fa-file-upload me-2"></i> Quick Upload Documents
+                </a>
+
+                <div class="mt-5 text-center">
+                    <small class="text-muted">Need assistance? Contact us below.</small>
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <main class="portal-container">
-        <div class="portal-card">
-            <h2>Client Access</h2>
-            <p class="text-muted mb-4">Please select an option to proceed to your secure area.</p>
-            
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" 
-               class="btn-portal btn-upload" target="_blank">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span>Submit / Upload Documents</span>
-            </a>
-
-            <a href="/specificclientlogin" class="btn-portal btn-login-gate">
-                <i class="fas fa-user-check"></i>
-                <span>Personal Client Dashboard</span>
-            </a>
-
-            <a href="/" class="text-muted d-block mt-3 text-decoration-none">
-                <small><i class="fas fa-arrow-left me-1"></i> Back to Main Site</small>
-            </a>
         </div>
-    </main>
+    </div>
 
-    <footer class="text-center">
-        <p class="mb-0">&copy; 2025 Sai Associates. All Rights Reserved.</p>
-    </footer>
+    <a href="https://wa.me/911353528177" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('keypress', (e) => { if (e.key === 'Enter') clientLogin(); });
+
+        function clientLogin() {
+            const clientId = document.getElementById('clientId').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (clientId === '05JGWPS1318L1ZM' && password === 'amrik@123') {
+                window.location.href = 'https://docs.google.com/spreadsheets/d/1rOKJgQmq1mGvhCBaZICbd-mmqo1mrdLXJob0Cplzoso/edit?usp=sharing';
+            } else if (clientId === '05DCZPA7299P1ZF' && password === 'priya@123') {
+                window.location.href = 'https://docs.google.com/spreadsheets/d/1BAHFUAAmSA37veXs8PdhTF-2KvffyzgpGzj1m4KQwhg/edit?usp=drive_link';
+            } else if (clientId === '05ADIPW0013E1Z0' && password === 'amar@123') {
+                window.location.href = 'https://docs.google.com/spreadsheets/d/1XHBO4Zx1r3MerYw_vZ1mJKixiDd01Jikq2XAA2WuJlo/edit?gid=1040700974#gid=1040700974';
+            } else {
+                alert('Invalid Credentials. Please check your Client ID and password.');
+            }
+        }
+    </script>
 </body>
-
-
 </html>
