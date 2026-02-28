@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers | Sai Associates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Trajan Pro';
+            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; }
+
+        /* Navbar Styling from Team Page */
+        .navbar { background-color: #038387 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-brand { color: #fff !important; font-family: 'Trajan Pro', serif; font-size: 1.5rem; }
+        .navbar-nav .nav-link { color: #f0f8ff !important; margin-left: 15px; transition: 0.3s; }
+        .navbar-nav .nav-link:hover { color: #fff !important; opacity: 0.8; }
+
+        /* Banner Style matched to Team Header */
+        .career-banner {
+            padding: 120px 0 80px;
+            background: linear-gradient(rgba(3, 131, 135, 0.8), rgba(3, 131, 135, 0.9)), 
+                        url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/17.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+        }
+
+        .font-trajan { font-family: 'Trajan Pro', serif; }
+
+        /* Form Styling */
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: -60px; /* Slight overlap with banner */
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-submit { background-color: #038387; color: white; border: none; padding: 12px 30px; font-weight: bold; width: 100%; transition: 0.3s; border-radius: 30px; text-transform: uppercase; }
+        .btn-submit:hover { background-color: #025a5d; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        #thankYouMessage { display: none; text-align: center; padding: 50px; }
+        .ack-box { background: #e0f2f1; padding: 15px; border-radius: 8px; color: #038387; font-weight: bold; font-size: 1.2rem; margin: 20px 0; }
+        
+        footer { background-color: #038387; color: #fff; text-align: center; padding: 20px 0; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sai Associates</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="career-banner">
+        <div class="container">
+            <h1 class="display-4 font-trajan">Join Our Team</h1>
+            <p class="lead">Shape the future of Tax & Management Consultancy with us.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container" id="formWrapper">
+                    <h3 class="mb-4 text-center font-trajan" style="color: #038387;">Application Form</h3>
+                    <form id="careerForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Full Name</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Contact Number</label>
+                                <input type="tel" name="phone" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Email ID</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Department</label>
+                                <select name="department" class="form-select" required>
+                                    <option value="">Choose...</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Payroll">Payroll</option>
+                                    <option value="Remuneration">Remuneration</option>
+                                    <option value="Labour Law">Labour Law</option>
+                                    <option value="Direct Tax">Direct Tax</option>
+                                    <option value="Indirect Tax">Indirect Tax</option>
+                                    <option value="Legal">Legal</option>
+                                    <option value="Accounts">Accounts</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Company Law">Company Law</option>
+                                    <option value="Audit">Audit</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Experience (Years)</label>
+                                <input type="number" name="experience" class="form-control" placeholder="e.g. 2" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Current Address</label>
+                                <textarea name="address" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Upload Resume (PDF only)</label>
+                                <input type="file" id="resumeFile" class="form-control" accept=".pdf" required>
+                                <small class="text-muted text-center d-block mt-1">Please upload in PDF format for faster processing.</small>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-submit" id="submitBtn">Submit Application</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="thankYouMessage" class="form-container">
+                    <i class="fas fa-check-circle fa-5x mb-3" style="color: #28a745;"></i>
+                    <h2 class="font-trajan">Thank You!</h2>
+                    <p>Your application has been received successfully.</p>
+                    <div class="ack-box">
+                        Acknowledgement ID: <span id="ackID"></span>
+                    </div>
+                    <p class="text-muted">Redirecting you back to careers in 15 seconds...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Sai Associates. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxmFyztC5KrP-9d331Ug_U2YQ6Yd_ebdQuRP8Byc79frqfPqnhUaAfKwE0gQdDBCER4/exec'; 
+        const form = document.getElementById('careerForm');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.innerHTML = "<span class='spinner-border spinner-border-sm'></span> Uploading...";
+
+            const fileInput = document.getElementById('resumeFile');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            const randomID = "SAI-" + Math.floor(100000 + Math.random() * 900000);
+
+            reader.onload = function() {
+                const base64Data = reader.result.split(',')[1];
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                data.resume = base64Data;
+                data.resumeName = file.name;
+                data.ackID = randomID;
+
+                fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    document.getElementById('formWrapper').style.display = 'none';
+                    document.getElementById('thankYouMessage').style.display = 'block';
+                    document.getElementById('ackID').innerText = randomID;
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 15000);
+                })
+                .catch(error => {
+                    alert('There was an error submitting your form. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = "Submit Application";
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>
