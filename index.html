@@ -732,31 +732,136 @@
     </section>
 
     <section class="container my-5" id="contact">
-        <h2 class="text-center mb-4">Contact Us</h2>
-        <p class="text-center">For inquiries, reach out to us:</p>
-        <p class="text-center"><i class="fas fa-phone"></i> +91 1353528177</p>
-        <p class="text-center"><i class="fas fa-envelope"></i> SaiAssociatesddun@Gmail.Com</p>
-        <p class="text-center">
-            <i class="fas fa-map-marker-alt"></i> <span class="address-text">H.O Suman Nagar, Dehradun, UK- 248001</span>
-        </p>
-        <p class="text-center">
-            <i class="fas fa-map-marker-alt"></i> <span class="address-text">Branch Office: Khargar, Mumbai, MH 410210</span>
-        </p>
-        <div class="text-center">
-            <a href="https://wa.me/911353528177" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 18px; transition: transform 0.2s ease-in-out;">
-                Connect on WhatsApp
+    <h2 class="text-center mb-5 font-trajan">Contact Us</h2>
+    <div class="row g-5">
+        <div class="col-lg-5">
+    <div class="p-4 h-100" style="background: #f8f9fa; border-radius: 15px; border-left: 5px solid #038387;">
+        <h4 class="mb-5 pb-2 font-trajan border-bottom text-center" style="color: #038387;">Get In Touch</h4>
+        
+        <div class="ps-3"> 
+            <p class="mb-4"><i class="fas fa-phone me-3" style="color: #038387;"></i> +91 1353528177</p>
+            <p class="mb-4"><i class="fas fa-envelope me-3" style="color: #038387;"></i> SaiAssociatesddun@Gmail.Com</p>
+            
+            <p class="mb-4">
+                <i class="fas fa-map-marker-alt me-3" style="color: #038387;"></i> 
+                <strong>H.O:</strong> Suman Nagar, Dehradun, UK- 248001
+            </p>
+            <p class="mb-4">
+                <i class="fas fa-map-marker-alt me-3" style="color: #038387;"></i> 
+                <strong>Branch:</strong> Khargar, Mumbai, MH 410210
+            </p>
+        </div>
+        
+        <div class="mt-5 pt-3">
+            <a href="https://wa.me/911353528177" class="btn btn-success w-100 py-3 shadow-sm">
+                <i class="fab fa-whatsapp me-2"></i> Connect on WhatsApp
             </a>
         </div>
-    </section>
+    </div>
+</div>
+
+        <div class="col-lg-7">
+    <div id="serviceFormWrapper" class="p-4 shadow-sm" style="background: white; border-radius: 15px;">
+        
+        <div class="text-center mb-4">
+            <h4 class="mb-2 font-trajan" style="color: #038387;">Schedule a Consultation</h4>
+            <p class="text-muted">Get started with our personalized management services.</p>
+            <hr style="width: 50px; margin: 15px auto; border-top: 3px solid #038387; opacity: 1;">
+        </div>
+                
+                <form id="serviceInquiryForm">
+                    <input type="hidden" name="formType" value="service">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="tel" name="phone" class="form-control" placeholder="Contact Number" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                        </div>
+                        <div class="col-12">
+                            <select name="department" class="form-select" required>
+                                <option value="">Interested In...</option>
+                                <option value="Tax Service">Tax Service (Income Tax/GST)</option>
+                                <option value="Law Service">Law Service (Labour/Company Law)</option>
+                                <option value="Audit Service">Audit & Accounts Service</option>
+                                <option value="Other Service">Other Service</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <textarea name="address" class="form-control" rows="3" placeholder="Tell us more about your service requirements..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn w-100 py-3 text-white" id="serviceSubmitBtn" style="background-color: #038387; font-weight: bold; border-radius: 8px;">
+                                SUBMIT REQUEST
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="serviceSuccessMessage" class="text-center p-5 shadow-sm" style="display:none; background: white; border-radius: 15px;">
+                <i class="fas fa-check-circle fa-4x mb-3" style="color: #28a745;"></i>
+                <h2 class="font-trajan">Thank You!</h2>
+                <p>Your request has been received successfully.</p>
+                <div style="background: #e0f2f1; padding: 15px; border-radius: 8px; color: #038387; font-weight: bold; font-size: 1.2rem; margin: 20px 0;">
+                    Acknowledgement ID: <span id="serviceAckID"></span>
+                </div>
+                <p class="text-muted">This section will reset in 15 seconds...</p>
+            </div>
+        </div>
+    </div>
+</section>
 
     <footer class="text-center py-3">
-        <p>&copy; 2025 Sai Associates. All Rights Reserved.</p>
+        <p>&copy; 2016 - 2025 Sai Associates. All Rights Reserved.</p>
         <p style="font-size: 0.75rem; opacity: 0.8; margin-top: 10px;">
             DNS Powered by <a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">DNS</a><a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">EXIT.COM</a>
         </p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    const sForm = document.getElementById('serviceInquiryForm');
+    const sBtn = document.getElementById('serviceSubmitBtn');
+    const sURL = 'https://script.google.com/macros/s/AKfycbxmFyztC5KrP-9d331Ug_U2YQ6Yd_ebdQuRP8Byc79frqfPqnhUaAfKwE0gQdDBCER4/exec';
+
+    sForm.addEventListener('submit', e => {
+        e.preventDefault();
+        sBtn.disabled = true;
+        sBtn.innerHTML = "Processing...";
+
+        // Generate Random ID (REQ instead of SAI to distinguish inquiries)
+        const randomID = "REQ-" + Math.floor(100000 + Math.random() * 900000);
+
+        const formData = new FormData(sForm);
+        const data = Object.fromEntries(formData.entries());
+        data.ackID = randomID;
+
+        fetch(sURL, { 
+            method: 'POST', 
+            mode: 'no-cors', // Added for better compatibility with Apps Script
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            document.getElementById('serviceFormWrapper').style.display = 'none';
+            document.getElementById('serviceSuccessMessage').style.display = 'block';
+            document.getElementById('serviceAckID').innerText = randomID;
+            
+            // Auto-reload after 15 seconds to match careers.html
+            setTimeout(() => {
+                window.location.reload();
+            }, 15000);
+        })
+        .catch(error => {
+            alert('Error submitting request. Please try WhatsApp.');
+            sBtn.disabled = false;
+            sBtn.innerHTML = "SUBMIT REQUEST";
+        });
+    });
+</script>
 </body>
 
 </html>
