@@ -300,6 +300,7 @@
 
         /* Payment Section */
         #payment {
+            display: none !important; /* This hides the section from the site */
             text-align: center;
             margin-top: 50px;
             padding: 20px;
@@ -468,6 +469,22 @@
             color: #038387;
             margin-right: 5px;
         }
+
+
+/* Hover Animation for Cards */
+.hover-pop {
+    transition: all 0.3s ease-in-out;
+}
+
+.hover-pop:hover {
+    transform: translateY(-10px); /* Lifts the card up */
+    box-shadow: 0 10px 20px rgba(3, 131, 135, 0.2) !important; /* Soft teal shadow */
+    border-color: #038387 !important;
+}
+
+.font-trajan {
+    font-family: 'Trajan Pro', serif;
+}
     </style>
 </head>
 
@@ -724,12 +741,136 @@
         </div>
     </section>
 
-    <section class="container my-5" id="about">
-        <h2 class="text-center mb-4">About Us</h2>
-        <p class="text-center">Sai Associates is a trusted firm specializing in tax and management consultancy. With years of expertise, we provide professional and personalized services to businesses and individuals, ensuring financial growth and compliance.From Income Tax, GST, and TDS to FSSAI, UDYAM, DARPAN, Trademark Registration, Company Incorporation, and
-            ROC Compliance—we handle it all with expertise, precision, and efficiency. Let us simplify your journey to financial and regulatory
-            success!</p>
-    </section>
+    <section id="about" class="py-5 bg-light">
+    <div class="container-fluid px-0 mb-5">
+        <div class="text-white p-5 text-center" style="background-color: #038387;">
+            <h2 class="display-4 font-trajan mb-4">About Sai Associates</h2>
+            <div class="container">
+                <p class="lead">
+                    Sai Associates is a Dehradun-based consultancy firm, renowned for its legacy of excellence, trust, and integrity. 
+                    With over three decades of professional expertise, the firm has been a pillar of support, offering exceptional audit, 
+                    consultancy, and advisory services to a diverse portfolio of clients across sectors.
+                </p>
+                  <p>
+                    Known for its personalized approach, the firm delivers solutions that are not only accurate and timely but also 
+                    thoughtfully tailored to meet the distinct needs of each client. What sets the firm apart is its unwavering commitment to quality, 
+                    reflected in its rigorous methodologies, structured processes, and impeccable documentation standards. 
+                    At Sai Associates, quality is not just a practice—it’s a principle.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
+                    <i class="fas fa-bullseye fa-3x mb-3" style="color: #038387;"></i>
+                    <h4 class="font-trajan" style="color: #038387;">Our Mission</h4>
+                    <p class="small text-muted">To provide flexible, professional services to businesses of all sizes, offering a broad range of audit, tax consultancy, and managerial consulting tailored to the evolving industrial landscape.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
+                    <i class="fas fa-eye fa-3x mb-3" style="color: #038387;"></i>
+                    <h4 class="font-trajan" style="color: #038387;">Our Vision</h4>
+                    <p class="small text-muted">To be the trusted partner of choice for expert financial guidance, recognized for our commitment to excellence, innovation, and making a positive impact on the prosperity of our clients.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
+                    <i class="fas fa-handshake fa-3x mb-3" style="color: #038387;"></i>
+                    <h4 class="font-trajan" style="color: #038387;">Our Values</h4>
+                    <p class="small text-muted">Professionalism, Integrity, and Client Focus. We believe honesty and transparency are non-negotiable principles in the practice of management and finance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="font-trajan mb-4" style="color: #038387;">What We Serve</h2>
+                <p>Our professional team’s educational background and experience enable us to be a flexible partner for industrial organizations, small-scale units, and large firms alike.</p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
+                            <h6 class="mb-0">Audit & Assurance</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
+                            <h6 class="mb-0">Corporate Finance</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
+                            <h6 class="mb-0">Tax Consultancy</h6>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
+                            <h6 class="mb-0">Legal Advisory</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <div class="p-4 bg-white shadow-sm border-start border-5" style="border-radius: 15px; border-color: #038387 !important;">
+                    <p class="fst-italic mb-0">"Rooted in Dehradun yet connected to the evolving demands of a dynamic financial world, Sai Associates continues to grow with its vision firmly aligned with innovation and client-centricity."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <h2 class="text-center font-trajan mb-5" style="color: #038387;">Why Choose Us?</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">1. Expertise</h5>
+                    <p class="text-muted small">Highly skilled professionals with deep expertise in accounting, auditing, and financial disciplines.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">2. Personalized</h5>
+                    <p class="text-muted small">Customized solutions tailored to your unique financial challenges and business opportunities.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">3. Client-Centric</h5>
+                    <p class="text-muted small">Proactive communication and reliable support at every single touchpoint of your journey.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">4. Quality</h5>
+                    <p class="text-muted small">Highest standards of accuracy that meet or exceed all regulatory requirements and industry practices.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">5. Innovation</h5>
+                    <p class="text-muted small">Cutting-edge technology and data analytics to optimize processes and enhance your decision-making.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <h5 class="font-trajan" style="color: #038387;">6. Comprehensive</h5>
+                    <p class="text-muted small">An integrated suite of services—tax, audit, and advisory—all under one professional roof.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px; border: 2px solid #038387;">
+                    <h5 class="font-trajan" style="color: #038387;">7. Value-Driven</h5>
+                    <p class="text-muted small">Outcomes that directly contribute to your strategic success and improve your financial bottom line.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <section class="container my-5" id="contact">
     <h2 class="text-center mb-5 font-trajan">Contact Us</h2>
