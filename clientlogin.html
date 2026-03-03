@@ -10,6 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
+
+/* Styling for the new Download Button */
+.btn-download-alt { 
+    background-color: #f0f9f9; 
+    color: var(--primary-teal); 
+    border: 1px solid var(--primary-teal); 
+    text-decoration: none;
+}
+
+.btn-download-alt:hover { 
+    background-color: var(--primary-teal); 
+    color: white; 
+    transform: translateY(-2px);
+}
         @font-face {
             font-family: 'Trajan Pro';
             src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
@@ -242,6 +256,11 @@
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" 
                    target="_blank" class="btn-custom btn-upload">
                     <i class="fas fa-file-upload me-2"></i> Quick Upload Documents
+                </a>
+
+                <a href="https://saiassociates.github.io/SaiAssociates/Clientdownload" 
+                class="btn-custom btn-download-alt mt-3">
+                <i class="fas fa-file-download me-2"></i> Quick Download Documents
                 </a>
 
                 <div class="mt-5 text-center">
