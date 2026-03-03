@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIMS Portal | Sai Associates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Trajan Pro';
+            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; }
+        .font-trajan { font-family: 'Trajan Pro', serif; }
+
+        /* Navbar Style from Index */
+        .navbar { background-color: #038387 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-brand { color: #fff !important; font-family: 'Trajan Pro', serif; font-size: 1.5rem; }
+        .navbar-nav .nav-link { color: #f0f8ff !important; margin-left: 15px; }
+
+        /* Banner from Career Header */
+        .vims-banner {
+            padding: 100px 0 60px;
+            background: linear-gradient(rgba(3, 131, 135, 0.85), rgba(3, 131, 135, 0.95)), 
+                        url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/18.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Portal Containers */
+        .portal-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: -40px;
+            margin-bottom: 50px;
+        }
+
+        .step-container { display: none; }
+        .active-step { display: block; }
+
+        .btn-teal { background-color: #038387; color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; transition: 0.3s; }
+        .btn-teal:hover { background-color: #025a5d; transform: translateY(-2px); color: white; }
+        .btn-teal:disabled { background-color: #cccccc; cursor: not-allowed; transform: none; }
+
+        .dashboard-stat { border-top: 4px solid #038387; padding: 20px; border-radius: 10px; background: #f0f9f9; text-align: center; }
+        .action-card { cursor: pointer; transition: 0.3s; border: 1px solid #dee2e6; }
+        .action-card:hover { border-color: #038387; background: #f0f9f9; }
+        
+        .form-label { font-weight: bold; color: #333; }
+        .ack-box { background: #e0f2f1; padding: 20px; border-radius: 8px; color: #038387; font-weight: bold; font-size: 1.3rem; margin: 20px 0; border: 2px dashed #038387; }
+
+        footer { background-color: #038387; color: #fff; text-align: center; padding: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="./">Sai Associates</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="./">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="team">Our Team</a></li>   
+                <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="paymentpage">Make Payment</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/careers">Careers</a></li>
+                <li class="nav-item"><a class="nav-link" href="vims">VIMS Portal</a></li>
+                <li><a href="login" class="nav-link">Login</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="clientlogin">Client Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <header class="vims-banner">
+        <div class="container">
+            <h1 class="display-5 font-trajan">Vendor Invoice Management System</h1>
+            <p class="lead">Secure Portal for Invoice Submission & Tracking</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="portal-card">
+                    
+                    <div id="step-search" class="step-container active-step text-center">
+                        <h3 class="font-trajan mb-4" style="color: #038387;">Find Your Record</h3>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <input type="text" id="vendorCodeInput" class="form-control mb-3 text-center p-3" placeholder="Enter Vendor Code (e.g. VND-001)">
+                                <button onclick="searchVendor()" class="btn btn-teal w-100">SEARCH VENDOR</button>
+                            </div>
+                        </div>
+                        <div id="searchResult" class="mt-4" style="display:none;">
+                            <hr>
+                            <p><strong>Vendor Name:</strong> <span id="resName">--</span></p>
+                            <p><strong>Access Status:</strong> <span id="resStatus">--</span></p>
+                            <button id="loginInitiateBtn" onclick="goToLogin()" class="btn btn-teal">PROCEED TO LOGIN</button>
+                            <p id="freezeMessage" class="text-danger mt-2" style="display:none;">Access is currently restricted. Please contact Admin.</p>
+                        </div>
+                    </div>
+
+                    <div id="step-auth" class="step-container">
+                        <h3 class="font-trajan mb-4 text-center" style="color: #038387;">Verification Required</h3>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6" id="passBlock">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="vendorPass" class="form-control mb-3" placeholder="••••••••">
+                                <button onclick="requestOTP()" class="btn btn-teal w-100">SEND OTP</button>
+                            </div>
+                            <div class="col-md-6" id="otpBlock" style="display:none;">
+                                <div class="alert alert-info py-2">OTP sent to registered email.</div>
+                                <label class="form-label">Enter 6-Digit OTP</label>
+                                <input type="text" id="otpInput" class="form-control mb-3 text-center" maxlength="6" placeholder="000000">
+                                <button onclick="verifyOTP()" class="btn btn-teal w-100">VERIFY & ENTER DASHBOARD</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step-dashboard" class="step-container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="font-trajan" style="color: #038387;">Vendor Dashboard</h3>
+                            <span class="badge bg-secondary">Vendor: <span id="dashVendorName"></span></span>
+                        </div>
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-4"><div class="dashboard-stat"><h6>Open P.O.s</h6><h2 id="countPO">0</h2></div></div>
+                            <div class="col-md-4"><div class="dashboard-stat"><h6>Unpaid Invoices</h6><h2 id="countUnpaid">0</h2></div></div>
+                            <div class="col-md-4"><div class="dashboard-stat"><h6>Total Paid</h6><h2 id="countPaid">₹ 0</h2></div></div>
+                        </div>
+                        <h5 class="mb-3 font-trajan">Submit Quote / Invoice</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 action-card rounded shadow-sm" id="btn-po-inv" onclick="checkEligibility('po_invoice')">
+                                    <strong><i class="fas fa-file-invoice me-2"></i> P.O Invoice</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 action-card rounded shadow-sm opacity-50" id="btn-non-po" onclick="checkEligibility('non_po')">
+                                    <strong><i class="fas fa-file-alt me-2"></i> Non P.O Invoice</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 action-card rounded shadow-sm opacity-50" id="btn-po-credit" onclick="checkEligibility('po_credit')">
+                                    <strong><i class="fas fa-minus-square me-2"></i> P.O Credit Memo</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 action-card rounded shadow-sm opacity-50" id="btn-non-po-credit" onclick="checkEligibility('non_po_credit')">
+                                    <strong><i class="fas fa-hand-holding-usd me-2"></i> Non P.O Credit Memo</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step-form" class="step-container">
+                        <h3 class="font-trajan mb-4 text-center" style="color: #038387;">Invoice Submission</h3>
+                        <form id="vimsInvoiceForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Vendor Name</label>
+                                    <input type="text" name="vendorName" id="f_vendorName" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Invoice Number</label>
+                                    <input type="text" name="invoiceNum" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">GST Details (GSTIN)</label>
+                                    <input type="text" name="gstin" class="form-control" placeholder="22AAAAA0000A1Z5" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Invoice Date</label>
+                                    <input type="date" name="invoiceDate" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Currency</label>
+                                    <select name="currency" class="form-select">
+                                        <option value="INR">INR (₹)</option>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label">Firm Dealing Person</label>
+                                    <select name="dealingPerson" class="form-select" required>
+                                        <option value="">Choose...</option>
+                                        <option value="Senior Managing Partner">Senior Managing Partner</option>
+                                        <option value="Associate Partner">Associate Partner</option>
+                                        <option value="Advisory Partner">Advisory Partner</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Partner ID</label>
+                                    <input type="text" name="partnerId" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Partner Email</label>
+                                    <input type="email" name="partnerEmail" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Place of Supply</label>
+                                    <input type="text" name="pos" class="form-control" placeholder="State Name" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Item / Service Description</label>
+                                    <textarea name="description" class="form-control" rows="2" required></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Base Amount</label>
+                                    <input type="number" name="amount" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Tax Rate (%)</label>
+                                    <input type="number" name="taxRate" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Total Amount</label>
+                                    <input type="number" name="totalAmount" class="form-control" required>
+                                </div>
+                                
+                                <div class="col-12 mt-4">
+                                    <div class="p-3 border rounded bg-light">
+                                        <label class="form-label">Upload Invoice (Digitally Signed Class III PDF)*</label>
+                                        <input type="file" id="invoiceFile" class="form-control" accept=".pdf" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" required>
+                                        <label class="form-check-label small">I have uploaded the Tax Invoice.</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" required>
+                                        <label class="form-check-label small">I have uploaded the Work Order / Supply Order.</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-4 text-center">
+                                    <button type="submit" id="submitInvoiceBtn" class="btn btn-teal w-100 py-3">SUBMIT INVOICE</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="step-success" class="step-container text-center">
+                        <i class="fas fa-check-circle fa-5x mb-3" style="color: #28a745;"></i>
+                        <h2 class="font-trajan">Submission Successful!</h2>
+                        <p>Your invoice has been queued for partner approval.</p>
+                        <div class="ack-box">
+                            ACK ID: <span id="ackID"></span>
+                        </div>
+                        <p class="text-muted">You will receive a notification on your email shortly.</p>
+                        <button onclick="location.reload()" class="btn btn-outline-secondary mt-3">Exit Portal</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="mb-0">&copy; 2016-2025 Sai Associates. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyiedyL_fKMA8Nfb5XnQYHT1PvoisQu8C8KwvXjbOjXDTtXnvRia-nTvX8Ox-mODWHRrw/exec";
+    let currentVendorData = null;
+
+    function showStep(stepId) {
+        document.querySelectorAll('.step-container').forEach(div => div.classList.remove('active-step'));
+        document.getElementById(stepId).classList.add('active-step');
+        window.scrollTo(0,0);
+    }
+
+    async function callAPI(payload) {
+        const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
+        });
+        const result = await response.json();
+        if (result.status === "error") throw new Error(result.message);
+        return result.data;
+    }
+
+    async function searchVendor() {
+        const codeInput = document.getElementById('vendorCodeInput');
+        const code = codeInput.value;
+        if(!code) return alert("Please enter Vendor Code");
+        
+        const btn = document.querySelector("#step-search button");
+        const originalText = btn.innerHTML;
+        
+        // UI: Set to searching state
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> SEARCHING...';
+
+        try {
+            const vendor = await callAPI({ action: 'getVendor', vendorCode: code });
+            if(!vendor) {
+                alert("Vendor Code not found in our master records.");
+            } else {
+                currentVendorData = vendor;
+                const resDiv = document.getElementById('searchResult');
+                const statusSpan = document.getElementById('resStatus');
+                
+                resDiv.style.display = 'block';
+                document.getElementById('resName').innerText = vendor.name;
+                statusSpan.innerText = vendor.status;
+                
+                // UI: Color Logic for Status
+                if(vendor.status.toUpperCase() === "ACTIVE") {
+                    statusSpan.className = "text-success fw-bold";
+                    document.getElementById('loginInitiateBtn').disabled = false;
+                    document.getElementById('freezeMessage').style.display = 'none';
+                } else {
+                    statusSpan.className = "text-danger fw-bold";
+                    document.getElementById('loginInitiateBtn').disabled = true;
+                    document.getElementById('freezeMessage').style.display = 'block';
+                }
+            }
+        } catch (e) { alert("Connection Error. Please check your internet."); }
+        finally { 
+            btn.disabled = false; 
+            btn.innerHTML = originalText; 
+        }
+    }
+
+    async function requestOTP() {
+        const pass = document.getElementById('vendorPass').value;
+        if(!pass) return alert("Enter password");
+        const btn = document.querySelector("#passBlock button");
+        btn.disabled = true;
+        btn.innerHTML = "Verifying Password...";
+        try {
+            const result = await callAPI({ action: 'sendOTP', vendorCode: currentVendorData.code, password: pass });
+            if(result.success) {
+                document.getElementById('passBlock').style.display = 'none';
+                document.getElementById('otpBlock').style.display = 'block';
+            } else {
+                alert(result.message);
+                btn.disabled = false;
+                btn.innerHTML = "SEND OTP";
+            }
+        } catch (e) { alert("API Error"); btn.disabled = false; btn.innerHTML = "SEND OTP"; }
+    }
+
+    async function verifyOTP() {
+        const otp = document.getElementById('otpInput').value;
+        const pass = document.getElementById('vendorPass').value;
+        const btn = document.querySelector("#otpBlock button");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> VERIFYING OTP...';
+        try {
+            const isValid = await callAPI({ action: 'verifyAuth', vendorCode: currentVendorData.code, password: pass, otp: otp });
+            if(isValid) {
+                document.getElementById('dashVendorName').innerText = currentVendorData.name;
+                document.getElementById('countPO').innerText = currentVendorData.stats.po;
+                document.getElementById('countUnpaid').innerText = currentVendorData.stats.unpaid;
+                document.getElementById('countPaid').innerText = "₹ " + Number(currentVendorData.stats.paid).toLocaleString('en-IN');
+                showStep('step-dashboard');
+            } else { alert("Incorrect OTP"); btn.disabled = false; }
+        } catch (e) { alert("Verification error"); btn.disabled = false; }
+    }
+
+    function checkEligibility(type) {
+        if(currentVendorData.eligible[type]) {
+            document.getElementById('f_vendorName').value = currentVendorData.name;
+            showStep('step-form');
+        } else { alert("Restricted: Not eligible for " + type.toUpperCase()); }
+    }
+
+    document.getElementById('vimsInvoiceForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitInvoiceBtn');
+        const file = document.getElementById('invoiceFile').files[0];
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i> UPLOADING AND SUBMITTING...';
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            const fileData = { base64: event.target.result.split(',')[1], type: file.type, name: file.name };
+            const formData = {
+                vendorCode: currentVendorData.code, vendorName: currentVendorData.name, invoiceNum: e.target.invoiceNum.value,
+                gstin: e.target.gstin.value, invoiceDate: e.target.invoiceDate.value, currency: e.target.currency.value,
+                dealingPerson: e.target.dealingPerson.value, partnerId: e.target.partnerId.value, partnerEmail: e.target.partnerEmail.value,
+                pos: e.target.pos.value, description: e.target.description.value, amount: e.target.amount.value,
+                taxRate: e.target.taxRate.value, totalAmount: e.target.totalAmount.value
+            };
+            try {
+                const ackId = await callAPI({ action: 'submitInvoice', formData: formData, fileData: fileData });
+                document.getElementById('ackID').innerText = ackId;
+                showStep('step-success');
+            } catch (err) { alert("Submission error"); btn.disabled = false; btn.innerHTML = "SUBMIT INVOICE"; }
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function goToLogin() { showStep('step-auth'); }
+</script>
+
+</body>
+</html>
