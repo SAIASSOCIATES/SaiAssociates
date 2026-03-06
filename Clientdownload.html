@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Portal | Sai Associates</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -73,9 +74,12 @@ body {
             <div id="navClientInfo" class="d-none align-items-center">
                 <span id="navClientName" class="nav-link text-white fw-bold me-4 border-start ps-3 text-uppercase"></span>
                 <span id="navClientPan" class="nav-link text-white-50 text-uppercase"></span>
-                <button class="btn btn-sm btn-outline-light ms-2 fw-bold" onclick="location.reload()">
-                    LOGOUT
-                </button>
+                <button class="btn btn-sm btn-outline-light ms-2 fw-bold" onclick="showEmailUpdate()">
+    UPDATE EMAIL
+</button>
+<button class="btn btn-sm btn-light ms-2 fw-bold text-teal" onclick="location.reload()">
+    LOGOUT
+</button>
             </div>
         </div>
     </div>
@@ -96,6 +100,11 @@ body {
                     <input type="text" id="loginPan" class="form-control mb-3" placeholder="Enter PAN Number">
                     <input type="password" id="loginPass" class="form-control mb-3" placeholder="Password">
                     <button class="btn btn-teal w-100" onclick="initiateLogin()">PROCEED TO OTP</button>
+                <div class="text-center mt-3">
+    <a href="javascript:void(0)" onclick="showForgotFlow()" class="text-teal small fw-bold" style="text-decoration: none;">
+        FORGOT PASSWORD?
+    </a>
+</div>
                 </div>
 
                 <div id="register-form" style="display:none;">
@@ -110,11 +119,23 @@ body {
         </div>
     </div>
 
+    <div id="step-forgot" class="step-container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 card shadow-sm p-4 text-center">
+                <h4 class="text-teal mb-3">Reset Password</h4>
+                <p class="text-muted small">Enter your PAN to receive a reset code on your registered email.</p>
+                <input type="text" id="forgotPan" class="form-control mb-3" placeholder="Enter PAN Number">
+                <button class="btn btn-teal w-100" onclick="handleForgot()">SEND RESET CODE</button>
+                <button class="btn btn-link btn-sm mt-3 text-muted" onclick="showStep('step-auth')">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
     <div id="step-otp" class="step-container">
         <div class="row justify-content-center">
             <div class="col-md-4 card shadow-sm p-4 text-center">
                 <i class="fas fa-envelope-open-text fa-3x text-teal mb-3"></i>
-                <h4>Verify OTP</h4>
+                <h4 id="otpTitle">Verify OTP</h4>
                 <p>We've sent a 6-digit code to your registered email.</p>
                 <input type="text" id="otpInput" class="form-control mb-3 text-center fs-4" placeholder="000000">
                 <button id="verifyBtn" class="btn btn-teal w-100" onclick="completeAuth()">VERIFY</button>
@@ -155,6 +176,24 @@ body {
         <div id="document-structure">
             </div>
     </div>
+<div class="modal fade" id="emailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-teal text-white">
+                <h5 class="modal-title">UPDATE EMAIL ADDRESS</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small">Enter the new email address you want to use for receiving OTPs.</p>
+                <input type="email" id="newEmailInput" class="form-control" placeholder="name@example.com">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                <button type="button" class="btn btn-teal" id="saveEmailBtn" onclick="handleEmailUpdate()">SAVE CHANGES</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // 1. PASTE YOUR NEW DEPLOYMENT URL HERE
@@ -280,8 +319,26 @@ body {
                     await callAPI({ action: 'verifyAndRegister', regData: sessionData });
                     alert("Registration Successful! Please login now.");
                     location.reload();
-                } else { 
-                    alert("Invalid OTP"); 
+                }
+            } else if (authMode === 'forgot') {
+                const newPass = document.getElementById('newResetPass').value;
+                if(!newPass) {
+                    alert("Please enter a new password.");
+                    btn.disabled = false;
+                    btn.innerHTML = "VERIFY";
+                    return;
+                }
+                const res = await callAPI({ 
+                    action: 'resetPassword', 
+                    pan: sessionData.pan, 
+                    otp: otp, 
+                    newPassword: newPass 
+                });
+                if(res.success) {
+                    alert("Password updated successfully! Please login with your new password.");
+                    location.reload();
+                } else {
+                    alert("Invalid OTP code.");
                     btn.disabled = false;
                     btn.innerHTML = "VERIFY";
                 }
@@ -301,7 +358,7 @@ body {
             btn.disabled = false; 
             btn.innerHTML = "VERIFY";
         }
-    }
+       }
 
     async function loadDashboard() {
        // 1. Identify the Navbar Container
@@ -342,6 +399,72 @@ body {
             alert("Failed to load dashboard data.");
         }
     }
-</script>
-</body>
+
+function showForgotFlow() {
+    authMode = 'forgot';
+    showStep('step-forgot');
+}
+
+async function handleForgot() {
+    const pan = document.getElementById('forgotPan').value.toUpperCase();
+    if(!pan) return alert("Please enter your PAN.");
+    const btn = document.querySelector("#step-forgot button.btn-teal");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> CONNECTING...';
+    
+    try {
+        const res = await callAPI({ action: 'sendForgotOTP', pan: pan });
+        if(res.success) {
+            sessionData = { pan: pan };
+            // Update OTP UI for Reset
+            document.querySelector('#step-otp h4').innerText = "Password Reset Verification";
+            // We temporarily add a password field to the OTP screen for resets
+            document.getElementById('otpInput').insertAdjacentHTML('afterend', '<input type="password" id="newResetPass" class="form-control mt-3 mb-3" placeholder="Enter New Password">');
+            showStep('step-otp');
+        } else {
+            alert("PAN not found in our records.");
+        }
+    } catch(e) { console.error(e); }
+}
+
+function showEmailUpdate() {
+    // This opens the Bootstrap modal
+    const emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+    emailModal.show();
+}
+
+async function handleEmailUpdate() {
+    const newEmail = document.getElementById('newEmailInput').value;
+    const btn = document.getElementById('saveEmailBtn');
+
+    if (!newEmail || !newEmail.includes('@')) {
+        return alert("Please enter a valid email address.");
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> UPDATING...';
+
+    try {
+        const res = await callAPI({ 
+            action: 'updateEmail', 
+            pan: sessionData.pan, 
+            newEmail: newEmail 
+        });
+
+        if (res.success) {
+            alert("Email updated successfully! Please login again to sync changes.");
+            location.reload(); // Reload to ensure security and update session
+        } else {
+            alert("Failed to update email. Please try again.");
+            btn.disabled = false;
+            btn.innerHTML = "SAVE CHANGES";
+        }
+    } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = "SAVE CHANGES";
+    }
+}
+
+  </script>
+ </body>
 </html>
