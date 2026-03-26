@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal | Sai Associates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+body { 
+    font-family: 'Montserrat', sans-serif; 
+    background-color: #f4f7f6; 
+    padding-top: 80px; /* Added to prevent content from hiding under the fixed navbar */
+}
+
+@font-face {
+    font-family: 'Trajan Pro';
+    src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.font-trajan { font-family: 'Trajan Pro', serif; }
+
+.navbar { 
+    background-color: #038387 !important; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+/* Simplified client info styling */
+#navClientInfo {
+    border-left: 1px solid rgba(255,255,255,0.3);
+    padding-left: 15px;
+}
+
+.blink-notice {
+    color: #dc3545; /* Red color */
+    font-weight: bold;
+    animation: blinker 1.5s linear infinite;
+    display: inline-block;
+    padding: 10px;
+    background-color: #fff5f5;
+    border: 1px solid #ffc1c1;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
+}
+        body { font-family: 'Montserrat', sans-serif; background-color: #f4f7f6; }
+        .bg-teal { background-color: #038387 !important; }
+        .text-teal { color: #038387 !important; }
+        .btn-teal { background-color: #038387; color: white; border: none; }
+        .btn-teal:hover { background-color: #026b6e; color: white; }
+        .step-container { display: none; }
+        .active-step { display: block; }
+        .ay-card { border-left: 5px solid #038387; margin-bottom: 20px; }
+        .stats-box { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+    <div class="container">
+        <a class="navbar-brand font-trajan" href="https://www.saiassociates.publicvm.com/#home">SAI ASSOCIATES</a>
+
+        <div class="ms-auto d-flex align-items-center">
+            <a class="nav-link text-white me-3" href="https://www.saiassociates.publicvm.com/#home">HOME</a>
+
+            <div id="navClientInfo" class="d-none align-items-center">
+                <span id="navClientName" class="nav-link text-white fw-bold me-4 border-start ps-3 text-uppercase"></span>
+                <span id="navClientPan" class="nav-link text-white-50 text-uppercase"></span>
+                <button class="btn btn-sm btn-outline-light ms-2 fw-bold" onclick="showEmailUpdate()">
+    UPDATE EMAIL
+</button>
+<button class="btn btn-sm btn-light ms-2 fw-bold text-teal" onclick="location.reload()">
+    LOGOUT
+</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div id="step-auth" class="step-container active-step">
+
+        <div class="row justify-content-center">
+            <div class="col-md-5 card shadow-sm p-4">
+                <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab">
+                    <li class="nav-item"><button class="nav-link active" onclick="toggleAuth('login')">Login</button></li>
+                    <li class="nav-item"><button class="nav-link" onclick="toggleAuth('register')">Register</button></li>
+                </ul>
+                
+                <div id="login-form">
+                    <h4 class="text-center mb-4">Client Login</h4>
+                    <input type="text" id="loginPan" class="form-control mb-3" placeholder="Enter PAN Number">
+                    <input type="password" id="loginPass" class="form-control mb-3" placeholder="Password">
+                    <button class="btn btn-teal w-100" onclick="initiateLogin()">PROCEED TO OTP</button>
+                <div class="text-center mt-3">
+    <a href="javascript:void(0)" onclick="showForgotFlow()" class="text-teal small fw-bold" style="text-decoration: none;">
+        FORGOT PASSWORD?
+    </a>
+</div>
+                </div>
+
+                <div id="register-form" style="display:none;">
+                    <h4 class="text-center mb-4">New Registration</h4>
+                    <input type="text" id="regName" class="form-control mb-2" placeholder="Full Name">
+                    <input type="text" id="regPan" class="form-control mb-2" placeholder="PAN Number">
+                    <input type="email" id="regEmail" class="form-control mb-2" placeholder="Email Address">
+                    <input type="password" id="regPass" class="form-control mb-3" placeholder="Create Password">
+                    <button class="btn btn-teal w-100" onclick="initiateRegistration()">VERIFY EMAIL & REGISTER</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-forgot" class="step-container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 card shadow-sm p-4 text-center">
+                <h4 class="text-teal mb-3">Reset Password</h4>
+                <p class="text-muted small">Enter your PAN to receive a reset code on your registered email.</p>
+                <input type="text" id="forgotPan" class="form-control mb-3" placeholder="Enter PAN Number">
+                <button class="btn btn-teal w-100" onclick="handleForgot()">SEND RESET CODE</button>
+                <button class="btn btn-link btn-sm mt-3 text-muted" onclick="showStep('step-auth')">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-otp" class="step-container">
+    <div class="row justify-content-center">
+        <div class="col-md-4 card shadow-sm p-4 text-center">
+            <i class="fas fa-envelope-open-text fa-3x text-teal mb-3"></i>
+            <h4 id="otpTitle">Verify OTP</h4>
+            <p>We've sent a 6-digit code to: <br><strong id="otpEmailDisplay" class="text-teal"></strong></p>
+            <input type="text" id="otpInput" class="form-control mb-3 text-center fs-4" placeholder="000000">
+            <button id="verifyBtn" class="btn btn-teal w-100" onclick="completeAuth()">VERIFY</button>
+        </div>
+    </div>
+</div>
+
+<div id="step-dashboard" class="step-container">
+        <div class="mb-3">
+            <span class="blink-notice">
+                <i class="fas fa-exclamation-triangle me-2"></i> 
+                DO NOT PRESS BACK OR REFRESH THIS PAGE. USE THE REFRESH BUTTON TO SYNC DATA.
+            </span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-teal mb-0"><i class="fas fa-file-invoice me-2"></i>Your Documents</h4>
+            <button class="btn btn-sm btn-teal" onclick="loadDashboard()">
+                <i class="fas fa-sync-alt me-1"></i> Refresh Data
+            </button>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="stats-box">
+                    <h2 id="statFiles" class="text-teal">0</h2>
+                    <p class="text-muted mb-0">Total Documents Available</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="stats-box">
+                    <h2 id="statAY" class="text-teal">0</h2>
+                    <p class="text-muted mb-0">Assessment Years Tracked</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="document-structure">
+            </div>
+    </div>
+<div class="modal fade" id="emailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-teal text-white">
+                <h5 class="modal-title">UPDATE EMAIL ADDRESS</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small">Enter the new email address you want to use for receiving OTPs.</p>
+                <input type="email" id="newEmailInput" class="form-control" placeholder="name@example.com">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                <button type="button" class="btn btn-teal" id="saveEmailBtn" onclick="handleEmailUpdate()">SAVE CHANGES</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. PASTE YOUR NEW DEPLOYMENT URL HERE
+    const API_URL = "https://script.google.com/macros/s/AKfycbwcMa6_9KLAUqVZc7Cgh4hKy5YSs5vsMXneFUu1koXpGbyO4Yi3CL17avPKZFBQU7Su/exec"; 
+    
+    let authMode = 'login';
+    let sessionData = {};
+
+    function showStep(s) {
+        document.querySelectorAll('.step-container').forEach(c => c.classList.remove('active-step'));
+        document.getElementById(s).classList.add('active-step');
+        window.scrollTo(0,0);
+    }
+
+    function toggleAuth(mode) {
+        authMode = mode;
+        document.getElementById('login-form').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        // Find the button and make it active
+        const btn = mode === 'login' ? document.querySelector('[onclick="toggleAuth(\'login\')"]') : document.querySelector('[onclick="toggleAuth(\'register\')"]');
+        if(btn) btn.classList.add('active');
+    }
+
+    async function callAPI(payload) {
+        try {
+            const r = await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(payload)
+            });
+            const response = await r.json();
+            
+            if (response.status === 'error') {
+                alert("Server Error: " + response.message);
+                throw new Error(response.message);
+            }
+            return response.data; // This matches the new Apps Script wrapper
+        } catch (e) {
+            console.error("Connection Failed:", e);
+            alert("Could not connect to the server. Check your Internet or Web App URL.");
+            throw e;
+        }
+    }
+
+    async function initiateLogin() {
+        const pan = document.getElementById('loginPan').value;
+        const pass = document.getElementById('loginPass').value;
+        if(!pan || !pass) return alert("Please enter both PAN and Password");
+
+        const btn = document.querySelector("#login-form button");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> CONNECTING...';
+
+        try {
+            const check = await callAPI({ action: 'checkClient', pan: pan });
+            if(!check.exists) {
+                alert("Account not found. Please register first.");
+                btn.disabled = false;
+                btn.innerHTML = "PROCEED TO OTP";
+                return;
+            }
+            if(check.status === "FROZEN") {
+                alert(check.error);
+                btn.disabled = false;
+                btn.innerHTML = "PROCEED TO OTP";
+                return;
+            }
+
+            const otpReq = await callAPI({ action: 'sendOTP', pan: pan, password: pass });
+            if(otpReq.success) {
+                sessionData = { pan, pass };
+             // ADD THIS LINE BELOW
+            updateOtpDisplay(otpReq.email);
+                showStep('step-otp');
+            } else {
+                alert("Invalid Credentials. Please check your password.");
+                btn.disabled = false;
+                btn.innerHTML = "PROCEED TO OTP";
+            }
+        } catch (e) { 
+            btn.disabled = false;
+            btn.innerHTML = "PROCEED TO OTP";
+        }
+    }
+
+    async function initiateRegistration() {
+        const name = document.getElementById('regName').value;
+        const pan = document.getElementById('regPan').value;
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        
+        if(!name || !pan || !email || !pass) return alert("Please fill all registration fields.");
+
+        const btn = document.querySelector("#register-form button");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> VERIFYING...';
+
+        try {
+            const check = await callAPI({ action: 'checkClient', pan: pan });
+            if(check.exists) {
+                alert("A client with this PAN already exists.");
+                btn.disabled = false;
+                btn.innerHTML = "VERIFY EMAIL & REGISTER";
+                return;
+            }
+
+            const otpReq = await callAPI({ action: 'sendOTP', pan: {email: email}, isRegistration: true });
+            sessionData = { pan, name, email, password: pass, tempOtp: otpReq.tempOtp };
+        // ADD THIS LINE BELOW
+        updateOtpDisplay(email);
+            showStep('step-otp');
+        } catch (e) { 
+            btn.disabled = false;
+            btn.innerHTML = "VERIFY EMAIL & REGISTER";
+        }
+    }
+
+    async function completeAuth() {
+        const otp = document.getElementById('otpInput').value;
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = "VERIFYING...";
+
+        try {
+            if(authMode === 'register') {
+                if(otp === sessionData.tempOtp.toString()) {
+                    await callAPI({ action: 'verifyAndRegister', regData: sessionData });
+                    alert("Registration Successful! Please login now.");
+                    location.reload();
+                }
+            } else if (authMode === 'forgot') {
+                const newPass = document.getElementById('newResetPass').value;
+                if(!newPass) {
+                    alert("Please enter a new password.");
+                    btn.disabled = false;
+                    btn.innerHTML = "VERIFY";
+                    return;
+                }
+                const res = await callAPI({ 
+                    action: 'resetPassword', 
+                    pan: sessionData.pan, 
+                    otp: otp, 
+                    newPassword: newPass 
+                });
+                if(res.success) {
+                    alert("Password updated successfully! Please login with your new password.");
+                    location.reload();
+                } else {
+                    alert("Invalid OTP code.");
+                    btn.disabled = false;
+                    btn.innerHTML = "VERIFY";
+                }
+            } else {
+                const login = await callAPI({ action: 'verifyLogin', pan: sessionData.pan, password: sessionData.pass, otp: otp });
+                if(login.success) {
+        // THIS IS THE FIX: Save the name returned from your sheet into sessionData
+        sessionData.name = login.name;
+                    loadDashboard();
+                } else { 
+                    alert("Invalid OTP"); 
+                    btn.disabled = false;
+                    btn.innerHTML = "VERIFY";
+                }
+            }
+        } catch (e) { 
+            btn.disabled = false; 
+            btn.innerHTML = "VERIFY";
+        }
+       }
+
+    async function loadDashboard() {
+       // 1. Identify the Navbar Container
+    const navInfo = document.getElementById('navClientInfo');
+    
+    if (navInfo) {
+        // 2. Show the container using Flexbox (keeps everything in one line)
+        navInfo.classList.remove('d-none');
+        navInfo.classList.add('d-flex');
+        
+        // 3. Inject the actual Client Name and PAN from the session
+        document.getElementById('navClientName').innerText = sessionData.name || "CLIENT";
+        document.getElementById('navClientPan').innerText = sessionData.pan.toUpperCase();
+    }
+        try {
+            const data = await callAPI({ action: 'getClientContent', pan: sessionData.pan });
+            document.getElementById('statFiles').innerText = data.totalFiles;
+            document.getElementById('statAY').innerText = data.ayCount;
+            
+            let html = "";
+            for (const [ay, files] of Object.entries(data.structure)) {
+                html += `<div class="card ay-card p-3 shadow-sm mb-4">
+                    <h5 class="text-teal border-bottom pb-2"><i class="fas fa-folder-open me-2"></i>${ay}</h5>
+                    <div class="list-group list-group-flush">`;
+                files.forEach(f => {
+                    html += `<div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-pdf text-danger me-2"></i>${f.name}</span>
+                        <a href="${f.downloadUrl}" target="_blank" class="btn btn-sm btn-outline-teal">
+    <i class="fas fa-external-link-alt me-1"></i> View / Download
+</a>
+                    </div>`;
+                });
+                html += `</div></div>`;
+            }
+            document.getElementById('document-structure').innerHTML = html || "<p class='text-center mt-5'>No documents found. Please ensure folders start with 'AY'.</p>";
+            showStep('step-dashboard');
+        } catch (e) {
+            alert("Failed to load dashboard data.");
+        }
+    }
+
+function showForgotFlow() {
+    authMode = 'forgot';
+    showStep('step-forgot');
+}
+
+async function handleForgot() {
+    const pan = document.getElementById('forgotPan').value.toUpperCase();
+    if(!pan) return alert("Please enter your PAN.");
+    const btn = document.querySelector("#step-forgot button.btn-teal");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> CONNECTING...';
+    
+    try {
+        const res = await callAPI({ action: 'sendForgotOTP', pan: pan });
+        if(res.success) {
+            sessionData = { pan: pan };
+           // ADD THIS LINE BELOW
+            updateOtpDisplay(res.email);
+            // Update OTP UI for Reset
+            document.querySelector('#step-otp h4').innerText = "Password Reset Verification";
+            // We temporarily add a password field to the OTP screen for resets
+            document.getElementById('otpInput').insertAdjacentHTML('afterend', '<input type="password" id="newResetPass" class="form-control mt-3 mb-3" placeholder="Enter New Password">');
+            showStep('step-otp');
+        } else {
+            alert("PAN not found in our records.");
+        }
+    } catch(e) { console.error(e); }
+}
+
+function showEmailUpdate() {
+    // This opens the Bootstrap modal
+    const emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+    emailModal.show();
+}
+
+async function handleEmailUpdate() {
+    const newEmail = document.getElementById('newEmailInput').value;
+    const btn = document.getElementById('saveEmailBtn');
+
+    if (!newEmail || !newEmail.includes('@')) {
+        return alert("Please enter a valid email address.");
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> UPDATING...';
+
+    try {
+        const res = await callAPI({ 
+            action: 'updateEmail', 
+            pan: sessionData.pan, 
+            newEmail: newEmail 
+        });
+
+        if (res.success) {
+            alert("Email updated successfully! Please login again to sync changes.");
+            location.reload(); // Reload to ensure security and update session
+        } else {
+            alert("Failed to update email. Please try again.");
+            btn.disabled = false;
+            btn.innerHTML = "SAVE CHANGES";
+        }
+    } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = "SAVE CHANGES";
+    }
+}
+
+function maskEmail(email) {
+    if (!email) return "your registered email";
+    const [name, domain] = email.split('@');
+    if (name.length <= 2) return email; 
+    return name[0] + "xxxx" + name[name.length - 1] + "@" + domain;
+}
+
+function updateOtpDisplay(email) {
+    document.getElementById('otpEmailDisplay').innerText = maskEmail(email);
+}
+
+  </script>
+ </body>
+</html>
