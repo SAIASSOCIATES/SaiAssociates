@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal | Sai Associates</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+
+/* Styling for the new Download Button */
+.btn-download-alt { 
+    background-color: #f0f9f9; 
+    color: var(--primary-teal); 
+    border: 1px solid var(--primary-teal); 
+    text-decoration: none;
+}
+
+.btn-download-alt:hover { 
+    background-color: var(--primary-teal); 
+    color: white; 
+    transform: translateY(-2px);
+}
+        @font-face {
+            font-family: 'Trajan Pro';
+            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --primary-teal: #038387;
+            --dark-teal: #025a5d;
+            --light-bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-bg);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--primary-teal) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        /* Apply Trajan Pro to Branding and Headings */
+        .navbar-brand, .login-content h1, .login-card h2 {
+            font-family: 'Trajan Pro', serif !important;
+        }
+
+        .navbar-brand {
+            font-size: 1.4rem;
+            color: #fff !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #f0f8ff !important;
+            margin-left: 15px;
+            transition: 0.3s;
+        }
+
+        /* Split Screen Layout */
+        .login-wrapper {
+            display: flex;
+            flex: 1;
+            margin-top: 56px;
+        }
+
+        /* Smooth Continuous Scrolling Background Animation */
+        .login-side-image {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .bg-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; 
+            height: 100%;
+            display: flex;
+            z-index: -1;
+            animation: slideSmooth 25s linear infinite;
+        }
+
+        .bg-slider div {
+            /* FIX: Use flex property to force exactly 1/4th width, preventing them from squishing */
+            flex: 1 0 25%; 
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @keyframes slideSmooth {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-75%); } 
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Reduced opacity significantly to show images clearly */
+            background: linear-gradient(rgba(3, 131, 135, 0.4), rgba(2, 90, 93, 0.6));
+            z-index: 0;
+        }
+
+        .login-content { position: relative; z-index: 1; animation: fadeInUp 1s ease; }
+        
+        .login-content h1 { font-size: 2.8rem; margin-bottom: 15px; }
+
+        /* Form Styling */
+        .login-side-form {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .login-card { max-width: 400px; width: 100%; margin: 0 auto; }
+        .login-card h2 { font-weight: 700; color: var(--primary-teal); }
+
+        .btn-custom {
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-login { background-color: var(--primary-teal); color: white; border: none; }
+        .btn-login:hover { background-color: var(--dark-teal); transform: translateY(-2px); color: white; }
+
+        .btn-upload { background-color: #e3f2fd; color: #0d47a1; border: 2px solid transparent; }
+        .btn-upload:hover { background-color: #0d47a1; color: white; }
+
+        /* WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: 0.3s;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); color: white; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 992px) {
+            .login-side-image { display: none; }
+            body { overflow-y: auto; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">SAI ASSOCIATES</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Admin Login</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/clientlogin">Client Portal</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-wrapper">
+        <div class="login-side-image">
+            <div class="bg-slider">
+    <div style="background-image: url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=2000');"></div>
+    <div style="background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=2000');"></div>
+    <div style="background-image: url('https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&q=80&w=2000');"></div>
+    <div style="background-image: url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=2000');"></div>
+</div>
+            <div class="overlay"></div>
+            <div class="login-content">
+                <i class="fas fa-user-shield fa-4x mb-4"></i>
+                <h1>Secure Client Access</h1>
+                <p class="lead">Access your personalized tax filings, credentials, and financial reports in one secure location.</p>
+            </div>
+        </div>
+
+        <div class="login-side-form">
+
+            <div class="login-card">
+    <div id="loginFormSection">
+        <h2>Welcome Back</h2>
+        <p class="text-muted">Enter your Client ID to access your dashboard.</p>
+        
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="clientId" placeholder="Client ID">
+            <label for="clientId">Client ID</label>
+        </div>
+        
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" placeholder="Password">
+            <label for="password">Password</label>
+        </div>
+
+        <button class="btn-custom btn-login" onclick="clientLogin()">
+            <i class="fas fa-sign-in-alt me-2"></i> Access Dashboard
+        </button>
+
+        <div class="text-end mt-2 mb-3">
+            <a href="javascript:void(0)" onclick="toggleForgotView(true)" style="color: var(--primary-teal); font-size: 0.85rem; font-weight: 600; text-decoration: none;">Forgot Password?</a>
+        </div>
+
+        <div class="text-center my-3"><span class="text-muted small fw-bold">OR</span></div>
+
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" 
+           target="_blank" class="btn-custom btn-upload">
+            <i class="fas fa-file-upload me-2"></i> Quick Upload Documents
+        </a>
+
+        <a href="https://saiassociates.github.io/SaiAssociates/Clientdownload" 
+           class="btn-custom btn-download-alt mt-3">
+            <i class="fas fa-file-download me-2"></i> Quick Download Documents
+        </a>
+    </div>
+
+    <div id="forgotPasswordSection" style="display: none;">
+        <h2 style="color: var(--dark-teal);">Reset Password</h2>
+        <p class="text-muted small mb-4">Enter your Client ID to receive a secure OTP on your registered email address.</p>
+        
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="forgotClientId" placeholder="Client ID">
+            <label for="forgotClientId">Client ID</label>
+        </div>
+
+        <div id="otpSection" style="display: none;">
+            <p class="text-success small fw-bold mb-2"><i class="fas fa-check-circle"></i> OTP Sent! Check your email.</p>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="forgotOtp" placeholder="6-digit OTP">
+                <label for="forgotOtp">Enter 6-Digit OTP</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="newPassword" placeholder="New Password">
+                <label for="newPassword">Enter New Password</label>
+            </div>
+        </div>
+
+        <button class="btn-custom btn-login" id="btnForgotAction" onclick="handleForgotAction()">
+            Send OTP
+        </button>
+
+        <div class="text-center mt-4">
+            <a href="javascript:void(0)" onclick="toggleForgotView(false)" class="text-muted small fw-bold text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i> Back to Login
+            </a>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <small class="text-muted">Need assistance? Contact us below.</small>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/911353528177" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') clientLogin(); });
+
+    // REPLACE THIS WITH YOUR APPS SCRIPT WEB APP URL
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx1ol6_K2b7PsT0xXSbWkx6bXFNn3wUWANIbY4lgg1WKf6ZOe4xxlvL9hvYBTF_Vpzw/exec'; 
+
+    async function clientLogin() {
+        const clientId = document.getElementById('clientId').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const btn = document.querySelector('.btn-login');
+
+        if (!clientId || !password) {
+            alert("Please enter both ID and Password.");
+            return;
+        }
+
+        // UI Feedback
+        const originalBtnText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verifying...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'login', id: clientId, pass: password })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Save client data securely for this browser session
+                sessionStorage.setItem('clientData', JSON.stringify(result.clientData));
+                // Redirect to the new dashboard page
+                window.location.href = 'clientdashboard.html'; 
+            } else {
+                alert(result.message); // Will alert "Technical issue..." if Frozen
+            }
+        } catch (error) {
+            alert('Connection error. Please try again.');
+        } finally {
+            btn.innerHTML = originalBtnText;
+            btn.disabled = false;
+        }
+    }
+
+// --- NEW FORGOT PASSWORD LOGIC ---
+    let forgotStep = 1; // 1 = Send OTP state, 2 = Verify & Reset state
+
+    function toggleForgotView(showForgot) {
+        // Toggle which section is visible
+        document.getElementById('loginFormSection').style.display = showForgot ? 'none' : 'block';
+        document.getElementById('forgotPasswordSection').style.display = showForgot ? 'block' : 'none';
+        
+        // Reset the form if they hit "Back to Login"
+        if (!showForgot) {
+            forgotStep = 1;
+            document.getElementById('otpSection').style.display = 'none';
+            document.getElementById('btnForgotAction').innerHTML = 'Send OTP';
+            document.getElementById('forgotClientId').value = '';
+            document.getElementById('forgotClientId').disabled = false;
+            document.getElementById('forgotOtp').value = '';
+            document.getElementById('newPassword').value = '';
+        }
+    }
+
+    async function handleForgotAction() {
+        const clientId = document.getElementById('forgotClientId').value.trim();
+        const btn = document.getElementById('btnForgotAction');
+
+        if (!clientId) return alert("Please enter your Client ID.");
+
+        if (forgotStep === 1) {
+            // --- STEP 1: REQUEST OTP ---
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending OTP...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'sendForgotOTP', id: clientId })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    forgotStep = 2;
+                    document.getElementById('otpSection').style.display = 'block';
+                    btn.innerHTML = 'Reset Password';
+                    document.getElementById('forgotClientId').disabled = true; // Lock the ID field so they can't change it
+                } else {
+                    alert(result.message);
+                    btn.innerHTML = 'Send OTP';
+                }
+            } catch (error) {
+                alert("Network error while sending OTP.");
+                btn.innerHTML = 'Send OTP';
+            } finally {
+                btn.disabled = false;
+            }
+            
+        } else {
+            // --- STEP 2: VERIFY OTP AND SAVE NEW PASSWORD ---
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const newPass = document.getElementById('newPassword').value.trim();
+            
+            if (!otp || !newPass) return alert("Please enter both the OTP and your New Password.");
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verifying...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'resetPassword', id: clientId, otp: otp, newPassword: newPass })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("Password updated successfully! You can now log in.");
+                    toggleForgotView(false); // Send them back to the login screen
+                } else {
+                    alert(result.message);
+                    btn.innerHTML = 'Reset Password';
+                }
+            } catch (error) {
+                alert("Network error while resetting password.");
+                btn.innerHTML = 'Reset Password';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    }
+
+</script>
+</body>
+
+</html>
+
+

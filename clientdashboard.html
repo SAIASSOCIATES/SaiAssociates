@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Sai Associates</title>
+    <!-- Requires bootstrap bundle for the Modal to work -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary-teal: #038387; --dark-teal: #025a5d; --light-bg: #f4f7f6; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--light-bg); margin-top: 80px; }
+        .navbar { background-color: var(--primary-teal) !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-header-teal { background-color: var(--primary-teal); color: white; border-radius: 12px 12px 0 0 !important; }
+        .btn-teal { background-color: var(--primary-teal); color: white; border: none;}
+        .btn-teal:hover { background-color: var(--dark-teal); color: white; }
+        .btn-outline-teal { color: var(--primary-teal); border: 1px solid var(--primary-teal); }
+        .btn-outline-teal:hover { background-color: var(--primary-teal); color: white; }
+        
+        table { font-size: 0.85rem; }
+        table th { background-color: #f8f9fa !important; white-space: nowrap; }
+        table td { white-space: nowrap; vertical-align: middle; }
+        table input { border: 1px solid #ddd; border-radius: 4px; padding: 6px 10px; width: 100%; min-width: 120px; text-align: right; }
+        table input:focus { border-color: var(--primary-teal); outline: none; }
+        table input:disabled { background-color: #e9ecef; cursor: not-allowed; border-color: #ccc; }
+        
+        .text-input { text-align: left !important; } 
+        
+        .output-cell { font-weight: 600; color: var(--dark-teal); background-color: #fbfbfb; }
+        .row-locked { background-color: #f8f9fa; opacity: 0.85; }
+        .totals-row td { background-color: #e3f2fd !important; font-weight: bold; }
+        
+        .status-text { font-size: 0.85rem; font-weight: 600; color: #038387; }
+        .hidden { display: none !important; }
+        
+        /* Smaller text for the profile details */
+        .profile-details p { font-size: 0.9rem; margin-bottom: 0.4rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" style="font-family: 'Trajan Pro', serif; color: #fff;">SAI ASSOCIATES</a>
+            <div class="ms-auto">
+                <button class="btn btn-sm btn-outline-light" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div id="mainDashboard" class="container">
+            <h2 class="mb-4" style="color: var(--dark-teal);">Welcome, <span id="lblOwnerWelcome"></span></h2>
+            
+            <div class="row">
+                <!-- CLIENT PROFILE SECTION UPDATED -->
+                <div class="col-md-4">
+                    <div class="card card-custom">
+                        <div class="card-header card-header-teal fw-bold">Client Profile</div>
+                        <div class="card-body profile-details">
+                            <p><strong>Firm Name:</strong> <span id="lblFirm"></span></p>
+                            <p><strong>GSTIN:</strong> <span id="lblGstin"></span></p>
+                            <p><strong>Authorised Personal:</strong> <span id="lblOwner"></span></p>
+                            <hr class="text-muted">
+                            <p><strong>Registration Date:</strong> <span id="lblRegDate"></span></p>
+                            <p><strong>Constitution:</strong> <span id="lblConstitution"></span></p>
+                            <p><strong>Place of Business:</strong> <span id="lblPlace"></span></p>
+                            <p><strong>Email ID:</strong> <span id="lblEmail" class="text-primary"></span></p>
+                            
+                            <button class="btn btn-sm btn-outline-teal w-100 mt-2 fw-bold" onclick="showEmailUpdate()">
+                                <i class="fas fa-envelope me-1"></i> UPDATE EMAIL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="card card-custom">
+                        <div class="card-header card-header-teal fw-bold">Active Services</div>
+                        <div class="card-body text-center p-4">
+                            <button class="btn btn-teal btn-lg w-50 py-3" onclick="loadGstData()">
+                                <i class="fas fa-file-invoice-dollar mb-2 fa-2x d-block"></i> GST Returns
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gstService" class="hidden">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-outline-secondary fw-bold" onclick="saveAndExit()">
+                    <i class="fas fa-save me-1"></i> Save & Exit
+                </button>
+                <span id="saveStatus" class="status-text hidden"><i class="fas fa-spinner fa-spin"></i> Saving...</span>
+            </div>
+            
+            <div class="card card-custom mb-3" style="background-color: var(--primary-teal); color: white;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" id="dynamicFyHeader">Loading GST Data...</h4>
+                    <div class="text-end">
+                        <small>Total FY Turnover</small>
+                        <h3 class="mb-0">₹ <span id="fyTurnover">0.00</span></h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-custom p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                            <tr class="text-center align-middle">
+                                <th>Month</th>
+                                <th class="text-primary"><span id="th-b">Loading...</span><br><small>(B)</small></th>
+                                <th class="text-primary"><span id="th-c">Loading...</span><br><small>(C)</small></th>
+                                <th class="text-primary"><span id="th-d">Loading...</span><br><small>(D)</small></th>
+                                <th class="text-primary"><span id="th-e">Loading...</span><br><small>(E)</small></th>
+                                <th class="text-primary"><span id="th-f">Loading...</span><br><small>(F)</small></th>
+                                <th class="text-primary"><span id="th-n">Loading...</span><br><small>(N)</small></th>
+                                <th class="text-primary"><span id="th-o">Loading...</span><br><small>(O)</small></th>
+                                <th class="text-primary"><span id="th-p">Loading...</span><br><small>(P)</small></th>
+                                <th><span id="th-g">Loading...</span><br><small>(G)</small></th>
+                                <th><span id="th-h">Loading...</span><br><small>(H)</small></th>
+                                <th><span id="th-j">Loading...</span><br><small>(J)</small></th>
+                                <th><span id="th-k">Loading...</span><br><small>(K)</small></th>
+                                <th><span id="th-l">Loading...</span><br><small>(L)</small></th>
+                                <th><span id="th-m">Loading...</span><br><small>(M)</small></th>
+                            </tr>
+                        </thead>
+                        <tbody id="gstTableBody"></tbody>
+                        <tfoot id="tableFooter"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMAIL UPDATE MODAL -->
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--primary-teal); color: white;">
+                    <h5 class="modal-title">UPDATE EMAIL ADDRESS</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Enter the new email address you want to use for receiving OTPs and notifications.</p>
+                    <input type="email" id="newEmailInput" class="form-control" placeholder="name@example.com">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-teal" id="saveEmailBtn" onclick="handleEmailUpdate()">SAVE CHANGES</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // REPLACE WITH YOUR NEW WEB APP URL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx1ol6_K2b7PsT0xXSbWkx6bXFNn3wUWANIbY4lgg1WKf6ZOe4xxlvL9hvYBTF_Vpzw/exec'; 
+        let clientData = {};
+
+        window.onload = function() {
+            const storedData = sessionStorage.getItem('clientData');
+            if (!storedData) {
+                window.location.href = 'clientlogin.html'; 
+                return;
+            }
+            clientData = JSON.parse(storedData);
+            
+            // Map Original Data
+            document.getElementById('lblOwnerWelcome').innerText = clientData.owner;
+            document.getElementById('lblOwner').innerText = clientData.owner;
+            document.getElementById('lblFirm').innerText = clientData.firm;
+            document.getElementById('lblGstin').innerText = clientData.gstin;
+            
+            // Map New Profile Data
+            document.getElementById('lblRegDate').innerText = clientData.regDate || 'N/A';
+            document.getElementById('lblConstitution').innerText = clientData.constitution || 'N/A';
+            document.getElementById('lblPlace').innerText = clientData.place || 'N/A';
+            document.getElementById('lblEmail').innerText = clientData.email || 'N/A';
+        };
+
+        function logout() {
+            sessionStorage.removeItem('clientData');
+            window.location.href = 'clientlogin.html';
+        }
+
+        function toggleService(viewId) {
+            document.getElementById('mainDashboard').classList.add('hidden');
+            document.getElementById('gstService').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function saveAndExit() { toggleService('mainDashboard'); }
+
+        function formatCurrency(num) { return Number(num).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+        // --- NEW EMAIL UPDATE LOGIC ---
+        function showEmailUpdate() {
+            const emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+            emailModal.show();
+        }
+
+        async function handleEmailUpdate() {
+            const newEmail = document.getElementById('newEmailInput').value;
+            const btn = document.getElementById('saveEmailBtn');
+
+            if (!newEmail || !newEmail.includes('@')) {
+                return alert("Please enter a valid email address.");
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> UPDATING...';
+
+            try {
+                const response = await fetch(WEB_APP_URL, { 
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'updateEmail', id: clientData.id, newEmail: newEmail })
+                });
+                const res = await response.json();
+
+                if (res.success) {
+                    alert("Email updated successfully! Please login again to sync changes.");
+                    logout(); // Forces re-login to update session storage with new email
+                } else {
+                    alert("Failed to update email: " + res.message);
+                    btn.disabled = false;
+                    btn.innerHTML = "SAVE CHANGES";
+                }
+            } catch (e) {
+                alert("Network error. Please try again.");
+                btn.disabled = false;
+                btn.innerHTML = "SAVE CHANGES";
+            }
+        }
+        // --- END EMAIL LOGIC ---
+
+        async function loadGstData() {
+            toggleService('gstService');
+            const tbody = document.getElementById('gstTableBody');
+            tbody.innerHTML = '<tr><td colspan="15" class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i><br><strong>Syncing with Secure Database...</strong></td></tr>';
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getGstData', sheetUrl: clientData.sheetId })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('th-b').innerText = result.headers.b || 'Col B';
+                    document.getElementById('th-c').innerText = result.headers.c || 'Col C';
+                    document.getElementById('th-d').innerText = result.headers.d || 'Col D';
+                    document.getElementById('th-e').innerText = result.headers.e || 'Col E';
+                    document.getElementById('th-f').innerText = result.headers.f || 'Col F';
+                    document.getElementById('th-g').innerText = result.headers.g || 'Col G';
+                    document.getElementById('th-h').innerText = result.headers.h || 'Col H';
+                    document.getElementById('th-j').innerText = result.headers.j || 'Col J';
+                    document.getElementById('th-k').innerText = result.headers.k || 'Col K';
+                    document.getElementById('th-l').innerText = result.headers.l || 'Col L';
+                    document.getElementById('th-m').innerText = result.headers.m || 'Col M';
+                    document.getElementById('th-n').innerText = result.headers.n || 'Col N';
+                    document.getElementById('th-o').innerText = result.headers.o || 'Col O';
+                    document.getElementById('th-p').innerText = result.headers.p || 'Col P';
+
+                    document.getElementById('dynamicFyHeader').innerText = result.fyHeader || "GST Sales Data";
+                    document.getElementById('fyTurnover').innerText = formatCurrency(result.fyTurnover);
+                    buildGstTable(result.data, result.totals);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="15" class="text-danger text-center py-4">Failed to load data: ${result.message}</td></tr>`;
+                }
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="15" class="text-danger text-center py-4">Network error while connecting to database.</td></tr>`;
+            }
+        }
+
+        function buildGstTable(dataRows, totals) {
+            const tbody = document.getElementById('gstTableBody');
+            tbody.innerHTML = '';
+            const months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
+            
+            dataRows.forEach((rowObj, index) => {
+                const month = months[index];
+                const row = rowObj.rowNum;
+                
+                const isLocked = rowObj.isLocked;
+                const lockAttr = isLocked ? 'disabled title="This month is frozen after GST filing."' : '';
+                const lockIcon = isLocked ? '<i class="fas fa-lock text-danger ms-2" title="Frozen Month"></i>' : '';
+                const trClass = isLocked ? 'row-locked' : '';
+                
+                const val = (v) => (v === '' || v === null || v === undefined) ? '' : v;
+
+                tbody.innerHTML += `
+                    <tr class="${trClass}">
+                        <td class="fw-bold bg-light">${month} ${lockIcon}</td>
+                        <td><input type="number" id="b-${row}" onchange="autosave(${row})" value="${val(rowObj.b)}" ${lockAttr}></td>
+                        <td><input type="number" id="c-${row}" onchange="autosave(${row})" value="${val(rowObj.c)}" ${lockAttr}></td>
+                        <td><input type="number" id="d-${row}" onchange="autosave(${row})" value="${val(rowObj.d)}" ${lockAttr}></td>
+                        <td><input type="number" id="e-${row}" onchange="autosave(${row})" value="${val(rowObj.e)}" ${lockAttr}></td>
+                        <td><input type="number" id="f-${row}" onchange="autosave(${row})" value="${val(rowObj.f)}" ${lockAttr}></td>
+
+                        <td><input type="text" class="text-input" id="n-${row}" onchange="autosave(${row})" value="${val(rowObj.n)}" ${lockAttr}></td>
+                        <td><input type="text" class="text-input" id="o-${row}" onchange="autosave(${row})" value="${val(rowObj.o)}" ${lockAttr}></td>
+                        <td><input type="text" class="text-input" id="p-${row}" onchange="autosave(${row})" value="${val(rowObj.p)}" ${lockAttr}></td>
+                        
+                        <td class="text-end output-cell" id="g-${row}">${formatCurrency(rowObj.g)}</td>
+                        <td class="text-end output-cell" id="h-${row}">${formatCurrency(rowObj.h)}</td>
+                        <td class="text-end output-cell text-danger" id="j-${row}">${formatCurrency(rowObj.j)}</td>
+                        <td class="text-end output-cell text-danger" id="k-${row}">${formatCurrency(rowObj.k)}</td>
+                        <td class="text-end output-cell text-success" id="l-${row}">${formatCurrency(rowObj.l)}</td>
+                        <td class="text-end output-cell text-danger fw-bold" id="m-${row}">${formatCurrency(rowObj.m)}</td>
+                    </tr>
+                `;
+            });
+            updateTotalsRow(totals);
+        }
+
+        function updateTotalsRow(totals) {
+            document.getElementById('tableFooter').innerHTML = `
+                <tr class="totals-row text-end">
+                    <td class="text-center bg-light">TOTAL</td>
+                    <td>${formatCurrency(totals.b)}</td>
+                    <td>${formatCurrency(totals.c)}</td>
+                    <td>${formatCurrency(totals.d)}</td>
+                    <td>${formatCurrency(totals.e)}</td>
+                    <td>${formatCurrency(totals.f)}</td>
+                    <td colspan="3" class="text-center text-muted fw-normal"><small>-</small></td>
+                    <td class="text-primary">${formatCurrency(totals.g)}</td>
+                    <td>${formatCurrency(totals.h)}</td>
+                    <td class="text-danger">${formatCurrency(totals.j)}</td>
+                    <td class="text-danger">${formatCurrency(totals.k)}</td>
+                    <td class="text-success">${formatCurrency(totals.l)}</td>
+                    <td class="text-danger">${formatCurrency(totals.m)}</td>
+                </tr>
+            `;
+        }
+
+        async function autosave(row) {
+            const statusLabel = document.getElementById('saveStatus');
+            statusLabel.classList.remove('hidden');
+            statusLabel.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                action: 'saveGst',
+                sheetUrl: clientData.sheetId,
+                row: row,
+                rate: clientData.rate, 
+                b: document.getElementById(`b-${row}`).value,
+                c: document.getElementById(`c-${row}`).value,
+                d: document.getElementById(`d-${row}`).value,
+                e: document.getElementById(`e-${row}`).value,
+                f: document.getElementById(`f-${row}`).value,
+                n: document.getElementById(`n-${row}`).value, 
+                o: document.getElementById(`o-${row}`).value,
+                p: document.getElementById(`p-${row}`).value
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById(`g-${row}`).innerText = formatCurrency(result.g);
+                    document.getElementById(`h-${row}`).innerText = formatCurrency(result.h);
+                    document.getElementById(`j-${row}`).innerText = formatCurrency(result.j);
+                    document.getElementById(`k-${row}`).innerText = formatCurrency(result.k);
+                    document.getElementById(`l-${row}`).innerText = formatCurrency(result.l);
+                    document.getElementById(`m-${row}`).innerText = formatCurrency(result.m);
+                    document.getElementById('fyTurnover').innerText = formatCurrency(result.fyTurnover);
+                    
+                    updateTotalsRow(result.totals); 
+
+                    statusLabel.innerHTML = '<i class="fas fa-check text-success"></i> Saved';
+                    setTimeout(() => statusLabel.classList.add('hidden'), 2000);
+                } else {
+                    alert("Error saving: " + result.message);
+                    statusLabel.classList.add('hidden');
+                }
+            } catch (error) {
+                alert("Network error. Please check your connection.");
+                statusLabel.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
