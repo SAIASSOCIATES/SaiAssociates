@@ -3,34 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers | Sai Associates</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
+    <meta name="description" content="Build your career in tax, audit, accounts, labour law and advisory with Sai Associates, Dehradun. Apply online with your resume.">
+    <meta property="og:site_name" content="Sai Associates">
+    <meta property="og:title" content="Careers | Sai Associates, Dehradun">
+    <meta property="og:description" content="Build your career in tax, audit, accounts, labour law and advisory with Sai Associates, Dehradun. Apply online with your resume.">
+    <meta property="og:url" content="https://www.saiassociates.publicvm.com/careers">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://www.saiassociates.publicvm.com/assets/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Careers | Sai Associates, Dehradun</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         @font-face {
             font-family: 'Trajan Pro';
-            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            src: url('TrajanPro-Regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
 
         body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; }
 
-        /* Navbar Styling from Team Page */
-        .navbar { background-color: #038387 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .navbar-brand { color: #fff !important; font-family: 'Trajan Pro', serif; font-size: 1.5rem; }
-        .navbar-nav .nav-link { color: #f0f8ff !important; margin-left: 15px; transition: 0.3s; }
-        .navbar-nav .nav-link:hover { color: #fff !important; opacity: 0.8; }
-
         /* Banner Style matched to Team Header */
         .career-banner {
             padding: 120px 0 80px;
             background: linear-gradient(rgba(3, 131, 135, 0.8), rgba(3, 131, 135, 0.9)), 
-                        url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/17.jpg');
+                        url('17.jpg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -56,30 +58,40 @@
 
         #thankYouMessage { display: none; text-align: center; padding: 50px; }
         .ack-box { background: #e0f2f1; padding: 15px; border-radius: 8px; color: #038387; font-weight: bold; font-size: 1.2rem; margin: 20px 0; }
-        
-        footer { background-color: #038387; color: #fff; text-align: center; padding: 20px 0; margin-top: 20px; }
-    </style>
-</head>
-<body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+    </style>
+    <!-- Shared header/footer styles -->
+    <link rel="stylesheet" href="assets/sa-site.css">
+</head>
+<body data-sa-page="careers">
+
+    <!-- ===== SITE HEADER (shared: same on every page; styles in assets/sa-site.css) ===== -->
+    <nav class="navbar navbar-expand-xl navbar-dark fixed-top sa-nav" id="saNav">
         <div class="container">
-            <a class="navbar-brand" href="/">Sai Associates</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand sa-brand" href="./">
+                <img src="assets/sa-mark.png" alt="" class="sa-brand-mark" width="38" height="38">
+                <span>Sai Associates</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#saNavLinks" aria-controls="saNavLinks" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/team">Our Team</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/paymentpage">Make Payment</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
-                </ul>
+            <div class="collapse navbar-collapse" id="saNavLinks">
+            <ul class="navbar-nav ms-auto align-items-xl-center">
+                <li class="nav-item"><a class="nav-link" data-nav="home" href="./">Home</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="team" href="team">Our Team</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="services" href="./#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="payment" href="paymentpage">Make Payment</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="about" href="./#about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="contact" href="./#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link active" data-nav="careers" href="careers" aria-current="page">Careers</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="vims" href="vims">VIMS Portal</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="login" href="login">Login</a></li>
+                <li class="nav-item"><a class="nav-link sa-nav-cta" data-nav="clientlogin" href="clientlogin">Client Login</a></li>
+            </ul>
             </div>
         </div>
     </nav>
+    <!-- ===== /SITE HEADER ===== -->
 
     <header class="career-banner">
         <div class="container">
@@ -158,11 +170,70 @@
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p class="mb-0">&copy; 2016-2026 Sai Associates. All Rights Reserved.</p>
+    <!-- ===== SITE FOOTER (shared: same on every page; styles in assets/sa-site.css) ===== -->
+    <footer class="sa-footer">
+        <div class="sa-footer-top">
+            <div class="container">
+                <div class="row g-4 g-lg-5">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="sa-footer-brand">
+                            <img src="assets/sa-mark.png" alt="Sai Associates logo" width="52" height="52">
+                            <div>
+                                <span class="sa-footer-name">Sai Associates</span>
+                                <span class="sa-footer-tag">Tax &amp; Management Consultancy</span>
+                            </div>
+                        </div>
+                        <p class="sa-footer-about">A Dehradun-based consultancy built on trust and integrity, offering audit, tax, compliance and advisory services to businesses of every size.</p>
+                        <div class="sa-footer-actions">
+                            <a class="sa-footer-btn sa-wa" href="https://wa.me/911353528177" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp us</a>
+                            <a class="sa-footer-btn" href="tel:+911353528177"><i class="fas fa-phone-alt"></i> Call us</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6>Quick Links</h6>
+                        <ul class="sa-footer-links">
+                            <li><a href="./"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="./#about"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                            <li><a href="./#services"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="team"><i class="fas fa-chevron-right"></i> Our Team</a></li>
+                            <li><a href="careers"><i class="fas fa-chevron-right"></i> Careers</a></li>
+                            <li><a href="./#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6>Client Corner</h6>
+                        <ul class="sa-footer-links">
+                            <li><a href="clientlogin"><i class="fas fa-chevron-right"></i> Client Login</a></li>
+                            <li><a href="Clientdownload"><i class="fas fa-chevron-right"></i> Client Downloads</a></li>
+                            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" target="_blank" rel="noopener"><i class="fas fa-chevron-right"></i> Upload Documents</a></li>
+                            <li><a href="paymentpage"><i class="fas fa-chevron-right"></i> Make Payment</a></li>
+                            <li><a href="vims"><i class="fas fa-chevron-right"></i> VIMS Portal</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4">
+                        <h6>Get in Touch</h6>
+                        <ul class="sa-footer-contact">
+                            <li><span class="sa-ico"><i class="fas fa-phone-alt"></i></span><div><strong>Phone</strong><a href="tel:+911353528177">+91 135 352 8177</a></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-envelope"></i></span><div><strong>Email</strong><a href="mailto:saiassociatesddun@gmail.com">saiassociatesddun@gmail.com</a></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-map-marker-alt"></i></span><div><strong>Head Office</strong><span>Suman Nagar, Dehradun, UK - 248001</span></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-building"></i></span><div><strong>Branch</strong><span>Kharghar, Mumbai, MH 410210</span></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sa-footer-bottom">
+            <div class="container">
+                <span>&copy; 2016 - <span data-sa-year>2026</span> Sai Associates. All Rights Reserved.</span>
+                <span class="sa-dns">DNS Powered by <a href="http://www.dnsExit.com" target="_blank" rel="noopener">DNSEXIT.COM</a></span>
+            </div>
         </div>
     </footer>
+    <button type="button" class="sa-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+    <!-- ===== /SITE FOOTER ===== -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
@@ -213,6 +284,7 @@
             reader.readAsDataURL(file);
         });
     </script>
+    <script src="assets/sa-site.js"></script>
 </body>
 
 </html>

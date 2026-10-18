@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sai Associates | Top Tax Consultant & GST Registration in Dehradun | Tax & Management Consultancy | Top Income Tax Consultant | Top FSSAI Consultant | Top DSC Consultant | Top PAN Consultant | Top TAN Consultant | Top MCA ROC COMPANY Consultant | Top DARPAN NITI AYOG NGO NPO SECTION 8 COMPANY TRUST SOCIETY RWA  Consultant</title>
+    <meta property="og:description" content="Expert tax and management consultancy in Dehradun: Income Tax, GST, company incorporation, FSSAI, audit and business advisory.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://www.saiassociates.publicvm.com/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Sai Associates | Tax, GST &amp; Business Consultants in Dehradun</title>
 
     <meta property="og:site_name" content="Sai Associates">
     <meta property="og:title" content="Sai Associates - Tax & Management Consultancy">
@@ -24,57 +30,24 @@
     }
     </script>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Existing Montserrat font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* Custom font import for Trajan Pro */
         @font-face {
             font-family: 'Trajan Pro';
-            src: url('https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/main/TrajanPro-Regular.ttf') format('truetype');
+            src: url('TrajanPro-Regular.ttf') format('truetype');
             font-weight: normal; /* Set to normal for the regular font file */
             font-style: normal;
         }
 
         body {
-            font-family: Arial, sans-serif;
-        }
-
-        /* Colored Navbar */
-        .navbar {
-            background-color: #038387 !important;
-            /* Teal background */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            color: #fff !important;
-            font-size: 1.5rem;
-            font-weight: normal; /* Changed to normal */
-            font-family: 'Trajan Pro', serif; 
-        }
-
-        .navbar-nav .nav-link {
-            color: #f0f8ff !important;
-            font-size: 0.95rem;
-            margin-left: 10px;
-            font-family: 'Montserrat', sans-serif;
-            transition: color 0.3s ease;
-            /* Smooth hover transition */
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #fff !important;
-            /* Keep white on hover */
-            opacity: 0.8;
-        }
-
-        .navbar-toggler-icon {
-            background-color: transparent;
+            font-family: 'Montserrat', Arial, sans-serif; /* was Arial; unified with the rest of the site */
         }
 
         /* Colored Hero Section with Animation */
@@ -416,7 +389,6 @@
         #about,
         #contact {
             padding: 50px 0;
-            animation: slideInRight 1s ease-out;
         }
 
         #about h2,
@@ -424,15 +396,17 @@
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5rem;
-            font-weight: bold;
-            font-family: 'Montserrat', sans-serif;
+            font-weight: normal;
+            font-family: 'Trajan Pro', serif;
         }
 
         #about p,
         #contact p {
             text-align: center;
-            font-size: 1.2rem;
-            font-family: 'Montserrat', sans-serif;
+        }
+
+        #contact p {
+            font-size: 1.1rem;
         }
 
         #contact p i {
@@ -451,29 +425,6 @@
 
             to {
                 transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Colored Footer with Animation */
-        footer {
-            background-color: #038387;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-            font-family: 'Montserrat', sans-serif;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            animation: slideInUpFooter 0.5s ease-out;
-        }
-
-        @keyframes slideInUpFooter {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
                 opacity: 1;
             }
         }
@@ -585,7 +536,6 @@
             border-color: #02696c;
         }
 
-
 /* Hover Animation for Cards */
 .hover-pop {
     transition: all 0.3s ease-in-out;
@@ -601,90 +551,112 @@
     font-family: 'Trajan Pro', serif;
 }
     </style>
+    <!-- Shared header/footer styles -->
+    <link rel="stylesheet" href="assets/sa-site.css">
+    <link rel="stylesheet" href="assets/sa-home.css">
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+<body data-sa-page="home">
+    <!-- ===== SITE HEADER (shared: same on every page; styles in assets/sa-site.css) ===== -->
+    <nav class="navbar navbar-expand-xl navbar-dark fixed-top sa-nav" id="saNav">
         <div class="container">
-            <a class="navbar-brand" href="/">Sai Associates</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand sa-brand" href="./">
+                <img src="assets/sa-mark.png" alt="" class="sa-brand-mark" width="38" height="38">
+                <span>Sai Associates</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#saNavLinks" aria-controls="saNavLinks" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="./">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="team">Our Team</a></li>   
-                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="paymentpage">Make Payment</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/#about">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/careers">Careers</a></li>
-                    <li class="nav-item"><a class="nav-link" href="vims">VIMS Portal</a></li>
-                    <li><a href="login" class="nav-link">Login</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="clientlogin">Client Login</a>
-                    </li>
-                </ul>
+            <div class="collapse navbar-collapse" id="saNavLinks">
+            <ul class="navbar-nav ms-auto align-items-xl-center">
+                <li class="nav-item"><a class="nav-link active" data-nav="home" href="./" aria-current="page">Home</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="team" href="team">Our Team</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="services" href="./#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="payment" href="paymentpage">Make Payment</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="about" href="./#about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="contact" href="./#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="careers" href="careers">Careers</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="vims" href="vims">VIMS Portal</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="login" href="login">Login</a></li>
+                <li class="nav-item"><a class="nav-link sa-nav-cta" data-nav="clientlogin" href="clientlogin">Client Login</a></li>
+            </ul>
             </div>
         </div>
     </nav>
+    <!-- ===== /SITE HEADER ===== -->
 
     <header class="hero-section" id="home" style="padding-top: 80px;">
         <!-- Container for the scrolling background images -->
         <div class="hero-background-images">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/17.jpg" alt="Background Image 1">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/18.jpg" alt="Background Image 2">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/19.jpg" alt="Background Image 3">
+            <img src="17.jpg" alt="Background Image 1">
+            <img src="18.jpg" alt="Background Image 2">
+            <img src="19.jpg" alt="Background Image 3">
             <!-- Duplicate images for seamless looping -->
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/17.jpg" alt="Background Image 1 Duplicate">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/18.jpg" alt="Background Image 2 Duplicate">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/c07f19e5df2ddca90cba231cffa95e2fa2e1f0fd/19.jpg" alt="Background Image 3 Duplicate">
+            <img src="17.jpg" alt="Background Image 1 Duplicate">
+            <img src="18.jpg" alt="Background Image 2 Duplicate">
+            <img src="19.jpg" alt="Background Image 3 Duplicate">
         </div>
         <h1 class="display-3">Welcome to Sai Associates</h1>
-        <p class="lead">Your Trusted Partner in Tax & Management Consultancy</p>
+        <p class="lead sa-hero-tagline">Tax &middot; Audit &middot; Advisory</p>
+        <div class="sa-hero-actions">
+            <a href="#contact" class="sa-hero-btn">Book a Consultation <i class="fas fa-arrow-right sa-arrow"></i></a>
+            <a href="https://wa.me/911353528177" class="sa-hero-btn" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+        </div>
+        <a href="#services" class="sa-scroll-cue" aria-label="Scroll to services"><span></span></a>
     </header>
 
     <section class="image-band-container">
         <div class="image-band">
             <!-- Duplicate images to create a seamless loop -->
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/1.jpeg" alt="Image 1">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/2.jpeg" alt="Image 2">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/3.jpeg" alt="Image 3">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/4.jpeg" alt="Image 4">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/5.jpeg" alt="Image 5">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/6.jpeg" alt="Image 6">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/7.jpeg" alt="Image 7">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/8.jpeg" alt="Image 8">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/9.jpeg" alt="Image 9">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/10.jpeg" alt="Image 10">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/11.jpeg" alt="Image 11">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/12.jpeg" alt="Image 12">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/13.jpeg" alt="Image 13">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/14.jpeg" alt="Image 14">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/15.jpeg" alt="Image 15">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/16.jpeg" alt="Image 16">
+            <img src="1.jpeg" alt="Image 1">
+            <img src="2.jpeg" alt="Image 2">
+            <img src="3.jpeg" alt="Image 3">
+            <img src="4.jpeg" alt="Image 4">
+            <img src="5.jpeg" alt="Image 5">
+            <img src="6.jpeg" alt="Image 6">
+            <img src="7.jpeg" alt="Image 7">
+            <img src="8.jpeg" alt="Image 8">
+            <img src="9.jpeg" alt="Image 9">
+            <img src="10.jpeg" alt="Image 10">
+            <img src="11.jpeg" alt="Image 11">
+            <img src="12.jpeg" alt="Image 12">
+            <img src="13.jpeg" alt="Image 13">
+            <img src="14.jpeg" alt="Image 14">
+            <img src="15.jpeg" alt="Image 15">
+            <img src="16.jpeg" alt="Image 16">
             <!-- Added duplicates for seamless scrolling -->
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/1.jpeg" alt="Image 1">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/2.jpeg" alt="Image 2">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/3.jpeg" alt="Image 3">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/4.jpeg" alt="Image 4">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/5.jpeg" alt="Image 5">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/6.jpeg" alt="Image 6">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/7.jpeg" alt="Image 7">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/8.jpeg" alt="Image 8">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/9.jpeg" alt="Image 9">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/10.jpeg" alt="Image 10">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/11.jpeg" alt="Image 11">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/12.jpeg" alt="Image 12">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/13.jpeg" alt="Image 13">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/14.jpeg" alt="Image 14">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/15.jpeg" alt="Image 15">
-            <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/16.jpeg" alt="Image 16">
+            <img src="1.jpeg" alt="Image 1">
+            <img src="2.jpeg" alt="Image 2">
+            <img src="3.jpeg" alt="Image 3">
+            <img src="4.jpeg" alt="Image 4">
+            <img src="5.jpeg" alt="Image 5">
+            <img src="6.jpeg" alt="Image 6">
+            <img src="7.jpeg" alt="Image 7">
+            <img src="8.jpeg" alt="Image 8">
+            <img src="9.jpeg" alt="Image 9">
+            <img src="10.jpeg" alt="Image 10">
+            <img src="11.jpeg" alt="Image 11">
+            <img src="12.jpeg" alt="Image 12">
+            <img src="13.jpeg" alt="Image 13">
+            <img src="14.jpeg" alt="Image 14">
+            <img src="15.jpeg" alt="Image 15">
+            <img src="16.jpeg" alt="Image 16">
+        </div>
+    </section>
+
+    <section class="sa-stats" aria-label="Sai Associates at a glance">
+        <div class="container">
+            <div class="row g-3 g-md-4 text-center">
+                <div class="col-6 col-md-3"><div class="sa-stat"><i class="fas fa-landmark"></i><span class="sa-stat-num" data-count="30" data-suffix="+">30+</span><span class="sa-stat-label">Years of expertise</span></div></div>
+                <div class="col-6 col-md-3"><div class="sa-stat"><i class="fas fa-briefcase"></i><span class="sa-stat-num" data-count="12">12</span><span class="sa-stat-label">Core services</span></div></div>
+                <div class="col-6 col-md-3"><div class="sa-stat"><i class="fas fa-user-tie"></i><span class="sa-stat-num" data-count="6">6</span><span class="sa-stat-label">Partners &amp; advisors</span></div></div>
+                <div class="col-6 col-md-3"><div class="sa-stat"><i class="fas fa-map-marker-alt"></i><span class="sa-stat-num" data-count="2">2</span><span class="sa-stat-label">Offices: Dehradun &amp; Mumbai</span></div></div>
+            </div>
         </div>
     </section>
 
     <section class="container py-5" id="services">
-        <h2 class="text-center font-trajan fw-bold mb-5" style="color: #038387;">Our Expertise & Services</h2>
+        <h2 class="text-center font-trajan mb-5" style="color: #038387;">Our Expertise & Services</h2>
         
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
@@ -694,7 +666,7 @@
                     </div>
                     <h5 class="font-trajan">Income Tax Services</h5>
                     <p class="text-muted">Comprehensive solutions including Registration, Returns Compliance, and expert handling of Notices & Litigation.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20consult%20regarding%20Income%20Tax%20Registration%2C%20Compliance%2C%20or%20Litigation." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20consult%20regarding%20Income%20Tax%20Registration%2C%20Compliance%2C%20or%20Litigation." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -705,7 +677,7 @@
                     </div>
                     <h5 class="font-trajan">GST Management</h5>
                     <p class="text-muted">End-to-end GST Registration, routine Return filings, rigorous Audit support, and Litigation representation.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwYFo8jpejh2pHNrJGJFgm_aAQUx5o6uCmiZgOhE5Bv2mlbw/viewform" class="btn btn-service mt-auto">Apply Now</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwYFo8jpejh2pHNrJGJFgm_aAQUx5o6uCmiZgOhE5Bv2mlbw/viewform" class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fas fa-file-signature me-1"></i> Apply Now</a>
                 </div>
             </div>
 
@@ -716,7 +688,7 @@
                     </div>
                     <h5 class="font-trajan">Strategic Business Advisory</h5>
                     <p class="text-muted">Professional consultancy to optimize your operational frameworks, financial health, and long-term corporate strategy.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20am%20looking%20for%20Strategic%20Business%20Advisory%20and%20corporate%20consulting%20services." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20am%20looking%20for%20Strategic%20Business%20Advisory%20and%20corporate%20consulting%20services." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -727,7 +699,7 @@
                     </div>
                     <h5 class="font-trajan">EPF & Labour Law</h5>
                     <p class="text-muted">Specialized consultancy for EPF Registration, Withdrawals, Final Settlements, Death Cases, and Pension management.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20assistance%20with%20EPF%20Registration%2C%20Withdrawals%2C%20or%20Labour%20Law%20compliance." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20assistance%20with%20EPF%20Registration%2C%20Withdrawals%2C%20or%20Labour%20Law%20compliance." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -738,7 +710,7 @@
                     </div>
                     <h5 class="font-trajan">Professional Accounting</h5>
                     <p class="text-muted">Meticulous bookkeeping, ledger management, and preparation of detailed financial statements for businesses of all sizes.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20want%20to%20inquire%20about%20Professional%20Accounting%2C%20Bookkeeping%2C%20and%20Financial%20Statements." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20want%20to%20inquire%20about%20Professional%20Accounting%2C%20Bookkeeping%2C%20and%20Financial%20Statements." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -749,7 +721,7 @@
                     </div>
                     <h5 class="font-trajan">Project Reports & Finance</h5>
                     <p class="text-muted">Creation of robust Business Projections, Detailed Project Reports (DPR), and commercial Loan Documentation.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20a%20Detailed%20Project%20Report%2C%20Projections%2C%20or%20Loan%20Documentation%20support." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20a%20Detailed%20Project%20Report%2C%20Projections%2C%20or%20Loan%20Documentation%20support." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -760,7 +732,7 @@
                     </div>
                     <h5 class="font-trajan">Food & Safety (FSSAI)</h5>
                     <p class="text-muted">Securing FSSAI Licenses alongside ongoing regulatory compliance monitoring and litigation resolution.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSePrOMqXFchlySzmyXHeMj2o-BBdvzmtBdvdL2BKQKZiN9R9g/viewform" class="btn btn-service mt-auto">Apply Now</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSePrOMqXFchlySzmyXHeMj2o-BBdvzmtBdvdL2BKQKZiN9R9g/viewform" class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fas fa-file-signature me-1"></i> Apply Now</a>
                 </div>
             </div>
 
@@ -771,7 +743,7 @@
                     </div>
                     <h5 class="font-trajan">MSME & Udyam</h5>
                     <p class="text-muted">Accurate classification of MSME status and seamless processing of your Udyam Registration certificates.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSci9bsEAuuhUVdX8RvykU4eZSObhoiWv8hgadWvQwxU0LHVgg/viewform" class="btn btn-service mt-auto">Apply Now</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSci9bsEAuuhUVdX8RvykU4eZSObhoiWv8hgadWvQwxU0LHVgg/viewform" class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fas fa-file-signature me-1"></i> Apply Now</a>
                 </div>
             </div>
 
@@ -782,7 +754,7 @@
                     </div>
                     <h5 class="font-trajan">NPO & DARPAN Registration</h5>
                     <p class="text-muted">Complete facilitation for NGO/NPO listing and NITI Aayog NGO-DARPAN registration procedures.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfYap1krAKEZ_k0-PvHwb2u5XvrWxxjMWJNz8BRRb0kVUnTw/viewform" class="btn btn-service mt-auto">Apply Now</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfYap1krAKEZ_k0-PvHwb2u5XvrWxxjMWJNz8BRRb0kVUnTw/viewform" class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fas fa-file-signature me-1"></i> Apply Now</a>
                 </div>
             </div>
 
@@ -793,7 +765,7 @@
                     </div>
                     <h5 class="font-trajan">Trademark & IPR</h5>
                     <p class="text-muted">Trademark name availability searches, application filings, and intellectual property protection.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6uUMZ4LSHUVR9LtPBdEiy7GSImZLuFi3TJghPfyEHcYrOtg/viewform" class="btn btn-service mt-auto">Apply Now</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6uUMZ4LSHUVR9LtPBdEiy7GSImZLuFi3TJghPfyEHcYrOtg/viewform" class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fas fa-file-signature me-1"></i> Apply Now</a>
                 </div>
             </div>
 
@@ -804,7 +776,7 @@
                     </div>
                     <h5 class="font-trajan">Company Incorporation</h5>
                     <p class="text-muted">End-to-end guidance for business formation, ROC filings, Director changes, and corporate compliance.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20consult%20about%20Company%20Incorporation%2C%20ROC%20filings%2C%20or%20Business%20Formation." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20consult%20about%20Company%20Incorporation%2C%20ROC%20filings%2C%20or%20Business%20Formation." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -815,7 +787,7 @@
                     </div>
                     <h5 class="font-trajan">DSC & LEI Licensing</h5>
                     <p class="text-muted">Rapid issuance of Digital Signature Certificates (DSC) and Legal Entity Identifier (LEI) registrations.</p>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20assistance%20with%20getting%20a%20Digital%20Signature%20Certificate%20(DSC)%20or%20LEI%20Registration." class="btn btn-service mt-auto">Consult Now</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20assistance%20with%20getting%20a%20Digital%20Signature%20Certificate%20(DSC)%20or%20LEI%20Registration." class="btn btn-service mt-auto" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Consult Now</a>
                 </div>
             </div>
 
@@ -823,7 +795,7 @@
     </section>
 
     <section class="container py-5" id="pricing">
-        <h2 class="text-center font-trajan fw-bold mb-2" style="color: #038387;">Flexible Engagement Models</h2>
+        <h2 class="text-center font-trajan mb-2" style="color: #038387;">Flexible Engagement Models</h2>
         <p class="text-center text-muted mb-5">Transparent options tailored for individuals, growing enterprises, and custom corporate requirements.</p>
 
         <div class="row g-4 justify-content-center">
@@ -840,7 +812,7 @@
                             <li><i class="fas fa-check-circle"></i> Clear, Flat-Fee Pricing Structuring</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20get%20a%20price%20quote%20for%20a%20specific%20one-time%20assignment%20or%20registration." class="btn btn-pricing">Get a Quote</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20would%20like%20to%20get%20a%20price%20quote%20for%20a%20specific%20one-time%20assignment%20or%20registration." class="btn btn-pricing" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Get a Quote</a>
                 </div>
             </div>
 
@@ -857,7 +829,7 @@
                             <li><i class="fas fa-check-circle"></i> Dedicated Account Officer Support</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20want%20to%20discuss%20an%20ongoing%20Corporate%20Retainer%20plan%20for%20my%20business%20accounting%20and%20compliance." class="btn btn-pricing">Discuss Retainer</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20want%20to%20discuss%20an%20ongoing%20Corporate%20Retainer%20plan%20for%20my%20business%20accounting%20and%20compliance." class="btn btn-pricing" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Discuss Retainer</a>
                 </div>
             </div>
 
@@ -874,7 +846,7 @@
                             <li><i class="fas fa-check-circle"></i> Direct Consultations with Experts</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20urgent%20professional%20assistance%20regarding%20a%20legal%20notice%2C%20audit%2C%20or%20litigation%20case." class="btn btn-pricing">Book Consultation</a>
+                    <a href="https://wa.me/911353528177?text=Hello%20Sai%20Associates%2C%20I%20need%20urgent%20professional%20assistance%20regarding%20a%20legal%20notice%2C%20audit%2C%20or%20litigation%20case." class="btn btn-pricing" target="_blank" rel="noopener"><i class="fab fa-whatsapp me-1"></i> Book Consultation</a>
                 </div>
             </div>
         </div>
@@ -882,24 +854,24 @@
 
     <section id="payment" style="text-align: center; margin-top: 50px;">
         <h2>Scan or Click to Pay</h2>
-        <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/SAI%20QR.png"
+        <img src="SAI%20QR.png"
             alt="UPI QR Code" style="width: 200px; height: 200px;">
         <div style="display: flex; justify-content: center; align-items: center;">
             <a href="gpay://upi/pay?pa=paytmqr28100505010110zmr8sjesym@paytm"
                 style="display: inline-block; padding: 10px; background-color: #e0f2f7; color: #000; text-decoration: none; border-radius: 5px; font-size: 18px; transition: transform 0.2s ease-in-out; margin: 0 5px; width: 150px; height: 50px;">
-                <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/gpay.webp"
+                <img src="gpay.webp"
                     alt="Google Pay" style="height: 100%; width: 100%; object-fit: contain;">
                 <p style="text-align: center; margin-top: 5px;">Google Pay</p>
             </a>
             <a href="paytmmp://pay?pa=paytmqr28100505010110zmr8sjesym@paytm"
                 style="display: inline-block; padding: 10px; background-color: #e0f2f7; color: #000; text-decoration: none; border-radius: 5px; font-size: 18px; transition: transform 0.2s ease-in-out; margin: 0 5px; width: 150px; height: 50px;">
-                <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/paytm.webp"
+                <img src="paytm.webp"
                     alt="Paytm" style="height: 100%; width: 100%; object-fit: contain;">
                 <p style="text-align: center; margin-top: 5px;">Paytm</p>
             </a>
             <a href="phonepe://pay?pa=paytmqr28100505010110zmr8sjesym@paytm"
                 style="display: inline-block; padding: 10px; background-color: #e0f2f7; color: #000; text-decoration: none; border-radius: 5px; font-size: 18px; transition: transform 0.2s ease-in-out; margin: 0 5px; width: 150px; height: 50px;">
-                <img src="https://raw.githubusercontent.com/SAIASSOCIATES/SaiAssociates/refs/heads/main/phonepe.webp"
+                <img src="phonepe.webp"
                     alt="PhonePe" style="height: 100%; width: 100%; object-fit: contain;">
                 <p style="text-align: center; margin-top: 5px;">PhonePe</p>
             </a>
@@ -907,21 +879,18 @@
     </section>
 
     <section id="about" class="py-5 bg-light">
-    <div class="container-fluid px-0 mb-5">
-        <div class="text-white p-5 text-center" style="background-color: #038387;">
-            <h2 class="display-4 font-trajan mb-4">About Sai Associates</h2>
-            <div class="container">
-                <p class="lead">
-                    Sai Associates is a Dehradun-based consultancy firm, renowned for its legacy of excellence, trust, and integrity. 
-                    With over three decades of professional expertise, the firm has been a pillar of support, offering exceptional audit, 
-                    consultancy, and advisory services to a diverse portfolio of clients across sectors.
-                </p>
-                  <p>
-                    Known for its personalized approach, the firm delivers solutions that are not only accurate and timely but also 
-                    thoughtfully tailored to meet the distinct needs of each client. What sets the firm apart is its unwavering commitment to quality, 
-                    reflected in its rigorous methodologies, structured processes, and impeccable documentation standards. 
-                    At Sai Associates, quality is not just a practice—it’s a principle.
-                </p>
+    <div class="container mb-5">
+        <div class="sa-about-intro">
+            <div class="row align-items-center g-4 g-lg-5">
+                <div class="col-lg-5">
+                    <span class="sa-eyebrow">About Us</span>
+                    <h2 class="sa-about-title">About Sai Associates</h2>
+                    <p class="sa-about-sub">Tax &amp; management consultancy, Dehradun &middot; Mumbai</p>
+                </div>
+                <div class="col-lg-7">
+                    <p class="lead">Sai Associates is a Dehradun-based tax and management consultancy built on more than three decades of trust, integrity and steady excellence. We support businesses, professionals and institutions across sectors with audit, taxation, compliance and advisory services that are accurate, timely and thoughtfully delivered.</p>
+                    <p>Every engagement is handled personally. We take the time to understand how your business works, then shape our approach around it, backed by structured processes, careful review and meticulous documentation. For us, quality is not a step in the process; it is the principle behind every piece of work that leaves our desk.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -932,21 +901,21 @@
                 <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
                     <i class="fas fa-bullseye fa-3x mb-3" style="color: #038387;"></i>
                     <h4 class="font-trajan" style="color: #038387;">Our Mission</h4>
-                    <p class="small text-muted">To provide flexible, professional services to businesses of all sizes, offering a broad range of audit, tax consultancy, and managerial consulting tailored to the evolving industrial landscape.</p>
+                    <p class="small text-muted">To deliver dependable, flexible professional services across audit, taxation and management consulting, helping businesses of every size stay compliant, confident and ready for what comes next.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
                     <i class="fas fa-eye fa-3x mb-3" style="color: #038387;"></i>
                     <h4 class="font-trajan" style="color: #038387;">Our Vision</h4>
-                    <p class="small text-muted">To be the trusted partner of choice for expert financial guidance, recognized for our commitment to excellence, innovation, and making a positive impact on the prosperity of our clients.</p>
+                    <p class="small text-muted">To be the first firm our clients turn to for financial guidance, known for excellence, forward thinking and a lasting, positive impact on their growth.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="p-4 h-100 shadow-sm bg-white border-top border-4 hover-pop" style="border-color: #038387 !important; border-radius: 10px;">
                     <i class="fas fa-handshake fa-3x mb-3" style="color: #038387;"></i>
                     <h4 class="font-trajan" style="color: #038387;">Our Values</h4>
-                    <p class="small text-muted">Professionalism, Integrity, and Client Focus. We believe honesty and transparency are non-negotiable principles in the practice of management and finance.</p>
+                    <p class="small text-muted">Integrity, professionalism and genuine care for every client. We hold honesty and transparency as non-negotiable, in finance and in every relationship we build.</p>
                 </div>
             </div>
         </div>
@@ -956,33 +925,33 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h2 class="font-trajan mb-4" style="color: #038387;">What We Serve</h2>
-                <p>Our professional team’s educational background and experience enable us to be a flexible partner for industrial organizations, small-scale units, and large firms alike.</p>
+                <p>Our team pairs strong academic grounding with hands-on experience across industries, so we can work as a flexible partner to large organisations, growing enterprises and small units alike.</p>
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
-                            <h6 class="mb-0">Audit & Assurance</h6>
+                            <h6 class="mb-0"><i class="fas fa-clipboard-check me-2 sa-serve-ico"></i>Audit & Assurance</h6>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
-                            <h6 class="mb-0">Corporate Finance</h6>
+                            <h6 class="mb-0"><i class="fas fa-coins me-2 sa-serve-ico"></i>Corporate Finance</h6>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
-                            <h6 class="mb-0">Tax Consultancy</h6>
+                            <h6 class="mb-0"><i class="fas fa-file-invoice me-2 sa-serve-ico"></i>Tax Consultancy</h6>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="p-2 border-start border-3" style="border-color: #038387 !important;">
-                            <h6 class="mb-0">Legal Advisory</h6>
+                            <h6 class="mb-0"><i class="fas fa-balance-scale me-2 sa-serve-ico"></i>Legal Advisory</h6>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="p-4 bg-white shadow-sm border-start border-5" style="border-radius: 15px; border-color: #038387 !important;">
-                    <p class="fst-italic mb-0">"Rooted in Dehradun yet connected to the evolving demands of a dynamic financial world, Sai Associates continues to grow with its vision firmly aligned with innovation and client-centricity."</p>
+                    <p class="fst-italic mb-0">"Rooted in the Doon Valley and in step with a fast-changing financial world, Sai Associates keeps growing with one clear focus: better ways of working, and our clients at the centre of everything we do."</p>
                 </div>
             </div>
         </div>
@@ -993,44 +962,65 @@
         <div class="row g-4 justify-content-center">
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-award"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">1. Expertise</h5>
-                    <p class="text-muted small">Highly skilled professionals with deep expertise in accounting, auditing, and financial disciplines.</p>
+                    <p class="text-muted small">Seasoned professionals with a deep command of accounting, audit, taxation and finance.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
-                    <h5 class="font-trajan" style="color: #038387;">2. Personalized</h5>
-                    <p class="text-muted small">Customized solutions tailored to your unique financial challenges and business opportunities.</p>
+                    <div class="sa-why-icon"><i class="fas fa-user-check"></i></div>
+                    <h5 class="font-trajan" style="color: #038387;">2. Personal Attention</h5>
+                    <p class="text-muted small">Advice shaped around your business, your challenges and your goals, never a template.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-headset"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">3. Client-Centric</h5>
-                    <p class="text-muted small">Proactive communication and reliable support at every single touchpoint of your journey.</p>
+                    <p class="text-muted small">Clear, proactive communication and dependable support at every stage of your journey.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-gem"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">4. Quality</h5>
-                    <p class="text-muted small">Highest standards of accuracy that meet or exceed all regulatory requirements and industry practices.</p>
+                    <p class="text-muted small">Exacting standards of accuracy that meet, and often exceed, regulatory requirements.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-lightbulb"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">5. Innovation</h5>
-                    <p class="text-muted small">Cutting-edge technology and data analytics to optimize processes and enhance your decision-making.</p>
+                    <p class="text-muted small">Modern tools and data-led methods that save you time and sharpen every decision.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-layer-group"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">6. Comprehensive</h5>
-                    <p class="text-muted small">An integrated suite of services—tax, audit, and advisory—all under one professional roof.</p>
+                    <p class="text-muted small">Tax, audit, compliance and advisory, brought together under one professional roof.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4">
-                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px; border: 2px solid #038387;">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-chart-line"></i></div>
                     <h5 class="font-trajan" style="color: #038387;">7. Value-Driven</h5>
-                    <p class="text-muted small">Outcomes that directly contribute to your strategic success and improve your financial bottom line.</p>
+                    <p class="text-muted small">Outcomes that strengthen your bottom line and support your long-term strategy.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-calendar-check"></i></div>
+                    <h5 class="font-trajan" style="color: #038387;">8. Timely Delivery</h5>
+                    <p class="text-muted small">We plan ahead of statutory deadlines, so your filings and reports never feel rushed.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="p-4 h-100 bg-white shadow-sm text-center hover-pop" style="border-radius: 15px;">
+                    <div class="sa-why-icon"><i class="fas fa-user-shield"></i></div>
+                    <h5 class="font-trajan" style="color: #038387;">9. Confidentiality</h5>
+                    <p class="text-muted small">Your financial information is handled with discretion, care and complete privacy.</p>
                 </div>
             </div>
         </div>
@@ -1038,15 +1028,15 @@
 </section>
 
     <section class="container my-5" id="contact">
-    <h2 class="text-center mb-5 font-trajan">Contact Us</h2>
+    <h2 class="text-center mb-5 font-trajan" style="color: #038387;">Contact Us</h2>
     <div class="row g-5">
         <div class="col-lg-5">
     <div class="p-4 h-100" style="background: #f8f9fa; border-radius: 15px; border-left: 5px solid #038387;">
         <h4 class="mb-5 pb-2 font-trajan border-bottom text-center" style="color: #038387;">Get In Touch</h4>
         
         <div class="ps-3"> 
-            <p class="mb-4"><i class="fas fa-phone me-3" style="color: #038387;"></i> +91 1353528177</p>
-            <p class="mb-4"><i class="fas fa-envelope me-3" style="color: #038387;"></i> SaiAssociatesddun@Gmail.Com</p>
+            <p class="mb-4"><i class="fas fa-phone me-3" style="color: #038387;"></i> <a class="sa-contact-link" href="tel:+911353528177">+91 1353528177</a></p>
+            <p class="mb-4"><i class="fas fa-envelope me-3" style="color: #038387;"></i> <a class="sa-contact-link" href="mailto:saiassociatesddun@gmail.com">SaiAssociatesddun@Gmail.Com</a></p>
             
             <p class="mb-4">
                 <i class="fas fa-map-marker-alt me-3" style="color: #038387;"></i> 
@@ -1054,12 +1044,12 @@
             </p>
             <p class="mb-4">
                 <i class="fas fa-map-marker-alt me-3" style="color: #038387;"></i> 
-                <strong>Branch:</strong> Khargar, Mumbai, MH 410210
+                <strong>Branch:</strong> Kharghar, Mumbai, MH 410210
             </p>
         </div>
         
         <div class="mt-5 pt-3">
-            <a href="https://wa.me/911353528177" class="btn btn-success w-100 py-3 shadow-sm">
+            <a href="https://wa.me/911353528177" class="btn btn-success w-100 py-3 shadow-sm" target="_blank" rel="noopener">
                 <i class="fab fa-whatsapp me-2"></i> Connect on WhatsApp
             </a>
         </div>
@@ -1121,12 +1111,72 @@
     </div>
 </section>
 
-    <footer class="text-center py-3">
-        <p>&copy; 2016 - 2026 Sai Associates. All Rights Reserved.</p>
-        <p style="font-size: 0.75rem; opacity: 0.8; margin-top: 10px;">
-            DNS Powered by <a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">DNS</a><a href="http://www.dnsExit.com" style="color: #fff; text-decoration: none;">EXIT.COM</a>
-        </p>
+    <a href="https://wa.me/911353528177" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+    <!-- ===== SITE FOOTER (shared: same on every page; styles in assets/sa-site.css) ===== -->
+    <footer class="sa-footer">
+        <div class="sa-footer-top">
+            <div class="container">
+                <div class="row g-4 g-lg-5">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="sa-footer-brand">
+                            <img src="assets/sa-mark.png" alt="Sai Associates logo" width="52" height="52">
+                            <div>
+                                <span class="sa-footer-name">Sai Associates</span>
+                                <span class="sa-footer-tag">Tax &amp; Management Consultancy</span>
+                            </div>
+                        </div>
+                        <p class="sa-footer-about">A Dehradun-based consultancy built on trust and integrity, offering audit, tax, compliance and advisory services to businesses of every size.</p>
+                        <div class="sa-footer-actions">
+                            <a class="sa-footer-btn sa-wa" href="https://wa.me/911353528177" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp us</a>
+                            <a class="sa-footer-btn" href="tel:+911353528177"><i class="fas fa-phone-alt"></i> Call us</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6>Quick Links</h6>
+                        <ul class="sa-footer-links">
+                            <li><a href="./"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="./#about"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                            <li><a href="./#services"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="team"><i class="fas fa-chevron-right"></i> Our Team</a></li>
+                            <li><a href="careers"><i class="fas fa-chevron-right"></i> Careers</a></li>
+                            <li><a href="./#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <h6>Client Corner</h6>
+                        <ul class="sa-footer-links">
+                            <li><a href="clientlogin"><i class="fas fa-chevron-right"></i> Client Login</a></li>
+                            <li><a href="Clientdownload"><i class="fas fa-chevron-right"></i> Client Downloads</a></li>
+                            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfiDJv8w9AHNUSrSk3sXuUBoxELiUgWUJuOqSCi4w4aNaSSbw/viewform?usp=sharing" target="_blank" rel="noopener"><i class="fas fa-chevron-right"></i> Upload Documents</a></li>
+                            <li><a href="paymentpage"><i class="fas fa-chevron-right"></i> Make Payment</a></li>
+                            <li><a href="vims"><i class="fas fa-chevron-right"></i> VIMS Portal</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4">
+                        <h6>Get in Touch</h6>
+                        <ul class="sa-footer-contact">
+                            <li><span class="sa-ico"><i class="fas fa-phone-alt"></i></span><div><strong>Phone</strong><a href="tel:+911353528177">+91 135 352 8177</a></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-envelope"></i></span><div><strong>Email</strong><a href="mailto:saiassociatesddun@gmail.com">saiassociatesddun@gmail.com</a></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-map-marker-alt"></i></span><div><strong>Head Office</strong><span>Suman Nagar, Dehradun, UK - 248001</span></div></li>
+                            <li><span class="sa-ico"><i class="fas fa-building"></i></span><div><strong>Branch</strong><span>Kharghar, Mumbai, MH 410210</span></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sa-footer-bottom">
+            <div class="container">
+                <span>&copy; 2016 - <span data-sa-year>2026</span> Sai Associates. All Rights Reserved.</span>
+                <span class="sa-dns">DNS Powered by <a href="http://www.dnsExit.com" target="_blank" rel="noopener">DNSEXIT.COM</a></span>
+            </div>
+        </div>
     </footer>
+    <button type="button" class="sa-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+    <!-- ===== /SITE FOOTER ===== -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -1168,6 +1218,8 @@
         });
     });
 </script>
+    <script src="assets/sa-site.js"></script>
+    <script src="assets/sa-home.js"></script>
 </body>
 
 </html>
