@@ -1,0 +1,304 @@
+/* =====================================================================
+   Sai Associates — home page touches (Phase 1b)
+   Small, additive polish on top of the existing home page styles.
+   ===================================================================== */
+
+/* ---------- Hero: eyebrow, buttons, scroll cue ---------- */
+.hero-section .sa-hero-actions,
+.hero-section .sa-scroll-cue { position: relative; z-index: 2; }
+
+.sa-hero-tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: .9rem;
+    margin: 0;
+    font-size: 1.05rem !important;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .92);
+}
+.sa-hero-tagline::before,
+.sa-hero-tagline::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--sa-gold, #cfae69);
+}
+
+.sa-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .8rem;
+    margin-top: 2.2rem;
+    opacity: 0;
+    animation: saFadeUp .9s ease-out .7s forwards;
+}
+.sa-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .8rem 1.6rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .88rem;
+    letter-spacing: .06em;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, .06);
+    transition: background-color .3s ease, color .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+.sa-hero-btn:hover { color: #fff; background: rgba(255, 255, 255, .16); transform: translateY(-2px); }
+.sa-hero-btn--solid { background: #038387; border-color: #038387; box-shadow: 0 10px 26px rgba(3, 131, 135, .35); }
+.sa-hero-btn--solid:hover { background: #02696c; border-color: #02696c; }
+.sa-hero-btn .sa-arrow { transition: transform .3s ease; }
+.sa-hero-btn:hover .sa-arrow { transform: translateX(4px); }
+
+.sa-scroll-cue {
+    position: absolute !important;
+    left: 50%;
+    bottom: 34px;
+    width: 26px;
+    height: 42px;
+    margin-left: -13px;
+    border: 1.5px solid rgba(255, 255, 255, .7);
+    border-radius: 14px;
+    opacity: 0;
+    animation: saFadeIn 1s ease-out 1.4s forwards;
+}
+.sa-scroll-cue span {
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 2px;
+    background: #fff;
+    animation: saWheel 1.8s ease-in-out infinite;
+}
+
+/* ---------- Image band: soft edges, pause on hover ---------- */
+.image-band-container {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.image-band-container:hover .image-band { animation-play-state: paused; }
+.image-band img { transition: transform .4s ease, box-shadow .4s ease; }
+.image-band img:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 10px 22px rgba(0, 0, 0, .15); }
+
+/* ---------- At-a-glance strip ---------- */
+.sa-stats { padding: 2.75rem 0 1rem; }
+.sa-stat {
+    position: relative;
+    height: 100%;
+    padding: 1.6rem 1rem 1.4rem;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #edf2f2;
+    box-shadow: 0 6px 18px rgba(3, 131, 135, .06);
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+.sa-stat:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(3, 131, 135, .12); }
+.sa-stat i {
+    display: inline-flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #eef7f7;
+    color: #038387;
+    font-size: 1.05rem;
+    margin-bottom: .8rem;
+    animation: saBob 4s ease-in-out infinite;
+}
+.sa-stats .col-6:nth-child(2) .sa-stat i { animation-delay: -1s; }
+.sa-stats .col-6:nth-child(3) .sa-stat i { animation-delay: -2s; }
+.sa-stats .col-6:nth-child(4) .sa-stat i { animation-delay: -3s; }
+.sa-stat-num {
+    display: block;
+    font-family: 'Trajan Pro', serif;
+    font-size: 2.1rem;
+    line-height: 1.1;
+    color: #038387;
+}
+.sa-stat-label {
+    display: block;
+    margin-top: .35rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #6c7a7a;
+}
+
+/* ---------- Service cards: light sweep + icon bob on hover ---------- */
+.service-card-pro { position: relative; overflow: hidden; }
+.service-card-pro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(3, 131, 135, .07), transparent);
+    transform: skewX(-18deg);
+    pointer-events: none;
+}
+.service-card-pro:hover::before { animation: saSweep .9s ease-out; }
+.service-card-pro:hover .icon-wrapper i { animation: saBob 1.6s ease-in-out infinite; }
+
+/* ---------- Why Choose Us / What We Serve icons ---------- */
+.sa-why-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 1rem;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef7f7;
+    color: #038387;
+    font-size: 1.15rem;
+    transform: rotate(-6deg);
+    transition: transform .4s ease, background-color .3s ease, color .3s ease;
+}
+.hover-pop:hover .sa-why-icon { transform: rotate(0) scale(1.08); background: #038387; color: #fff; }
+.sa-serve-ico { color: #038387; width: 1.2em; }
+
+/* ---------- Section headings: one size, regular weight, small line that draws in ---------- */
+.sa-heading-line { font-size: clamp(1.85rem, 3.2vw, 2.4rem) !important; font-weight: normal !important; }
+.sa-heading-line::after {
+    content: '';
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: .9rem auto 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #038387, var(--sa-gold, #cfae69));
+    transform: scaleX(0);
+    transition: transform .9s cubic-bezier(.2, .7, .2, 1) .2s;
+}
+.sa-heading-line.text-start::after, .sa-heading-line.sa-left::after { margin-left: 0; transform-origin: left; }
+.sa-heading-line.is-in::after { transform: scaleX(1); }
+
+/* ---------- Scroll reveal (only when JS is on) ---------- */
+.sa-js .sa-reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+.sa-js .sa-reveal.is-in { opacity: 1; transform: none; }
+
+/* ---------- Contact links ---------- */
+.sa-contact-link { color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(3, 131, 135, .35); transition: color .2s, border-color .2s; }
+.sa-contact-link:hover { color: #038387; border-color: #038387; }
+
+/* ---------- Floating WhatsApp ---------- */
+.whatsapp-float {
+    position: fixed;
+    right: 26px;
+    bottom: 26px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
+    z-index: 1020;
+    transition: transform .3s ease;
+}
+.whatsapp-float::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #25d366;
+    animation: saPulse 2.4s ease-out infinite;
+}
+.whatsapp-float:hover { color: #fff; transform: scale(1.08); }
+
+/* ---------- Keyframes ---------- */
+@keyframes saFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes saFadeIn { to { opacity: 1; } }
+@keyframes saWheel { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
+@keyframes saBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes saSweep { from { left: -60%; } to { left: 130%; } }
+@keyframes saPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.6); opacity: 0; } }
+
+@media (max-width: 575.98px) {
+    .sa-hero-tagline { font-size: .9rem !important; letter-spacing: .2em; gap: .6rem; }
+    .sa-hero-tagline::before, .sa-hero-tagline::after { width: 20px; }
+    .sa-hero-btn { padding: .7rem 1.25rem; font-size: .82rem; }
+    .sa-stat-num { font-size: 1.7rem; }
+    .sa-stat-label { font-size: .68rem; letter-spacing: .08em; }
+    .whatsapp-float { width: 50px; height: 50px; font-size: 25px; right: 18px; bottom: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sa-hero-actions, .sa-scroll-cue { animation: none; opacity: 1; }
+    .sa-scroll-cue span, .sa-stat i, .whatsapp-float::after, .service-card-pro:hover .icon-wrapper i { animation: none; }
+    .sa-js .sa-reveal { opacity: 1; transform: none; transition: none; }
+    .sa-heading-line::after { transform: none; transition: none; }
+}
+
+/* ---------- About intro (replaces the full-width teal band) ---------- */
+.sa-about-intro {
+    position: relative;
+    overflow: hidden;
+    padding: 3rem 3rem 2.75rem;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #e8f0f0;
+    box-shadow: 0 14px 40px rgba(3, 131, 135, .08);
+}
+.sa-about-intro::before {               /* teal edge */
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, #038387, var(--sa-gold, #cfae69));
+}
+.sa-about-intro::after {                /* faint monogram watermark */
+    content: '';
+    position: absolute;
+    right: -30px;
+    bottom: -40px;
+    width: 220px;
+    height: 220px;
+    background: url('sa-mark.png') center / cover no-repeat;
+    border-radius: 40px;
+    opacity: .05;
+    transform: rotate(-10deg);
+    pointer-events: none;
+}
+.sa-about-intro .row { position: relative; z-index: 1; }
+.sa-eyebrow {
+    display: inline-block;
+    margin-bottom: .9rem;
+    font-size: .74rem;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: #038387;
+}
+#about .sa-about-intro h2,
+#about .sa-about-intro p { text-align: left; }
+#about .sa-about-intro h2 { color: #038387; margin-bottom: 0; line-height: 1.15; }
+#about .sa-about-intro .sa-about-sub { margin-top: 1.4rem; font-size: .88rem; letter-spacing: .04em; color: #7a8a8a; }
+#about .sa-about-intro .lead { font-size: 1.12rem; line-height: 1.8; color: #2f3b3b; }
+#about .sa-about-intro p:not(.lead):not(.sa-about-sub) { font-size: .98rem; line-height: 1.85; color: #5f6d6d; margin-bottom: 0; }
+@media (max-width: 991.98px) {
+    .sa-about-intro { padding: 2.25rem 1.6rem 2rem 1.9rem; }
+    #about .sa-about-intro .sa-about-sub { margin-top: .9rem; }
+}
+#about .hover-pop p.small { font-size: .95rem; line-height: 1.7; }
+/* Phones: the contact row's wide gutter made the page scroll sideways */
+@media (max-width: 767.98px) { #contact > .row.g-5 { --bs-gutter-x: 1.5rem; } }
+#contact.container { padding-left: .75rem; padding-right: .75rem; }
