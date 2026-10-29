@@ -4,141 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pay Sai Associates securely by UPI: Google Pay, Paytm, PhonePe or a QR code for any amount.">
+    <meta name="description" content="Pay Sai Associates by UPI: Google Pay, Paytm, PhonePe or a QR code for any amount.">
     <meta property="og:site_name" content="Sai Associates">
     <meta property="og:title" content="Make a Payment | Sai Associates">
-    <meta property="og:description" content="Pay Sai Associates securely by UPI: Google Pay, Paytm, PhonePe or a QR code for any amount.">
+    <meta property="og:description" content="Pay Sai Associates by UPI: Google Pay, Paytm, PhonePe or a QR code for any amount.">
     <meta property="og:url" content="https://www.saiassociates.publicvm.com/paymentpage">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://www.saiassociates.publicvm.com/assets/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <title>Make a Payment | Sai Associates</title>
-    <!-- Bootstrap CSS for styling -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts - Montserrat for a modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Basic body styling to ensure full viewport height and proper layout */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Ensure body takes full viewport height */
-        }
-
-        @font-face {
-    font-family: 'Trajan Pro';
-    src: url('TrajanPro-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-        /* Payment container styling */
-        .payment-container {
-            max-width: 600px;
-            margin: 90px auto 50px; /* clears the fixed header */
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            flex-grow: 1; /* Allow container to grow and fill space */
-        }
-
-        .payment-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Payment button styling */
-        .btn-pay {
-            background-color: #038387;
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            margin: 5px; /* Added margin for spacing between buttons */
-        }
-
-        .btn-pay:hover {
-            background-color: #025a5d; /* Darker teal on hover */
-        }
-
-        .payment-options {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .payment-options img {
-            height: 50px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        /* QR Code container styling */
-        #qrcode {
-            display: flex;
-            flex-direction: column; /* Changed to column to stack QR and info */
-            justify-content: center;
-            align-items: center;
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            min-height: 200px; /* Ensure space for QR code */
-        }
-
-        #qrcode img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .qr-info {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .loading-message {
-            font-style: italic;
-            color: #888;
-            margin-top: 10px;
-        }
-    </style>
     <!-- Shared header/footer styles -->
     <link rel="stylesheet" href="assets/sa-site.css">
+    <!-- Payment page styles -->
+    <link rel="stylesheet" href="assets/sa-payment.css">
+
+    <!-- =================================================================
+         PAYMENT SETTINGS: the only part you need to edit
+         gatewayLive: false shows the gateway as "Coming soon"; set true to switch it on
+         apiUrl     : your Google Apps Script web app URL (ends with /exec)
+         paytmHost  : staging while testing, production when live
+         maxAmount  : highest amount allowed in the online form (₹)
+         ================================================================= -->
+    <script>
+        window.SA_PAYMENT_CONFIG = {
+            gatewayLive: false,
+            apiUrl: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE',
+            paytmHost: 'https://securestage.paytmpayments.com',   // live: 'https://secure.paytmpayments.com'
+            maxAmount: 200000,
+            merchantName: 'Sai Associates'
+        };
+    </script>
 </head>
 
 <body data-sa-page="payment">
-    <!-- Navigation Bar -->
     <!-- ===== SITE HEADER (shared: same on every page; styles in assets/sa-site.css) ===== -->
     <nav class="navbar navbar-expand-xl navbar-dark fixed-top sa-nav" id="saNav">
         <div class="container">
@@ -167,33 +70,167 @@
     </nav>
     <!-- ===== /SITE HEADER ===== -->
 
-    <!-- Payment Container -->
-    <div class="payment-container">
-        <h2 class="mt-5">Enter Payment Details</h2>
-        <form id="paymentForm">
-            <div class="form-group">
-                <label for="amount">Amount (₹):</label>
-                <input type="number" id="amount" name="amount" required>
-            </div>
-            <div class="form-group">
-                <label for="remark">Payment Remark (Optional):</label>
-                <input type="text" id="remark" name="remark">
-            </div>
-            <div class="text-center">
-                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('gpay')">Pay with GPay</button>
-                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('paytm')">Pay with Paytm</button>
-                <button type="button" class="btn btn-pay" onclick="generatePaymentLink('phonepe')">Pay with PhonePe</button>
-                <button type="button" class="btn btn-pay" onclick="generateQrCode()">Generate QR Code</button>
-            </div>
-        </form>
-
-        <div id="qrcode">
-            <!-- QR Code will be generated here -->
-            <p class="qr-info">Enter amount and remark, then click "Generate QR Code" to get your payment QR.</p>
+    <header class="sa-pay-hero">
+        <div class="container">
+            <span class="sa-eyebrow">Payments</span>
+            <h1>Make a Payment</h1>
+            <p>Pay instantly with any UPI app, or generate a QR code for a specific amount.</p>
         </div>
-    </div>
+    </header>
 
-    <!-- Footer -->
+    <main class="sa-pay">
+        <div class="container">
+
+            <!-- ===== UPI payment & QR (main) ===== -->
+            <section class="sa-card sa-pay-main" aria-labelledby="upiTitle">
+                <div class="row g-4 g-lg-5">
+                    <div class="col-lg-6">
+                        <h2 class="sa-card-title" id="upiTitle">Pay by UPI</h2>
+                        <div class="sa-card-line"></div>
+                        <p class="sa-card-sub">Enter the amount and an optional remark, then pay in your UPI app or generate a QR code.</p>
+
+                        <form id="paymentForm" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="form-label" for="amount">Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" id="amount" name="amount" min="1" step="0.01" inputmode="decimal" required>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label" for="remark">Payment remark <span class="sa-opt">(optional)</span></label>
+                                <input type="text" class="form-control" id="remark" name="remark" maxlength="60" placeholder="e.g. GST return Sep 2026, Inv 104">
+                            </div>
+
+                            <span class="sa-mini-label">Pay with</span>
+                            <div class="sa-app-row">
+                                <button type="button" class="sa-app-btn" onclick="generatePaymentLink('gpay')"><img src="gpay.webp" alt=""> Google Pay</button>
+                                <button type="button" class="sa-app-btn" onclick="generatePaymentLink('paytm')"><img src="paytm.webp" alt=""> Paytm</button>
+                                <button type="button" class="sa-app-btn" onclick="generatePaymentLink('phonepe')"><img src="phonepe.webp" alt=""> PhonePe</button>
+                            </div>
+                            <p class="sa-fineprint text-start mt-2 mb-0">App buttons open the UPI app on your phone with the amount filled in.</p>
+
+                            <div class="sa-divider">or scan a QR code</div>
+                            <button type="submit" class="sa-btn sa-btn--block"><i class="fas fa-qrcode"></i> Generate QR Code</button>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <h2 class="sa-card-title">Your QR</h2>
+                        <div class="sa-card-line"></div>
+                        <div id="qrcode" aria-live="polite"></div>
+                        <div class="sa-qr-tools">
+                            <button type="button" class="sa-btn sa-btn--sm" id="qrCopyBtn" data-qr-tool disabled><i class="far fa-copy"></i> Copy Image</button>
+                            <button type="button" class="sa-btn sa-btn--sm sa-btn--ghost" id="qrDownloadBtn" data-qr-tool disabled><i class="fas fa-download"></i> Download Image</button>
+                            <button type="button" class="sa-btn sa-btn--sm sa-btn--ghost sa-btn--share" id="qrShareBtn" data-qr-tool disabled hidden><i class="fas fa-share-alt"></i> Share (WhatsApp, Email...)</button>
+                        </div>
+                        <p class="sa-qr-hint" id="qrHint"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Payment gateway & receipt (folded; Coming soon until gatewayLive is true) ===== -->
+            <section class="sa-card sa-gw" aria-labelledby="gwToggle">
+                <button type="button" class="sa-gw-toggle" id="gwToggle" aria-expanded="false" aria-controls="gwBody">
+                    <span class="sa-gw-ico"><i class="fas fa-file-invoice"></i></span>
+                    <span class="sa-gw-text">
+                        <span class="sa-gw-title">Need a receipt?</span>
+                        <span class="sa-gw-sub">Pay through the payment gateway (UPI, cards or net banking via Paytm) and get an instant receipt.</span>
+                    </span>
+                    <span class="sa-gw-badge">Coming soon</span>
+                    <i class="fas fa-chevron-down sa-gw-chev" aria-hidden="true"></i>
+                </button>
+
+                <div class="sa-gw-body" id="gwBody" hidden>
+                    <div id="gatewayFormView">
+                        <form id="gatewayForm" novalidate autocomplete="on">
+                            <div class="row g-3">
+                                <div class="col-md-6 sa-field">
+                                    <label class="form-label" for="gwName">Full name</label>
+                                    <input type="text" class="form-control" id="gwName" name="name" autocomplete="name" maxlength="60" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-6 sa-field">
+                                    <label class="form-label" for="gwMobile">Mobile number</label>
+                                    <div class="input-group has-validation">
+                                        <span class="input-group-text">+91</span>
+                                        <input type="tel" class="form-control" id="gwMobile" name="mobile" inputmode="numeric" autocomplete="tel-national" maxlength="16" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 sa-field">
+                                    <label class="form-label" for="gwEmail">Email <span class="sa-opt">(receipt is sent here)</span></label>
+                                    <input type="email" class="form-control" id="gwEmail" name="email" autocomplete="email" maxlength="80" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-6 sa-field">
+                                    <label class="form-label" for="gwClientRef">Client ID / PAN / GSTIN <span class="sa-opt">(optional)</span></label>
+                                    <input type="text" class="form-control" id="gwClientRef" name="clientRef" maxlength="20" autocomplete="off">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-4 sa-field">
+                                    <label class="form-label" for="gwPurpose">Payment for</label>
+                                    <select class="form-select" id="gwPurpose" name="purpose" required>
+                                        <option value="">Choose...</option>
+                                        <option>Professional fees</option>
+                                        <option>GST payment</option>
+                                        <option>Income tax filing</option>
+                                        <option>Registration / licence</option>
+                                        <option>Monthly / quarterly retainer</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-4 sa-field">
+                                    <label class="form-label" for="gwAmount">Amount</label>
+                                    <div class="input-group has-validation">
+                                        <span class="input-group-text">₹</span>
+                                        <input type="number" class="form-control" id="gwAmount" name="amount" min="1" step="0.01" inputmode="decimal" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 sa-field">
+                                    <label class="form-label" for="gwRemark">Remark / invoice no. <span class="sa-opt">(optional)</span></label>
+                                    <input type="text" class="form-control" id="gwRemark" name="remark" maxlength="60">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-12 sa-field">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gwConsent" required>
+                                        <label class="form-check-label small text-muted" for="gwConsent">I confirm these details are correct.</label>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="sa-btn sa-btn--block" id="gwPayBtn"><i class="fas fa-lock"></i> <span id="gwPayLabel">Proceed to secure payment</span></button>
+                                    <div class="sa-alert" id="gwAlert" role="alert" aria-live="polite"></div>
+                                    <p class="sa-fineprint">Payments are processed by Paytm Payment Gateway. Sai Associates never sees your card or bank details.</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Result / receipt (shown after payment) -->
+                    <div class="sa-receipt" id="gatewayReceipt" data-state="checking" hidden aria-live="polite">
+                        <div class="sa-receipt-ico"><i class="fas fa-circle-notch fa-spin"></i></div>
+                        <h2>Confirming your payment</h2>
+                        <p class="sa-receipt-msg">Please wait a moment and do not close this page.</p>
+                        <div class="sa-receipt-amount"></div>
+                        <dl class="sa-receipt-table"></dl>
+                        <div class="sa-receipt-actions">
+                            <button type="button" class="sa-btn sa-btn--sm" data-act="download" data-show="success"><i class="fas fa-download"></i> Download receipt</button>
+                            <button type="button" class="sa-btn sa-btn--sm sa-btn--ghost" data-act="print" data-show="success"><i class="fas fa-print"></i> Print</button>
+                            <button type="button" class="sa-btn sa-btn--sm" data-act="recheck" data-show="pending"><i class="fas fa-sync-alt"></i> Check again</button>
+                            <button type="button" class="sa-btn sa-btn--sm" data-act="new" data-show="failed"><i class="fas fa-redo"></i> Try again</button>
+                            <button type="button" class="sa-btn sa-btn--sm sa-btn--ghost" data-act="new" data-show="success pending"><i class="fas fa-plus"></i> New payment</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
     <!-- ===== SITE FOOTER (shared: same on every page; styles in assets/sa-site.css) ===== -->
     <footer class="sa-footer">
         <div class="sa-footer-top">
@@ -260,136 +297,9 @@
     <button type="button" class="sa-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
     <!-- ===== /SITE FOOTER ===== -->
 
-    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        const upiId = "paytmqr28100505010110zmr8sjesym@paytm"; // Replace with your actual UPI ID
-
-        // Function to display custom messages (replaces alert)
-        function displayMessage(message, type) {
-            const messageContainer = document.createElement('div');
-            messageContainer.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background-color: ${type === 'error' ? '#dc3545' : '#28a745'};
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-                z-index: 1000;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                opacity: 0;
-                transition: opacity 0.5s ease-in-out;
-            `;
-            messageContainer.textContent = message;
-            document.body.appendChild(messageContainer);
-
-            setTimeout(() => {
-                messageContainer.style.opacity = 1;
-            }, 10); // Small delay to trigger transition
-
-            setTimeout(() => {
-                messageContainer.style.opacity = 0;
-                messageContainer.addEventListener('transitionend', () => messageContainer.remove());
-            }, 3000); // Message disappears after 3 seconds
-        }
-
-        function generatePaymentLink(app) {
-            const amount = document.getElementById("amount").value;
-            const remark = document.getElementById("remark").value;
-            const encodedRemark = encodeURIComponent(remark);
-
-            if (!amount) {
-                displayMessage("Please enter an amount to generate a payment link.", "error");
-                return;
-            }
-
-            let paymentLink = "";
-
-            if (app === 'gpay') {
-                paymentLink = `gpay://upi/pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
-            } else if (app === 'paytm') {
-                paymentLink = `paytmmp://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
-            } else if (app === 'phonepe') {
-                paymentLink = `phonepe://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}`;
-            }
-
-            if (paymentLink) {
-                window.location.href = paymentLink;
-            } else {
-                displayMessage("Invalid payment app selected.", "error");
-            }
-        }
-
-        function generateQrCode() {
-            const amount = document.getElementById("amount").value;
-            const remark = document.getElementById("remark").value;
-            const encodedRemark = encodeURIComponent(remark);
-
-            const qrcodeDiv = document.getElementById("qrcode");
-            qrcodeDiv.innerHTML = '<p class="loading-message">Generating QR Code...</p>'; // Show loading message
-
-            if (!amount) {
-                displayMessage("Please enter an amount to generate a QR code.", "error");
-                qrcodeDiv.innerHTML = '<p class="qr-info">Enter amount and remark, then click "Generate QR Code" to get your payment QR.</p>'; // Reset message
-                return;
-            }
-
-            // UPI deep link for QR code
-            const qrData = `upi://pay?pa=${upiId}&am=${amount}&tn=${encodedRemark}&cu=INR`;
-
-            // Construct the API URL for QR code generation
-            // Using goqr.me API for reliable QR code image generation
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(qrData)}`;
-
-            // Clear previous content
-            qrcodeDiv.innerHTML = '';
-
-            // Create an image element
-            const qrImage = document.createElement("img");
-            qrImage.alt = "QR Code for Payment";
-            qrImage.style.width = '256px';
-            qrImage.style.height = '256px';
-            qrImage.style.borderRadius = '5px';
-            qrImage.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-
-            // Set a loading placeholder or message
-            qrImage.src = "https://placehold.co/256x256/f0f0f0/cccccc?text=Loading+QR...";
-            qrcodeDiv.appendChild(qrImage);
-
-            // Add information below the QR code placeholder
-            const qrInfoParagraph = document.createElement("p");
-            qrInfoParagraph.className = "qr-info";
-            qrInfoParagraph.innerHTML = `Scan this QR code with your preferred UPI app to pay ₹${amount}.<br>Remark: ${remark || 'N/A'}`;
-            qrcodeDiv.appendChild(qrInfoParagraph);
-
-            // Fetch the QR code image
-            fetch(qrApiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.blob(); // Get the image as a blob
-                })
-                .then(blob => {
-                    const objectURL = URL.createObjectURL(blob);
-                    qrImage.src = objectURL; // Set the image source to the generated QR code
-                    qrImage.onload = () => URL.revokeObjectURL(objectURL); // Clean up the object URL
-                })
-                .catch(error => {
-                    console.error("Error fetching QR code from API:", error);
-                    displayMessage("Failed to generate QR code. Please check your internet connection.", "error");
-                    qrImage.src = "https://placehold.co/256x256/ffcccc/cc0000?text=Error+Loading+QR"; // Show error image
-                    qrInfoParagraph.textContent = "Error: Could not generate QR code."; // Update info text
-                });
-        }
-    </script>
+    <script src="assets/sa-payment.js"></script>
     <script src="assets/sa-site.js"></script>
 </body>
 
 </html>
-
-
-
