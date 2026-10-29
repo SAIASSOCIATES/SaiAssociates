@@ -1,0 +1,210 @@
+/* =====================================================================
+   Sai Associates — Payment page
+   One screen: UPI apps + QR generator, with a folded "payment gateway & receipt" panel.
+   Uses the shared tokens from sa-site.css (--sa-teal, --sa-gold ...).
+   ===================================================================== */
+
+body { font-family: 'Montserrat', Arial, sans-serif; background: #f6f9f9; color: #2f3b3b; }
+.font-trajan { font-family: 'Trajan Pro', serif; font-weight: normal; }
+
+/* ---------- Banner ---------- */
+.sa-pay-hero {
+    position: relative;
+    padding: calc(var(--sa-nav-h, 66px) + 3.25rem) 0 6.5rem;
+    color: #fff;
+    text-align: center;
+    background:
+        linear-gradient(180deg, rgba(3, 131, 135, .86), rgba(1, 63, 66, .94)),
+        url('../17.jpg') center / cover no-repeat;
+}
+.sa-pay-hero .sa-eyebrow {
+    display: inline-flex; align-items: center; gap: .75rem;
+    font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(255, 255, 255, .85);
+}
+.sa-pay-hero .sa-eyebrow::before,
+.sa-pay-hero .sa-eyebrow::after { content: ''; width: 28px; height: 1px; background: var(--sa-gold, #cfae69); }
+.sa-pay-hero h1 { color: #fff; font-family: 'Trajan Pro', serif; font-weight: normal; font-size: clamp(2rem, 4.5vw, 3rem); margin: .9rem 0 .6rem; }
+.sa-pay-hero p { max-width: 36rem; margin: 0 auto; color: rgba(255, 255, 255, .85); line-height: 1.7; }
+
+/* ---------- Layout ---------- */
+.sa-pay { position: relative; margin-top: -4.25rem; padding-bottom: 4rem; }
+.sa-pay-main, .sa-gw { height: auto; max-width: 1060px; margin-left: auto; margin-right: auto; }
+.sa-pay-main { margin-bottom: 1.25rem; }
+@keyframes saPanelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.sa-card {
+    background: #fff;
+    border: 1px solid #e3eded;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(1, 63, 66, .06);
+    padding: 2rem;
+    height: 100%;
+}
+.sa-card-title { font-family: 'Trajan Pro', serif; font-weight: normal; font-size: 1.35rem; color: var(--sa-teal); margin-bottom: .35rem; }
+.sa-card-sub { color: #6c7a7a; font-size: .9rem; margin-bottom: 1.5rem; margin-top: -.25rem; }
+.sa-card-line { width: 44px; height: 2px; border-radius: 2px; margin: .55rem 0 1.25rem; background: linear-gradient(90deg, var(--sa-teal), var(--sa-gold, #cfae69)); }
+
+.sa-pay .form-label { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: #5f6d6d; margin-bottom: .4rem; }
+.sa-pay .form-label .sa-opt { text-transform: none; letter-spacing: 0; color: #9aa7a7; }
+.sa-pay .form-control, .sa-pay .form-select { border-radius: 10px; padding: .7rem .9rem; border-color: #d9e4e4; }
+.sa-pay .input-group-text { background: #f3f8f8; border-color: #d9e4e4; color: #5f6d6d; border-radius: 10px; }
+.sa-pay .input-group > .form-control { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+.sa-pay .input-group > .input-group-text { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.sa-pay .invalid-feedback { font-size: .8rem; }
+
+/* Buttons */
+.sa-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+    padding: .8rem 1.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--sa-teal);
+    background: var(--sa-teal);
+    color: #fff;
+    font-size: .9rem; letter-spacing: .04em;
+    text-decoration: none;
+    transition: background-color .25s ease, color .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s;
+}
+.sa-btn:hover { background: var(--sa-teal-dark, #025a5d); border-color: var(--sa-teal-dark, #025a5d); color: #fff; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(3, 131, 135, .22); }
+.sa-btn:disabled, .sa-btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+.sa-btn--ghost { background: transparent; color: var(--sa-teal); }
+.sa-btn--ghost:hover { background: var(--sa-teal); color: #fff; }
+.sa-btn--block { width: 100%; }
+.sa-btn--sm { padding: .55rem 1rem; font-size: .82rem; }
+.sa-btn .spinner-border { width: 1rem; height: 1rem; border-width: .15em; }
+
+.sa-app-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.sa-app-btn {
+    display: flex; flex-direction: column; align-items: center; gap: .35rem;
+    padding: .75rem .5rem; border-radius: 14px;
+    border: 1px solid #e3eded; background: #fbfdfd; color: #2f3b3b; font-size: .78rem;
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.sa-app-btn img { height: 26px; width: auto; object-fit: contain; }
+.sa-app-btn:hover { border-color: var(--sa-teal); box-shadow: 0 6px 16px rgba(3, 131, 135, .12); transform: translateY(-1px); }
+
+.sa-mini-label { display: block; margin-bottom: .5rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: #5f6d6d; }
+.sa-divider { display: flex; align-items: center; gap: .75rem; margin: 1.5rem 0 1rem; color: #9aa7a7; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; }
+.sa-divider::before, .sa-divider::after { content: ''; flex: 1; height: 1px; background: #e3eded; }
+
+/* Inline alert */
+.sa-alert { display: none; margin-top: 1rem; padding: .8rem 1rem; border-radius: 12px; font-size: .88rem; line-height: 1.5; }
+.sa-alert.show { display: flex; gap: .6rem; align-items: flex-start; }
+.sa-alert--error { background: #fdf1f1; color: #9b2c2c; border: 1px solid #f4d2d2; }
+.sa-alert--info { background: #eef7f7; color: #025a5d; border: 1px solid #cfe6e6; }
+
+.sa-fineprint { font-size: .76rem; color: #8a9898; text-align: center; margin: .9rem 0 0; }
+
+/* ---------- Payment gateway panel (folded) ---------- */
+.sa-gw { padding: 0; overflow: hidden; }
+.sa-gw-toggle {
+    display: flex; align-items: center; gap: 1rem;
+    width: 100%; padding: 1.25rem 1.6rem;
+    background: transparent; border: 0; text-align: left; color: inherit; cursor: pointer;
+    transition: background-color .2s ease;
+}
+.sa-gw-toggle:hover { background: #f8fbfb; }
+.sa-gw-toggle:focus-visible { outline: 2px solid var(--sa-teal); outline-offset: -2px; }
+.sa-gw-ico {
+    flex: 0 0 46px; width: 46px; height: 46px; border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #eef7f7; color: var(--sa-teal); font-size: 1.1rem;
+}
+.sa-gw-text { flex: 1; min-width: 0; }
+.sa-gw-title { display: block; font-family: 'Trajan Pro', serif; font-size: 1.08rem; color: #1f2b2b; line-height: 1.35; }
+.sa-gw-sub { display: block; margin-top: .25rem; font-size: .84rem; color: #6c7a7a; }
+.sa-gw-badge {
+    flex: 0 0 auto;
+    font-size: .64rem; letter-spacing: .14em; text-transform: uppercase;
+    color: #8a6d2e; background: #f8f1e1; border: 1px solid #efe2c4; border-radius: 999px; padding: .25rem .65rem;
+}
+.sa-gw-chev { color: #8a9898; transition: transform .3s ease; }
+.sa-gw-toggle[aria-expanded="true"] .sa-gw-chev { transform: rotate(180deg); }
+.sa-gw-body { padding: .5rem 1.6rem 1.75rem; border-top: 1px solid #e3eded; animation: saPanelIn .35s ease; }
+.sa-gw-body #gatewayFormView { padding-top: 1.25rem; }
+.sa-gw-body .sa-receipt { padding-top: 1.5rem; }
+
+/* ---------- Receipt ---------- */
+.sa-receipt { max-width: 640px; margin: 0 auto; text-align: center; }
+.sa-receipt-ico {
+    width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center; font-size: 1.9rem;
+    background: #e8f6ee; color: #1f8a4c;
+    animation: saPop .5s cubic-bezier(.2, .9, .3, 1.3);
+}
+.sa-receipt[data-state="pending"] .sa-receipt-ico { background: #fff6e5; color: #b7791f; }
+.sa-receipt[data-state="failed"] .sa-receipt-ico { background: #fdf1f1; color: #c53030; }
+.sa-receipt[data-state="checking"] .sa-receipt-ico { background: #eef7f7; color: var(--sa-teal); }
+@keyframes saPop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.sa-receipt h2 { font-family: 'Trajan Pro', serif; font-weight: normal; font-size: 1.6rem; color: #1f2b2b; margin-bottom: .4rem; }
+.sa-receipt .sa-receipt-msg { color: #6c7a7a; margin-bottom: 1.5rem; }
+.sa-receipt-amount { font-family: 'Trajan Pro', serif; font-size: 2.2rem; color: var(--sa-teal); margin-bottom: 1.25rem; }
+.sa-receipt-table { width: 100%; text-align: left; border-top: 1px dashed #d9e4e4; margin-bottom: 1.5rem; }
+.sa-receipt-table div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px dashed #e6eeee; font-size: .88rem; }
+.sa-receipt-table dt { color: #7a8a8a; font-weight: 400; }
+.sa-receipt-table dd { margin: 0; color: #1f2b2b; text-align: right; word-break: break-all; }
+.sa-receipt-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; }
+
+/* ---------- QR output: same look as the original page (keeps the shared image format) ---------- */
+#qrcode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    min-height: 200px;
+    font-family: Arial, sans-serif;     /* original page font */
+    font-size: 16px;
+    line-height: 1.5;
+}
+#qrcode img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+#qrcode p { margin: 0 0 1rem; }
+.qr-info {
+    text-align: center;
+    margin-top: 10px !important;
+    font-size: 0.9em;
+    color: #666;
+}
+.loading-message {
+    font-style: italic;
+    color: #888;
+    margin-top: 10px !important;
+}
+
+.sa-qr-tools { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: 1rem; }
+.sa-qr-tools .sa-btn--share { grid-column: 1 / -1; }
+.sa-qr-hint { font-size: .76rem; color: #8a9898; text-align: center; margin: .7rem 0 0; min-height: 1.1em; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767.98px) {
+    .sa-pay-hero { padding-bottom: 5.5rem; }
+    .sa-gw-toggle { flex-wrap: wrap; padding: 1.1rem 1.2rem; gap: .75rem 1rem; }
+    .sa-gw-text { flex-basis: calc(100% - 46px - 1rem - 1.5rem); }
+    .sa-gw-badge { margin-left: calc(46px + 1rem); }
+    .sa-gw-chev { margin-left: auto; }
+    .sa-gw-body { padding: .25rem 1.2rem 1.4rem; }
+    .sa-gw-title { font-size: .98rem; }
+    .sa-qr-tools .sa-btn { white-space: nowrap; padding-left: .6rem; padding-right: .6rem; font-size: .8rem; }
+    .sa-card { padding: 1.5rem 1.2rem; }
+    .sa-receipt-table div { flex-direction: column; gap: .15rem; }
+    .sa-receipt-table dd { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sa-gw-body, .sa-receipt-ico { animation: none; }
+}
+
+/* ---------- Print: only the receipt ---------- */
+@media print {
+    body * { visibility: hidden; }
+    #gatewayReceipt, #gatewayReceipt * { visibility: visible; }
+    #gatewayReceipt { position: absolute; inset: 0 0 auto 0; box-shadow: none; border: 0; }
+    .sa-receipt-actions { display: none !important; }
+}
