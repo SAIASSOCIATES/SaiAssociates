@@ -331,3 +331,45 @@ html { scroll-behavior: smooth; scroll-padding-top: calc(var(--sa-nav-h) + 12px)
 }
 .form-check-input:checked { background-color: var(--sa-teal); border-color: var(--sa-teal); }
 .form-check-input:focus { border-color: var(--sa-teal); box-shadow: 0 0 0 .22rem rgba(3, 131, 135, .14); }
+
+/* ---------- Show / hide password (eye button) ---------- */
+.sa-pw-wrap { position: relative; display: block; }
+.sa-pw { position: relative; }
+.sa-pw > input[type] { padding-right: 2.75rem; }
+.form-floating.sa-pw > input[type] { padding-right: 2.75rem; }
+.sa-pw-btn,
+.sa-pw > .sa-pw-btn {                       /* !important: pages style "every button" and must not restyle the eye */
+    position: absolute !important;
+    top: 50% !important;
+    right: .45rem !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 5;
+    width: 2.1rem !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 2.1rem !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #7a8a8a !important;
+    font-size: .95rem !important;
+    line-height: 1 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    cursor: pointer;
+    transition: color .2s ease, background-color .2s ease;
+}
+.sa-pw-btn:hover, .sa-pw > .sa-pw-btn:hover { color: var(--sa-teal) !important; background: rgba(3, 131, 135, .08) !important; }
+.sa-pw-btn:focus-visible { outline: 2px solid var(--sa-teal); outline-offset: 1px; }
+input::-ms-reveal, input::-ms-clear { display: none; }          /* hide Edge's own eye so there is only one */
+/* Client access page: its boxes are centred and capped at 300px */
+.login-container > .sa-pw-wrap { max-width: 300px; margin: 10px auto; }
+.login-container > .sa-pw-wrap > input { margin: 0; }

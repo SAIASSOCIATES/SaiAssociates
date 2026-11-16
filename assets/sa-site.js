@@ -99,3 +99,65 @@ document.querySelectorAll('[role="button"][data-bs-toggle]').forEach(function (e
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
     });
 });
+
+/* =====================================================================
+   Show / hide password (eye button) on every password box, including
+   boxes a page adds later (e.g. "new password" after an OTP step).
+   ===================================================================== */
+(function () {
+    'use strict';
+    var MARGIN_CLASS = /^m[tbsexy]?-(?:auto|\d)$/;
+
+    function enhance(input) {
+        if (!input || input.dataset.saPw) return;
+        input.dataset.saPw = '1';
+        var parent = input.parentElement;
+        if (!parent) return;
+        var host;
+
+        if (parent.classList.contains('form-floating') ||
+            (parent.classList.contains('input-group') && parent.lastElementChild === input)) {
+            host = parent;                                   // already positioned: keep layout intact
+        } else {
+            host = document.createElement('span');           // wrap the box; spacing moves to the wrapper
+            host.className = 'sa-pw-wrap';
+            Array.prototype.slice.call(input.classList).forEach(function (c) {
+                if (MARGIN_CLASS.test(c)) { input.classList.remove(c); host.classList.add(c); }
+            });
+            parent.insertBefore(host, input);
+            host.appendChild(input);
+        }
+        host.classList.add('sa-pw');
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sa-pw-btn';
+        btn.setAttribute('aria-label', 'Show password');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.title = 'Show password';
+        btn.innerHTML = '<i class="far fa-eye" aria-hidden="true"></i>';
+        btn.addEventListener('mousedown', function (e) { e.preventDefault(); });   // keep the cursor in the box
+        btn.addEventListener('click', function () {
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            btn.innerHTML = '<i class="far ' + (show ? 'fa-eye-slash' : 'fa-eye') + '" aria-hidden="true"></i>';
+            btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+            btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            btn.title = show ? 'Hide password' : 'Show password';
+        });
+        host.appendChild(btn);
+    }
+
+    function scan(root) {
+        if (!root || !root.querySelectorAll) return;
+        if (root.matches && root.matches('input[type="password"]')) enhance(root);
+        root.querySelectorAll('input[type="password"]').forEach(enhance);
+    }
+
+    scan(document);
+    if (window.MutationObserver) {
+        new MutationObserver(function (list) {
+            list.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType === 1) scan(n); }); });
+        }).observe(document.body, { childList: true, subtree: true });
+    }
+})();
