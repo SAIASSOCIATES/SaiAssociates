@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow"><!-- private: keep out of search results -->
+    <title>SA Vault | Sai Associates</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/vault.css">
+
+    <!-- =================================================================
+         VAULT SETTING: paste the MASTER web app URL (ends with /exec)
+         ================================================================= -->
+    <script>
+        window.VAULT_CONFIG = {
+            api: 'https://script.google.com/macros/s/AKfycbznLv4SfXohNZUzd2Putlv97RFnfcHYsRQkgF8RzgiJ_ivq9o18ol4dvky-MWHkVZPHxg/exec'
+        };
+    </script>
+</head>
+
+<body>
+    <!-- ===================== Sign in ===================== -->
+    <div class="v-login" id="vLogin">
+        <div class="v-login-card">
+            <div class="v-login-brand">
+                <img src="assets/sa-mark.png" alt="" width="54" height="54">
+                <div>
+                    <span class="v-login-name">SA Vault</span>
+                    <span class="v-login-sub">Sai Associates · private files</span>
+                </div>
+            </div>
+
+            <form id="vLoginForm" autocomplete="on" novalidate>
+                <h1 class="v-login-title">Sign in</h1>
+                <label class="v-label" for="vUser">Username</label>
+                <input class="v-input" id="vUser" name="username" autocomplete="username" required>
+                <label class="v-label" for="vPass">Password</label>
+                <div class="v-pass">
+                    <input class="v-input" id="vPass" name="password" type="password" autocomplete="current-password" required>
+                    <button type="button" class="v-eye" data-eye="vPass" aria-label="Show password"><i class="far fa-eye"></i></button>
+                </div>
+                <button class="v-btn v-btn--block" type="submit" id="vLoginBtn"><i class="fas fa-lock"></i> Continue</button>
+            </form>
+
+            <form id="vOtpForm" hidden novalidate>
+                <h1 class="v-login-title">Check your email</h1>
+                <p class="v-login-help">We sent a 6-digit code to <strong id="vOtpHint"></strong>. It expires in 10 minutes.</p>
+                <label class="v-label" for="vOtp">Sign-in code</label>
+                <input class="v-input v-otp" id="vOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+                <button class="v-btn v-btn--block" type="submit" id="vOtpBtn"><i class="fas fa-check"></i> Sign in</button>
+                <button class="v-link" type="button" id="vOtpBack">Use a different account</button>
+            </form>
+
+            <div class="v-alert" id="vLoginAlert" role="alert"></div>
+            <a class="v-login-home" href="./"><i class="fas fa-arrow-left"></i> Back to Sai Associates</a>
+        </div>
+    </div>
+
+    <!-- ===================== App ===================== -->
+    <div class="v-app" id="vApp" hidden>
+        <aside class="v-side" id="vSide">
+            <div class="v-brand">
+                <img src="assets/sa-mark.png" alt="" width="38" height="38">
+                <div><span class="v-brand-name">SA Vault</span><span class="v-brand-sub">Sai Associates</span></div>
+            </div>
+            <nav class="v-nav" aria-label="Vault">
+                <button class="v-nav-btn" data-view="files"><i class="fas fa-folder-open"></i> Files</button>
+                <button class="v-nav-btn" data-view="storage"><i class="fas fa-hard-drive"></i> Storage</button>
+                <button class="v-nav-btn" data-view="backup"><i class="fas fa-server"></i> Server backup</button>
+                <button class="v-nav-btn" data-view="activity"><i class="fas fa-clock-rotate-left"></i> Activity</button>
+                <button class="v-nav-btn" data-view="settings"><i class="fas fa-gear"></i> Settings</button>
+            </nav>
+            <div class="v-cap" id="vCap">
+                <div class="v-cap-top"><span>Storage</span><span id="vCapPct">…</span></div>
+                <div class="v-cap-bar"><span id="vCapBar"></span></div>
+                <div class="v-cap-text" id="vCapText">Checking drives…</div>
+            </div>
+            <button class="v-bk-chip" id="vBk" type="button"><span id="vBkText"><i class="fas fa-server"></i> Server backup</span></button>
+            <div class="v-user">
+                <span class="v-user-ico"><i class="fas fa-user"></i></span>
+                <span class="v-user-name" id="vUserName"></span>
+                <button class="v-user-out" id="vSignOut" title="Sign out" aria-label="Sign out"><i class="fas fa-right-from-bracket"></i></button>
+            </div>
+        </aside>
+        <div class="v-scrim" id="vScrim"></div>
+
+        <main class="v-main" id="vMain">
+            <header class="v-top">
+                <button class="v-menu" id="vMenu" aria-label="Menu"><i class="fas fa-bars"></i></button>
+                <div class="v-top-title" id="vTopTitle">Files</div>
+            </header>
+
+            <!-- Files -->
+            <section class="v-view" id="view-files" hidden>
+                <div class="v-files-head">
+                    <nav class="v-crumbs" id="vCrumbs" aria-label="Folder path"></nav>
+                    <div class="v-files-meta" id="vFilesMeta"></div>
+                </div>
+                <div class="v-toolbar">
+                    <div class="v-search">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <input id="vSearch" placeholder="Search client folders" autocomplete="off">
+                    </div>
+                    <select class="v-select" id="vSort" aria-label="Sort">
+                        <option value="name">Name A–Z</option>
+                        <option value="size">Largest first</option>
+                        <option value="updated">Recently updated</option>
+                    </select>
+                    <div class="v-toolbar-actions" id="vFileActions"></div>
+                </div>
+                <div class="v-selbar" id="vFSelBar" hidden>
+                    <span id="vFSelText"></span>
+                    <span class="v-selbar-move">
+                        <button class="v-btn v-btn--sm" id="vFSend"><i class="fas fa-server"></i> Send to office server</button>
+                    </span>
+                    <button class="v-link" id="vFSelClear">Clear</button>
+                </div>
+                <div class="v-panel v-office" id="vOffice" hidden></div>
+                <div class="v-panel v-files" id="vFiles"></div>
+                <div class="v-drop" id="vDrop"><div><i class="fas fa-cloud-arrow-up"></i><span id="vDropText">Drop files to upload</span></div></div>
+                <input type="file" id="vFileInput" multiple hidden>
+            </section>
+
+            <!-- Storage -->
+            <section class="v-view" id="view-storage" hidden>
+                <div class="v-stats" id="vStats"></div>
+                <div class="v-section-head">
+                    <h2>Drives</h2>
+                    <p>New clients go to the first drive, in this order, that is below <strong id="vThreshold">80%</strong> at that moment.</p>
+                </div>
+                <div class="v-drives" id="vDrives"></div>
+
+                <div class="v-section-head v-section-head--row">
+                    <div>
+                        <h2>Client folders</h2>
+                        <p>Each client folder stays whole on one drive. Select folders to move them.</p>
+                    </div>
+                    <div class="v-head-actions">
+                        <button class="v-btn v-btn--ghost v-btn--sm" id="vSizes"><i class="fas fa-calculator"></i> Recalculate sizes</button>
+                        <button class="v-btn v-btn--ghost v-btn--sm" id="vRescan"><i class="fas fa-rotate"></i> Rescan drives</button>
+                        <button class="v-btn v-btn--ghost v-btn--sm" id="vExport"><i class="fas fa-file-csv"></i> A–Z list</button>
+                    </div>
+                </div>
+                <div class="v-toolbar">
+                    <div class="v-search">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <input id="vCSearch" placeholder="Search client folders" autocomplete="off">
+                    </div>
+                    <select class="v-select" id="vCDrive" aria-label="Drive filter"></select>
+                </div>
+                <div class="v-selbar" id="vSelBar" hidden>
+                    <span id="vSelText"></span>
+                    <span class="v-selbar-move">
+                        <label for="vMoveTo">Move to</label>
+                        <select class="v-select" id="vMoveTo"></select>
+                        <button class="v-btn v-btn--sm" id="vMoveBtn"><i class="fas fa-right-left"></i> Move</button>
+                    </span>
+                    <button class="v-link" id="vSelClear">Clear</button>
+                </div>
+                <div class="v-panel" id="vClientTable"></div>
+
+                <div class="v-section-head v-section-head--row" id="vTrashHead" hidden>
+                    <div>
+                        <h2>Vault trash</h2>
+                        <p>Everything the vault has removed, kept in Google Drive’s trash. Nothing here is gone until you delete it for good, or Google empties it after 30 days. <span id="vTrashSum"></span></p>
+                    </div>
+                    <div class="v-head-actions">
+                        <button class="v-btn v-btn--ghost v-btn--sm" id="vTrashMoves"><i class="fas fa-broom"></i> Free space from moves</button>
+                    </div>
+                </div>
+                <div class="v-panel" id="vTrash" hidden></div>
+            </section>
+
+            <!-- Server backup -->
+            <section class="v-view" id="view-backup" hidden>
+                <div class="v-alert err show" id="bkUnsupported" hidden>
+                    Backing up to the office server works in <strong>Chrome or Edge on a laptop or desktop</strong>. Open the vault there, on the office network.
+                </div>
+                <div class="v-bk-grid">
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Office server folders</h2>
+                        <p class="v-muted v-small">Connect the two parts of the server separately. This computer remembers them.</p>
+                        <div id="bkFolders"></div>
+                        <p class="v-small v-muted">The browser may ask once per visit to allow access again; choose “Allow on every visit” when it offers.</p>
+                    </div>
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Back up to the office server</h2>
+                        <p class="v-muted">Copies new and changed vault files into both server folders. Files already there are skipped. <strong>Nothing on the server is ever deleted</strong>, and a server file is only updated after its old copy is saved in “SA Vault - replaced files”.</p>
+                        <p class="v-bk-last" id="bkLastDown"></p>
+                        <label class="v-check"><input type="checkbox" id="bkAuto"> Back up automatically when the vault opens, then every 30 minutes while it stays open</label>
+                        <div class="v-row">
+                            <button class="v-btn" id="bkRun"><i class="fas fa-download"></i> Back up now</button>
+                            <button class="v-btn v-btn--ghost" id="bkDeep" title="Also checks that every backed-up file is still on the server"><i class="fas fa-list-check"></i> Full check</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="v-panel v-pad v-bk-attention" id="bkAttention" hidden>
+                    <div><strong><i class="fas fa-triangle-exclamation"></i> Some files could not be copied last time</strong>
+                        <span class="v-small">Nothing was lost: the originals are untouched. The reasons are in the report below and in the log file.</span></div>
+                    <div class="v-row">
+                        <button class="v-btn v-btn--sm" id="bkRetryDown" hidden></button>
+                        <button class="v-btn v-btn--sm" id="bkRetryUp" hidden></button>
+                    </div>
+                </div>
+
+                <div class="v-panel v-pad v-bk-progress" id="bkProgress" hidden>
+                    <div class="v-bk-progress-head">
+                        <strong id="bkPhase">Starting…</strong>
+                        <button class="v-btn v-btn--ghost v-btn--sm" id="bkStop"><i class="fas fa-stop"></i> Stop</button>
+                    </div>
+                    <div class="v-meter"><span class="vault" id="bkBar"></span></div>
+                    <div class="v-bk-counts" id="bkCounts"></div>
+                    <div class="v-small v-muted v-bk-current" id="bkCurrent"></div>
+                </div>
+
+                <div class="v-panel v-pad v-bk-report" id="bkReport" hidden></div>
+
+                <div class="v-panel v-pad v-bk-old">
+                    <div>
+                        <h2 class="v-h2">Older copies kept on the server</h2>
+                        <p class="v-muted v-small">When the backup updates a server file, the old copy goes to “SA Vault - replaced files” in that folder, one copy per file per day. Delete old ones here when you no longer need them.</p>
+                        <ul class="v-bk-replaced" id="bkReplaced"></ul>
+                    </div>
+                    <button class="v-btn v-btn--ghost" id="bkClean" disabled><i class="fas fa-broom"></i> Clean up old copies</button>
+                </div>
+
+                <div class="v-panel v-pad v-bk-up">
+                    <div>
+                        <h2 class="v-h2">Copy the office server to the vault</h2>
+                        <p class="v-muted">For the first set-up, or after a day of working offline on the server. In the Client data folder, each top-level folder is one client; the Office data folder goes to the vault’s Office data space. You see exactly what will happen and confirm before anything is copied.</p>
+                        <p class="v-bk-last" id="bkLastUp"></p>
+                    </div>
+                    <button class="v-btn v-btn--ghost" id="bkUpCheck"><i class="fas fa-upload"></i> Check what would be copied</button>
+                </div>
+            </section>
+
+            <!-- Activity -->
+            <section class="v-view" id="view-activity" hidden>
+                <div class="v-panel" id="vActivity"></div>
+            </section>
+
+            <!-- Settings -->
+            <section class="v-view" id="view-settings" hidden>
+                <div class="v-grid2">
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Add a drive</h2>
+                        <p class="v-muted">Install the agent script in the new Gmail account, run its setup, deploy it, then paste its link and secret here. The guide has each step.</p>
+                        <form id="vAddDrive" novalidate>
+                            <label class="v-label" for="vDLabel">Name</label>
+                            <input class="v-input" id="vDLabel" placeholder="e.g. Drive 4">
+                            <label class="v-label" for="vDUrl">Agent link</label>
+                            <input class="v-input" id="vDUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+                            <label class="v-label" for="vDSecret">Secret</label>
+                            <div class="v-pass">
+                                <input class="v-input" id="vDSecret" type="password" autocomplete="off">
+                                <button type="button" class="v-eye" data-eye="vDSecret" aria-label="Show secret"><i class="far fa-eye"></i></button>
+                            </div>
+                            <button class="v-btn" type="submit" id="vDAdd"><i class="fas fa-plus"></i> Connect drive</button>
+                        </form>
+                    </div>
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Placement</h2>
+                        <p class="v-muted">A drive stops taking <em>new</em> clients at this level. Clients already on it can keep growing until it is nearly full.</p>
+                        <form id="vSettingsForm" novalidate>
+                            <label class="v-label" for="vTh">Fill level for new clients</label>
+                            <div class="v-range">
+                                <input type="range" id="vTh" min="50" max="95" step="1">
+                                <output id="vThOut">80%</output>
+                            </div>
+                            <label class="v-label" for="vEmails">Also give access to <span class="v-opt">(optional emails, comma separated)</span></label>
+                            <input class="v-input" id="vEmails" placeholder="e.g. partner@gmail.com">
+                            <p class="v-muted v-small">All connected Gmail accounts can always open every file. Add others only if they should too.</p>
+                            <div class="v-row">
+                                <button class="v-btn" type="submit"><i class="fas fa-floppy-disk"></i> Save</button>
+                                <button class="v-btn v-btn--ghost" type="button" id="vReshare"><i class="fas fa-user-group"></i> Re-share drives</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Change password</h2>
+                        <form id="vPwForm" novalidate>
+                            <label class="v-label" for="vPwOld">Current password</label>
+                            <div class="v-pass"><input class="v-input" id="vPwOld" type="password" autocomplete="current-password"><button type="button" class="v-eye" data-eye="vPwOld" aria-label="Show password"><i class="far fa-eye"></i></button></div>
+                            <label class="v-label" for="vPwNew">New password <span class="v-opt">(at least 10 characters)</span></label>
+                            <div class="v-pass"><input class="v-input" id="vPwNew" type="password" autocomplete="new-password"><button type="button" class="v-eye" data-eye="vPwNew" aria-label="Show password"><i class="far fa-eye"></i></button></div>
+                            <button class="v-btn" type="submit"><i class="fas fa-key"></i> Change password</button>
+                        </form>
+                    </div>
+                    <div class="v-panel v-pad">
+                        <h2 class="v-h2">Good to know</h2>
+                        <ul class="v-tips">
+                            <li><i class="fas fa-shield-halved"></i> Files stay in your own Google Drives, in each account's <strong>SA Vault</strong> folder. Even without this website, you can open them in Google Drive.</li>
+                            <li><i class="fas fa-trash-can-arrow-up"></i> Nothing is deleted straight away. Deleted files and the old copies left after a move go to the <strong>vault trash</strong> (Storage page), where you can restore them or free the space. Google empties its trash after 30 days.</li>
+                            <li><i class="fas fa-user-clock"></i> Sign in to every connected Gmail account at least once every few months. Google deletes accounts unused for 2 years.</li>
+                            <li><i class="fas fa-upload"></i> Always upload through the vault, so files count against the right drive.</li>
+                            <li><i class="fas fa-server"></i> Open the vault on the office laptop while it is connected to the server: the backup runs by itself.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Upload tray -->
+    <div class="v-tray" id="vTray" hidden>
+        <div class="v-tray-head"><span id="vTrayTitle">Uploading</span><span><button class="v-tray-retry" id="vTrayRetry" hidden><i class="fas fa-rotate-right"></i> Retry failed</button><button class="v-tray-x" id="vTrayClose" aria-label="Close"><i class="fas fa-xmark"></i></button></span></div>
+        <div class="v-tray-list" id="vTrayList"></div>
+    </div>
+
+    <!-- Dialog -->
+    <div class="v-modal" id="vModal" hidden>
+        <div class="v-modal-card" role="dialog" aria-modal="true" aria-labelledby="vModalTitle">
+            <h2 id="vModalTitle"></h2>
+            <div id="vModalBody"></div>
+            <div class="v-modal-actions" id="vModalActions"></div>
+        </div>
+    </div>
+
+    <div class="v-toast" id="vToast" role="status" aria-live="polite"></div>
+
+    <script src="assets/vault-backup.js"></script>
+    <script src="assets/vault.js"></script>
+</body>
+</html>
