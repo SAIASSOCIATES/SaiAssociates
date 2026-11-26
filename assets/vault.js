@@ -408,8 +408,12 @@
             var size = cl.reduce(function (a, c) { return a + c.sizeBytes; }, 0);
             meta.textContent = S.loaded ? cl.length + ' client folder' + (cl.length === 1 ? '' : 's') + ' · ' + bytes(size) : '';
             $('vSearch').placeholder = 'Search client folders';
+            acts.appendChild(el('<button class="v-btn v-btn--ghost" id="vUpFolder" title="Each folder you upload becomes a client folder"><i class="fas fa-folder-open"></i> Upload folder</button>'));
+            acts.appendChild(el('<button class="v-btn v-btn--ghost" id="vUpFiles" title="You choose the client the files go to"><i class="fas fa-cloud-arrow-up"></i> Upload files</button>'));
             acts.appendChild(el('<button class="v-btn" id="vNewClient"><i class="fas fa-folder-plus"></i> New client</button>'));
             $('vNewClient').onclick = newClient;
+            $('vUpFiles').onclick = function () { pickFiles(false); };
+            $('vUpFolder').onclick = function () { pickFiles(true); };
         } else {
             var home = el('<button type="button"><i class="fas fa-folder-tree"></i> ' + (S.client.kind === 'office' ? 'Home' : 'All clients') + '</button>');
             home.onclick = function () { goCrumb(-1); };
@@ -692,19 +696,22 @@
             var parts = (f.webkitRelativePath || '').split('/').filter(Boolean);
             return { file: f, dirs: parts.slice(0, -1) };
         });
-        enqueue(list);
+        if (S.client) enqueue(list); else homeUpload(list);
         this.value = '';
     });
 
     /* Drag and drop (files and whole folders) */
     var dragDepth = 0;
-    function canDrop() { return S.view === 'files' && S.client && S.client.status !== 'moving' && !$('vApp').hidden; }
+    function canDrop() { return S.view === 'files' && !$('vApp').hidden && (!S.client || S.client.status !== 'moving'); }
     function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0; }
     window.addEventListener('dragenter', function (e) {
         if (!hasFiles(e)) return;
         e.preventDefault();
         dragDepth++;
-        if (canDrop()) { $('vDropText').textContent = 'Drop to upload to ' + (S.path.length ? S.path[S.path.length - 1].name : S.client.name); $('vDrop').classList.add('show'); }
+        if (canDrop()) {
+            $('vDropText').textContent = !S.client ? 'Drop client folders here' : 'Drop to upload to ' + (S.path.length ? S.path[S.path.length - 1].name : S.client.name);
+            $('vDrop').classList.add('show');
+        }
     });
     window.addEventListener('dragover', function (e) { if (hasFiles(e)) { e.preventDefault(); e.dataTransfer.dropEffect = canDrop() ? 'copy' : 'none'; } });
     window.addEventListener('dragleave', function (e) { if (!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $('vDrop').classList.remove('show'); });
@@ -712,15 +719,16 @@
         if (!hasFiles(e)) return;
         e.preventDefault();
         dragDepth = 0; $('vDrop').classList.remove('show');
-        if (!canDrop()) { if (S.view === 'files' && !S.client) toast('Open a client folder first, then drop the files.', true); return; }
+        if (!canDrop()) return;
+        var send = S.client ? enqueue : homeUpload;
         var items = e.dataTransfer.items;
         var entries = [];
         if (items && items.length && items[0].webkitGetAsEntry) {
             for (var i = 0; i < items.length; i++) { var en = items[i].webkitGetAsEntry && items[i].webkitGetAsEntry(); if (en) entries.push(en); }
         }
-        if (!entries.length) { enqueue(Array.prototype.map.call(e.dataTransfer.files, function (f) { return { file: f, dirs: [] }; })); return; }
+        if (!entries.length) { send(Array.prototype.map.call(e.dataTransfer.files, function (f) { return { file: f, dirs: [] }; })); return; }
         var out = [];
-        Promise.all(entries.map(function (en) { return walk(en, [], out); })).then(function () { enqueue(out); })
+        Promise.all(entries.map(function (en) { return walk(en, [], out); })).then(function () { send(out); })
             .catch(function () { toast('Could not read the dropped folder. Try “Upload folder”.', true); });
     });
     function walk(entry, dirs, out) {
@@ -737,19 +745,152 @@
         });
     }
 
-    function enqueue(list) {
-        list = list.filter(function (x) { return x.file && !/^(\.DS_Store|Thumbs\.db|desktop\.ini)$/i.test(x.file.name); });
+    function junk(x) { return !x.file || /^(\.DS_Store|Thumbs\.db|desktop\.ini)$/i.test(x.file.name) || /^~\$/.test(x.file.name); }
+    /* target: { client, baseId } — when not given, the folder that is open */
+    function enqueue(list, target) {
+        list = list.filter(function (x) { return !junk(x); });
         if (!list.length) return;
-        var c = S.client, base = currentFolderId(), folders = {};
+        var c = target ? target.client : S.client, base = target ? target.baseId : currentFolderId(), folders = {};
+        var where = target ? target.client.name : (S.path.length ? S.path[S.path.length - 1].name : c.name);
         var batch = { listing: {}, policy: null, size: list.length };          // shared by the files of this upload
         list.forEach(function (x) {
-            var job = { id: ++upSeq, file: x.file, name: x.file.name, size: x.file.size, client: c, baseId: base, dirs: x.dirs,
+            var job = { id: ++upSeq, file: x.file, name: x.file.name, size: x.file.size, client: c, baseId: base, dirs: x.dirs, where: where,
                 folderCache: folders, batch: batch, state: 'wait', sent: 0, msg: '' };
             queue.push(job);
         });
         $('vTray').hidden = false;
         renderTray();
         pump();
+    }
+
+    /* ---------------------------------------------------------------
+       Uploading from the client list.
+       Each folder becomes a client folder (or goes into the client with that name).
+       Loose files go to a client you choose.
+       --------------------------------------------------------------- */
+    function homeUpload(list) {
+        list = list.filter(function (x) { return !junk(x); });
+        if (!list.length) return;
+        var loose = list.filter(function (x) { return !x.dirs.length; });
+        var inFolders = list.filter(function (x) { return x.dirs.length; });
+        var next = function () { if (loose.length) return chooseClientFor(loose); };
+        if (!inFolders.length) return next();
+        var tops = {};
+        inFolders.forEach(function (x) { tops[x.dirs[0]] = 1; });
+        var names = Object.keys(tops);
+        // One folder picked that only holds folders (e.g. the whole "Clients" folder): ask what it is
+        var single = names.length === 1 && inFolders.every(function (x) { return x.dirs.length > 1; });
+        var inner = {};
+        if (single) inFolders.forEach(function (x) { inner[x.dirs[1]] = 1; });
+        var ask = single && Object.keys(inner).length > 1 ? askParentFolder(names[0], Object.keys(inner).length) : Promise.resolve('one');
+        return ask.then(function (how) {
+            if (!how) return;
+            var depth = how === 'each' ? 1 : 0;
+            var groups = {}, order = [];
+            inFolders.forEach(function (x) {
+                var key = x.dirs[depth].trim();
+                var k = key.toLowerCase();
+                if (!groups[k]) { groups[k] = { name: key, files: [], bytes: 0 }; order.push(k); }
+                groups[k].files.push({ file: x.file, dirs: x.dirs.slice(depth + 1) });
+                groups[k].bytes += x.file.size;
+            });
+            return planFolders(order.map(function (k) { return groups[k]; }));
+        }).then(next);
+    }
+
+    function askParentFolder(name, count) {
+        var body = el('<div><p>The folder <strong>' + esc(name) + '</strong> holds ' + count + ' folders and no files of its own. How should it be added?</p>' +
+            '<label class="v-check"><input type="radio" name="vParentHow" value="each" checked> Each folder inside it is a client (' + count + ' client folders)</label>' +
+            '<label class="v-check"><input type="radio" name="vParentHow" value="one"> “' + esc(name) + '” is one client</label></div>');
+        return modal({ title: 'Add these folders', body: body, actions: [
+            { label: 'Cancel', cls: 'v-btn--ghost', value: null },
+            { label: 'Continue', id: 'vParentGo', value: function () { return body.querySelector('input[name=vParentHow]:checked').value; } }
+        ] });
+    }
+
+    function planFolders(groups) {
+        var byName = {}, office = officeSpace();
+        S.clients.forEach(function (c) { if (c.kind !== 'office') byName[c.name.trim().toLowerCase()] = c; });
+        groups.forEach(function (g) {
+            var k = g.name.toLowerCase();
+            g.client = k === 'office data' ? (office || null) : (byName[k] || null);
+            g.office = k === 'office data';
+            g.blocked = g.client && g.client.status === 'moving' ? 'being moved to another drive; try after the move' :
+                g.client && g.client.status === 'missing' ? 'not found on its drive; rescan drives first' : '';
+        });
+        var adds = groups.filter(function (g) { return !g.client && !g.blocked; }).length;
+        var into = groups.filter(function (g) { return g.client && !g.blocked; }).length;
+        var total = groups.reduce(function (a, g) { return a + (g.blocked ? 0 : g.bytes); }, 0);
+        var nd = nextDrive();
+        var rows = groups.map(function (g) {
+            var what = g.blocked ? '<span class="v-badge warn">Not uploaded</span> <span class="v-muted v-small">' + esc(g.blocked) + '</span>' :
+                g.client ? '<span class="v-badge">Existing</span> <span class="v-muted v-small">added into it on ' + esc(driveLabel(g.client.driveId)) + '</span>' :
+                    '<span class="v-badge ok">New ' + (g.office ? 'office space' : 'client') + '</span>';
+            return '<tr><td><i class="fas fa-folder" style="color:var(--gold);margin-right:.4rem"></i>' + esc(g.name) + '</td><td class="num">' +
+                g.files.length.toLocaleString('en-IN') + ' file' + (g.files.length === 1 ? '' : 's') + '</td><td class="num">' + bytes(g.bytes) + '</td><td>' + what + '</td></tr>';
+        }).join('');
+        var body = '<p>' + (adds ? adds + ' new client folder' + (adds === 1 ? '' : 's') + ' will be created' : '') + (adds && into ? ', and ' : '') +
+            (into ? into + ' existing client folder' + (into === 1 ? '' : 's') + ' will get the new files' : '') + ' (' + bytes(total) + ').</p>' +
+            '<div class="v-plan-wrap"><table class="v-plan-table"><thead><tr><th>Folder</th><th class="num">Files</th><th class="num">Size</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+            '<p class="v-small v-muted">' + (adds ? 'New clients go to ' + (nd ? '<strong>' + esc(nd.label) + '</strong> first (the first drive below ' + S.settings.threshold + '%), then the next drive with room. ' : 'the first drive with room. ') : '') +
+            (into ? 'A file that already exists in a client asks you to Replace, Keep both or Skip. Nothing is deleted.' : 'Nothing is deleted.') + '</p>';
+        if (!adds && !into) return modal({ title: 'Nothing can be uploaded', body: body, wide: true, actions: [{ label: 'Close', value: true }] });
+        return modal({ title: 'Upload ' + groups.length + ' folder' + (groups.length === 1 ? '' : 's') + ' to the vault?', body: body, wide: true, actions: [
+            { label: 'Cancel', cls: 'v-btn--ghost', value: false },
+            { label: '<i class="fas fa-cloud-arrow-up"></i> Upload', id: 'vHomeUpGo', value: true }
+        ] }).then(function (go) {
+            if (!go) return;
+            var pending = {}, made = 0, failed = [];
+            return groups.filter(function (g) { return !g.blocked; }).reduce(function (p, g) {
+                return p.then(function () {
+                    if (g.client) return g.client;
+                    return api(g.office ? 'createOffice' : 'createClient', { name: g.name, sizeHint: g.bytes, pending: pending }).then(function (r) {
+                        if (!r.existed) S.clients.push(r.client);
+                        made++;
+                        return r.client;
+                    });
+                }).then(function (c) {
+                    pending[c.driveId] = (pending[c.driveId] || 0) + g.bytes;
+                    enqueue(g.files, { client: c, baseId: c.folderId });
+                }).catch(function (err) { failed.push(g.name + ': ' + err.message); });
+            }, Promise.resolve()).then(function () {
+                if (made) loadOverview().catch(function () {});
+                if (failed.length) toast('Not uploaded — ' + failed.join(' · '), true);
+                render();
+            });
+        });
+    }
+
+    function chooseClientFor(files) {
+        var size = files.reduce(function (a, x) { return a + x.file.size; }, 0);
+        var list = clientsOnly().filter(function (c) { return c.status === 'ok'; }).sort(byName);
+        var office = officeSpace();
+        var opts = '<option value="">Choose a client…</option>' +
+            (office && office.status === 'ok' ? '<option value="' + esc(office.id) + '">Office data</option>' : '') +
+            '<optgroup label="Clients">' + list.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>'; }).join('') + '</optgroup>' +
+            '<option value="+new">+ New client…</option>';
+        var body = el('<div><p>' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' (' + bytes(size) + ') will go into the main folder of the client you choose.</p>' +
+            '<label class="v-label" for="vUpTo">Client</label><select class="v-input" id="vUpTo">' + opts + '</select>' +
+            '<div id="vUpNewWrap" hidden><label class="v-label" for="vUpNew">New client name</label><input class="v-input" id="vUpNew" autocomplete="off"></div>' +
+            '<p class="v-small v-muted">To put them in a sub-folder, open the client and upload there instead.</p></div>');
+        var sel = body.querySelector('#vUpTo'), nw = body.querySelector('#vUpNew');
+        sel.onchange = function () { body.querySelector('#vUpNewWrap').hidden = sel.value !== '+new'; if (sel.value === '+new') nw.focus(); };
+        return modal({ title: 'Upload to which client?', body: body, actions: [
+            { label: 'Cancel', cls: 'v-btn--ghost', value: null },
+            { label: '<i class="fas fa-cloud-arrow-up"></i> Upload', id: 'vUpToGo', value: function () { return sel.value === '+new' ? { name: nw.value.trim() } : { id: sel.value }; },
+                onClick: function () {
+                    if (!sel.value) { sel.focus(); toast('Choose a client.', true); return false; }
+                    if (sel.value === '+new' && !nw.value.trim()) { nw.focus(); toast('Type the new client’s name.', true); return false; }
+                } }
+        ] }).then(function (pick) {
+            if (!pick) return;
+            var get = pick.id ? Promise.resolve(S.clients.filter(function (c) { return c.id === pick.id; })[0]) :
+                api('createClient', { name: pick.name, sizeHint: size }).then(function (r) {
+                    S.clients.push(r.client); toast('“' + r.client.name + '” created on ' + r.drive + '.'); loadOverview().catch(function () {}); return r.client;
+                });
+            return get.then(function (c) { enqueue(files, { client: c, baseId: c.folderId }); render(); })
+                .catch(function (err) { toast(err.message, true); });
+        });
     }
 
     function pump() {
@@ -806,7 +947,7 @@
             if (job.batch.policy) return job.batch.policy;
             var more = job.batch.size > 1;
             var body = el('<div><p>A file named <strong>' + esc(existing.name) + '</strong> is already in <strong>' +
-                esc(job.dirs.length ? job.dirs[job.dirs.length - 1] : (S.path.length ? S.path[S.path.length - 1].name : job.client.name)) + '</strong>' +
+                esc(job.dirs.length ? job.dirs[job.dirs.length - 1] : job.where) + '</strong>' +
                 ' (' + bytes(existing.size) + ', changed ' + date(existing.modified) + ').</p>' +
                 '<p class="v-small v-muted"><strong>Replace</strong> updates that file with your new version. Nothing is lost: Google Drive keeps the previous version ' +
                 'in its version history, and the next server backup keeps the old server copy in “SA Vault - replaced files”.</p>' +
@@ -976,6 +1117,7 @@
         if (failed) toast(failed + ' file' + (failed === 1 ? '' : 's') + ' could not be uploaded. See the list for the reason.', true);
         else toast('Upload complete.');
         if (S.view === 'files' && S.client) { renderFiles(); loadItems(); }
+        else if (S.view === 'files') renderFiles();
         loadOverview().catch(function () {});
     }
 

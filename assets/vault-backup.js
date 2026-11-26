@@ -483,9 +483,10 @@
         noclient: 'Skipped: folders in the vault not linked to a client yet',
         drive: 'Drives that could not be reached (their files were not checked)',
         removed: 'Moved to the vault trash (not on the server)',
-        cleaned: 'Deleted for good from “' + REPLACED + '”'
+        cleaned: 'Deleted for good from “' + REPLACED + '”',
+        unreadable: 'Could not be read on the server (skipped, nothing changed)'
     };
-    var ALERT = /folder|conflict|differs|failed|drive/;
+    var ALERT = /folder|conflict|differs|failed|drive|unreadable/;
 
     var lastPaint = 0;
     function paint(force) {
@@ -652,7 +653,7 @@
                 var e = rec.files[id];
                 if (++n % 50 === 0) { run.current = n + ' of ' + keys.length + ' checked'; paint(); }
                 if (e.g) return;
-                if (!(await disk.stat(e.p))) e.missing = 1;
+                try { if (!(await disk.stat(e.p))) e.missing = 1; } catch (err) { /* could not check this one; leave it as it is */ }
             });
             run.current = '';
         }
@@ -689,6 +690,15 @@
             return true;
         });
         await pool(toCheck, 4, async function (f) {
+          try { await compareOne(f); }
+          catch (err) {
+            if (err.stopped) throw err;
+            run.failed++;
+            rec.failed[f.id] = { p: f.path, e: err.message, t: nowIso() };
+            issue(run, 'failed', k, f.path, 'Could not check the server copy: ' + err.message);
+          }
+        });
+        async function compareOne(f) {
             if (++checked % 20 === 0) { run.current = checked + ' of ' + toCheck.length + ' compared'; paint(); }
             var e = rec.files[f.id];
             if (e && e.m === f.fp && lower(e.p) !== lower(f.path) && !e.missing) {      // renamed or moved in the vault, same content
@@ -714,7 +724,7 @@
             if (!f.native && f.md5 && local.size === f.size && (await md5OfFile(local)) === f.md5) { adopt(rec, f, local); run.same++; return; }
             issue(run, 'differs', k, f.path, 'The server already has a different file with this name. It was kept. Rename one of them, or use “Copy server to vault” if the server copy is the right one.');
             logRow(run, k, 'Not copied (different file on server)', f.path, f.size);
-        });
+        }
         run.current = '';
 
         // Copy
@@ -849,16 +859,33 @@
        UP: office server -> vault
        --------------------------------------------------------------- */
     async function readServer(sc, run) {
-        var out = { groups: [], loose: [] }, count = 0;
+        // The chosen folder itself cannot be read (drive letter disconnected, folder moved or renamed): stop with a clear message.
+        var topErr = function (err) {
+            return new Error('The ' + sc.label + ' folder (“' + sc.disk.root.name + '”) could not be opened. Check that the server is connected and the folder still exists, then press “Change” next to it and choose it again. (' + (err && err.message || err) + ')');
+        };
+        var out = { groups: [], loose: [], unreadable: [] }, count = 0;
+        var head = function (g) { return sc.key === 'clients' ? [g.name] : []; };
+        // A file or folder the browser cannot open is listed and skipped; the scan carries on.
         var walk = async function (dir, parts, g) {
-            for await (var e of dir.values()) {
-                if (B.stop) throw stopErr();
-                if (e.kind === 'directory') { if (!SKIP_DIR.test(e.name)) await walk(e, parts.concat(e.name), g); continue; }
-                if (SKIP_FILE.test(e.name)) continue;
-                var file = await e.getFile();
-                g.files.push({ parts: parts.concat(e.name), file: file });
-                g.bytes += file.size;
-                if (++count % 25 === 0) { run.current = count + ' files found'; paint(); }
+            try {
+                for await (var e of dir.values()) {
+                    if (B.stop) throw stopErr();
+                    try {
+                        if (e.kind === 'directory') { if (!SKIP_DIR.test(e.name)) await walk(e, parts.concat(e.name), g); continue; }
+                        if (SKIP_FILE.test(e.name)) continue;
+                        var file = await e.getFile();
+                        g.files.push({ parts: parts.concat(e.name), file: file });
+                        g.bytes += file.size;
+                        if (++count % 25 === 0) { run.current = count + ' files found'; paint(); }
+                    } catch (err) {
+                        if (err.stopped) throw err;
+                        out.unreadable.push({ path: head(g).concat(parts, e.name).join('/'), error: err });
+                    }
+                }
+            } catch (err) {
+                if (err.stopped) throw err;
+                if (dir === sc.disk.root) throw topErr(err);
+                out.unreadable.push({ path: head(g).concat(parts).join('/') + '/ (folder)', error: err });
             }
         };
         if (sc.key === 'office') {
@@ -866,16 +893,32 @@
             await walk(sc.disk.root, [], g);
             out.groups.push(g);
         } else {
-            for await (var entry of sc.disk.root.values()) {
-                if (entry.kind === 'file') { if (!SKIP_FILE.test(entry.name)) out.loose.push(entry.name); continue; }
-                if (SKIP_DIR.test(entry.name)) continue;
-                out.groups.push({ name: entry.name, handle: entry, files: [], bytes: 0 });
-            }
+            try {
+                for await (var entry of sc.disk.root.values()) {
+                    if (B.stop) throw stopErr();
+                    if (entry.kind === 'file') { if (!SKIP_FILE.test(entry.name)) out.loose.push(entry.name); continue; }
+                    if (SKIP_DIR.test(entry.name)) continue;
+                    out.groups.push({ name: entry.name, handle: entry, files: [], bytes: 0 });
+                }
+            } catch (err) { if (err.stopped) throw err; throw topErr(err); }
             out.groups.sort(function (a, b) { return a.name.localeCompare(b.name, 'en', { numeric: true, sensitivity: 'base' }); });
             for (var i = 0; i < out.groups.length; i++) await walk(out.groups[i].handle, [], out.groups[i]);
         }
+        if (out.unreadable.length) {
+            out.unreadable.forEach(function (u) { u.note = unreadableNote(u.path, u.error); });
+        }
         run.current = '';
         return out;
+    }
+
+    function unreadableNote(path, err) {
+        var why = err && err.name === 'NotFoundError' ? 'The browser could not find it while reading.' :
+            err && err.name === 'NotReadableError' ? 'The file is open or locked by another program.' :
+                err && err.name === 'SecurityError' ? 'The browser does not allow this kind of file to be opened.' : 'It could not be opened (' + (err && err.message || 'unknown reason') + ').';
+        var hint = path.length > 180 ? ' Its path is very long (' + path.length + ' characters, plus the server folder’s own path; Windows struggles past about 250): shorten the folder or file names.' :
+            /[ .]$/.test(path.split('/').pop()) ? ' Its name ends with a space or a dot, which Windows does not handle well: rename it.' :
+                ' Common causes: a very long path, a name ending with a space or a dot, or the file being moved or open while the scan ran.';
+        return why + hint;
     }
 
     function startUp(opts) {
@@ -919,6 +962,9 @@
             rec.upFailed = rec.upFailed || {};
             var server = await readServer(sc, run);
             if (!opts.only) server.loose.forEach(function (n) { issue(run, 'loose', k, n); });
+            server.unreadable.forEach(function (u) { issue(run, 'unreadable', k, u.path, u.note); });
+            plan.unreadable = (plan.unreadable || 0) + server.unreadable.length;
+            var partialRead = server.unreadable.length > 0;
             var recByPath = {};
             Object.keys(rec.files).forEach(function (id) { recByPath[lower(rec.files[id].p)] = id; });
             var clientByName = {};
@@ -969,7 +1015,8 @@
                 if (!c) plan.newClients++;
                 plan.pcs.push(pc);
             });
-            if (!only) {
+            if (partialRead) plan.mirrorOff = true;
+            if (!only && !partialRead) {
                 var names = {};
                 server.groups.forEach(function (g) { names[lower(g.name.trim())] = 1; });
                 plan.pcs.filter(function (pc) { return pc.scope === k && pc.client; }).forEach(function (pc) {
@@ -983,7 +1030,15 @@
             run.phase = 'Comparing ' + hashList.length + ' files with the vault…';
             var n = 0;
             await pool(hashList, 3, async function (it) {
-                var h = await md5OfFile(it.file);
+                var h;
+                try { h = await md5OfFile(it.file); }
+                catch (err) {
+                    if (err.stopped) throw err;
+                    it.how = 'unreadable';
+                    plan.unreadable = (plan.unreadable || 0) + 1;
+                    issue(run, 'unreadable', it.scope, it.localPath, unreadableNote(it.localPath, err));
+                    return;
+                }
                 it.how = h === it.cloud.md5 ? 'same' : 'replace';
                 it.md5 = h;
                 if (++n % 10 === 0) { run.current = n + ' of ' + hashList.length + ' compared'; paint(); }
@@ -999,6 +1054,7 @@
         });
         plan.free = S.drives.filter(function (d) { return d.status === 'active'; })
             .reduce(function (a, d) { return a + Math.max(0, d.limit - d.used - (300 * 1048576)); }, 0);
+        plan.folderIssues = run.issues.filter(function (i) { return i.group === 'folder'; }).map(function (i) { return i.path + ': ' + i.note; });
         run.phase = 'Waiting for you to confirm…'; paint(true);
         return plan;
     }
@@ -1020,6 +1076,11 @@
             line(plan.same, '{file is|files are} already the same (skipped)') +
             (plan.vaultNewer ? line(plan.vaultNewer, '{file is|files are} newer in the vault', '(the next backup brings them to the server)') : '') +
             (plan.keptDeleted ? line(plan.keptDeleted, '{file was|files were} deleted or renamed in the vault and only kept on the server', '(not copied back)') : '') + '</ul>' +
+            (plan.folderIssues && plan.folderIssues.length ? '<p class="v-bk-warn"><i class="fas fa-triangle-exclamation"></i> Not included this time: ' +
+                plan.folderIssues.map(esc).join('; ') + '</p>' : '') +
+            (plan.unreadable ? '<p class="v-bk-warn"><i class="fas fa-triangle-exclamation"></i> ' + plan.unreadable + ' item' + (plan.unreadable === 1 ? '' : 's') +
+                ' on the server could not be read and will be skipped. They are listed with the reason after this run. Fix them (usually by shortening or renaming) and run this again.' +
+                (plan.mirrorOff ? ' Because of this, “make the vault match the server” is not offered this time, so nothing in the vault is removed by mistake.' : '') + '</p>' : '') +
             (plan.conflicts.length ? '<div class="v-bk-mirror"><label class="v-check"><input type="checkbox" id="bkUseServer"> Use the server copy for ' + plan.conflicts.length +
                 ' file(s) changed in both places</label><p class="v-small v-muted">' + plan.conflicts.slice(0, 5).map(function (it) { return esc(where(it.scope, it.localPath)); }).join('<br>') +
                 (plan.conflicts.length > 5 ? '<br>…' : '') + '<br>If you leave this unticked, both copies stay as they are. If ticked, the vault keeps its version in Google Drive’s version history.</p></div>' : '') +
@@ -1037,8 +1098,8 @@
         var mirror = body.querySelector('#bkMirror');
         var useServer = body.querySelector('#bkUseServer');
         if (mirror) mirror.onchange = function () { body.querySelector('#bkMirrorConfirm').hidden = !mirror.checked; };
-        if (!plan.upload && !plan.replace && !plan.conflicts.length && !(plan.removeFiles.length || plan.removeClients.length)) {
-            return X.modal({ title: 'The vault already matches the server', body: body, actions: [{ label: 'Close', value: true }] })
+        if (!plan.upload && !plan.replace && !plan.conflicts.length && !plan.unreadable && !(plan.removeFiles.length || plan.removeClients.length)) {
+            return X.modal({ title: plan.folderIssues && plan.folderIssues.length ? 'Nothing to copy from the folders that could be read' : 'The vault already matches the server', body: body, actions: [{ label: 'Close', value: true }] })
                 .then(function () { return { mirror: false, nothing: true }; });
         }
         return X.modal({ title: plan.retry ? 'Retry the failed copies to the vault?' : 'Copy the office server to the vault?', body: body, wide: true, actions: [
