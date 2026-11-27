@@ -1164,7 +1164,7 @@
                     var kk = key;
                     p = p.then(function (pid) {
                         if (!folders[kk]) {
-                            folders[kk] = X.api('createFolder', { clientId: c.id, parentId: pid, name: name, reuse: true }).then(function (r) { return r.id; });
+                            folders[kk] = X.makeFolder(c, pid, name, true).then(function (r) { return r.id; });
                             folders[kk].catch(function () { delete folders[kk]; });
                         }
                         return folders[kk];
@@ -1172,14 +1172,14 @@
                 });
                 return p;
             };
-            await pool(items, PARALLEL, async function (it) {
+            await pool(items, X.direct(c) ? X.UPLOAD_JOBS : PARALLEL, async function (it) {
                 run.current = where(pc.scope, it.localPath); paint();
-                var base = run.bytesDone;
+                var sentNow = 0;      // several files upload at once: each adds only its own progress
                 try {
                     var fid = await folderOf(it.parts.slice(0, -1));
                     var r = await X.uploadOne({ client: c, folderId: fid, file: it.file, name: it.parts[it.parts.length - 1],
                         fileId: it.how === 'replace' ? it.cloud.id : '', oldSize: it.how === 'replace' ? it.cloud.size : 0,
-                        onProgress: function (sent) { run.bytesDone = base + sent; paint(); } });
+                        onProgress: function (sent) { run.bytesDone += sent - sentNow; sentNow = sent; paint(); } });
                     if (!r.md5) r.md5 = it.md5 || await md5OfFile(it.file);
                     record(pc, it, r);
                     pending[c.driveId] = (pending[c.driveId] || 0) + (it.file.size - (it.how === 'replace' ? it.cloud.size : 0));
@@ -1189,7 +1189,7 @@
                     if (err.stopped) throw err;
                     fail(pc, it, err.message);
                 }
-                run.bytesDone = base + it.file.size;
+                run.bytesDone += it.file.size - sentNow;
                 run.done++;
                 paint();
                 if (Date.now() - lastSave > SAVE_EVERY) { lastSave = Date.now(); await saveRecord(new Disk(B.f[pc.scope].h), pc.rec); }
@@ -1215,6 +1215,7 @@
             }
         }
         run.phase = 'Saving the backup records…'; paint(true);
+        await X.flushSizes();
         var done = {};
         for (var p = 0; p < plan.pcs.length; p++) {
             var s = plan.pcs[p].scope;

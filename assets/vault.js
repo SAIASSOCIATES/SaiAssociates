@@ -8,7 +8,8 @@
     var CFG = window.VAULT_CONFIG || {};
     var CHUNK = 8 * 1024 * 1024;              // resumable upload piece (multiple of 256 KB)
     var SMALL_LIMIT = 20 * 1024 * 1024;       // fallback path limit
-    var PARALLEL = 2;
+    var PARALLEL = 8;                         // files being prepared/uploaded at once
+    var PUT_SLOTS = 4;                        // of those, how many send their bytes at the same time
     var KEY = 'saVault.session';
 
     var $ = function (id) { return document.getElementById(id); };
@@ -18,7 +19,7 @@
         client: null, path: [], items: [], itemsFor: '',
         fileSort: 'name', search: '',
         cSort: { key: 'size', dir: -1 }, cSearch: '', cDrive: '', selected: {}, fsel: {}, backup: { down: null, up: null },
-        busy: 0
+        busy: 0, passes: {}
     };
 
     /* ---------------------------------------------------------------
@@ -93,6 +94,8 @@
        --------------------------------------------------------------- */
     function configured() { return !!CFG.api && /^https?:\/\//.test(CFG.api); }
 
+    var LIMIT_MSG = 'Google’s daily limit for this account is used up. It resets within 24 hours; nothing is lost. Opening folders still works.';
+    function friendly(msg) { return /too many times for one day|Service invoked too many/i.test(msg || '') ? LIMIT_MSG : msg; }
     function api(action, params) {
         var body = Object.assign({ action: action, token: S.token }, params || {});
         var call = window.VAULT_MOCK ? Promise.resolve(window.VAULT_MOCK(body)) :
@@ -104,13 +107,113 @@
         return call.then(function (res) {
             if (!res || !res.ok) {
                 if (res && res.code === 'AUTH') { endSession(res.error); }
-                var e = new Error((res && res.error) || 'Something went wrong.');
+                var e = new Error(friendly((res && res.error) || 'Something went wrong.'));
                 e.code = res && res.code;
                 throw e;
             }
             return res;
         });
     }
+
+    /* ---------------------------------------------------------------
+       Straight to a drive's agent (one hop instead of two), with a short-lived pass from the master.
+       Used when the drive runs the new agent (version 4); older agents go through the master as before.
+       --------------------------------------------------------------- */
+    function direct(c) { var d = driveOf(c.driveId); return !!(d && Number(d.v) >= 4 && d.online !== false); }
+    function passFor(driveId, fresh) {
+        var p = S.passes[driveId];
+        if (!fresh && p && p.expires - Date.now() > 5 * 60 * 1000) return Promise.resolve(p);
+        return api('downloadTicket', { driveId: driveId }).then(function (r) { S.passes[driveId] = r; return r; });
+    }
+    function agentApi(driveId, action, params, again) {
+        return passFor(driveId, again).then(function (p) {
+            var body = Object.assign({ action: action, ticket: p.ticket }, params || {});
+            var call = window.VAULT_MOCK_AGENT ? Promise.resolve(window.VAULT_MOCK_AGENT(p.agentUrl, body)) :
+                fetch(p.agentUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' })
+                    .then(function (r) {
+                        if (!r.ok) throw new Error(driveLabel(driveId) + ' answered with an error (' + r.status + '). Please try again.');
+                        return r.json();
+                    }, function () { throw new Error('Could not reach ' + driveLabel(driveId) + '. Check your internet connection.'); });
+            return call.then(function (res) {
+                if (res && res.ok) return res;
+                if (res && res.error === 'TICKET_EXPIRED' && !again) return agentApi(driveId, action, params, true);
+                var e = new Error((res && res.error) === 'NO_SPACE' ? 'NO_SPACE' : driveLabel(driveId) + ': ' + friendly((res && res.error) || 'Something went wrong.'));
+                throw e;
+            });
+        });
+    }
+    function listFolder(c, folderId) {
+        if (!direct(c)) return api('list', { clientId: c.id, folderId: folderId }).then(function (r) { return r.items; });
+        return agentApi(c.driveId, 'list', { withinId: c.folderId, folderId: folderId || c.folderId }).then(function (r) { return r.items; });
+    }
+    function makeFolder(c, parentId, name, reuse) {
+        if (c.status === 'moving') return Promise.reject(new Error('"' + c.name + '" is being moved to another drive. Try again after the move finishes.'));
+        if (!direct(c)) return api('createFolder', { clientId: c.id, parentId: parentId, name: name, reuse: !!reuse });
+        return agentApi(c.driveId, 'createFolder', { withinId: c.folderId, parentId: parentId || c.folderId, name: name, reuse: !!reuse });
+    }
+
+    /* Upload sessions are asked for in batches: files that start around the same time share one call. */
+    var sessQ = {};
+    function sessionFor(c, spec) {
+        if (c.status === 'moving') return Promise.reject(new Error('"' + c.name + '" is being moved to another drive. Upload after the move finishes.'));
+        return new Promise(function (resolve, reject) {
+            var q = sessQ[c.id] = sessQ[c.id] || { c: c, items: [], timer: 0 };
+            q.items.push({ spec: spec, resolve: resolve, reject: reject });
+            if (q.items.length >= 20) flushSessions(c.id);
+            else if (!q.timer) q.timer = setTimeout(function () { flushSessions(c.id); }, 80);
+        });
+    }
+    function flushSessions(cid) {
+        var q = sessQ[cid];
+        if (!q) return;
+        clearTimeout(q.timer); q.timer = 0;
+        var batch = q.items.splice(0, 20);
+        if (!batch.length) return;
+        if (q.items.length) q.timer = setTimeout(function () { flushSessions(cid); }, 0);
+        agentApi(q.c.driveId, 'uploadSessions', { withinId: q.c.folderId, origin: location.origin, items: batch.map(function (b) { return b.spec; }) })
+            .then(function (r) {
+                batch.forEach(function (b, i) {
+                    var one = (r.sessions || [])[i] || {};
+                    if (one.uploadUrl) b.resolve(one.uploadUrl); else b.reject(new Error(one.error || 'The upload could not start. Please try again.'));
+                });
+            }, function (err) {
+                var e = err.message === 'NO_SPACE' ? new Error(driveLabel(q.c.driveId) + ' is nearly full, so "' + q.c.name + '" cannot grow there. Move this client to another drive from the Storage page.') : err;
+                batch.forEach(function (b) { b.reject(e); });
+            });
+    }
+    /* Only a few files send their bytes at once; the rest get ready meanwhile. */
+    var freeSlots = PUT_SLOTS, slotWait = [];
+    function inSlot(fn) {
+        return new Promise(function (res) { if (freeSlots > 0) { freeSlots--; res(); } else slotWait.push(res); }).then(function () {
+            var done = function () { var n = slotWait.shift(); if (n) n(); else freeSlots++; };
+            return Promise.resolve().then(fn).then(function (v) { done(); return v; }, function (e) { done(); throw e; });
+        });
+    }
+    /* Client sizes: uploads straight to a drive are reported to the master in batches. */
+    var pendingSizes = {}, sizeTimer = 0;
+    function pendSize(c, bytes, files) {
+        var p = pendingSizes[c.id] = pendingSizes[c.id] || { clientId: c.id, bytes: 0, files: 0 };
+        p.bytes += Number(bytes) || 0; p.files += Number(files) || 0;
+        if (!sizeTimer) sizeTimer = setTimeout(flushSizes, 15000);
+    }
+    function flushSizes() {
+        clearTimeout(sizeTimer); sizeTimer = 0;
+        var items = Object.keys(pendingSizes).map(function (k) { return pendingSizes[k]; });
+        pendingSizes = {};
+        if (!items.length) return Promise.resolve();
+        return api('noteUploads', { items: items }).then(function () {}, function () {
+            items.forEach(function (it) {
+                var p = pendingSizes[it.clientId] = pendingSizes[it.clientId] || { clientId: it.clientId, bytes: 0, files: 0 };
+                p.bytes += it.bytes; p.files += it.files;
+            });
+            if (!sizeTimer) sizeTimer = setTimeout(flushSizes, 60000);
+        });
+    }
+    window.addEventListener('pagehide', function () {
+        var items = Object.keys(pendingSizes).map(function (k) { return pendingSizes[k]; });
+        if (!items.length || window.VAULT_MOCK || !navigator.sendBeacon || !CFG.api) return;
+        try { navigator.sendBeacon(CFG.api, new Blob([JSON.stringify({ action: 'noteUploads', token: S.token, items: items })], { type: 'text/plain' })); pendingSizes = {}; } catch (e) {}
+    });
 
     /* ---------------------------------------------------------------
        Modal
@@ -285,6 +388,7 @@
             S.drives = r.drives.sort(function (a, b) { return a.order - b.order; });
             S.settings = r.settings || S.settings;
             S.backup = r.backup || S.backup;
+            S.passes = r.passes || {};
             renderCapacity();
             if (window.SAVBackup) window.SAVBackup.onOverview();
         });
@@ -386,9 +490,9 @@
         var c = S.client, fid = currentFolderId();
         S.items = []; S.itemsFor = '';
         renderFilesBody(true);
-        return api('list', { clientId: c.id, folderId: fid }).then(function (r) {
+        return listFolder(c, fid).then(function (items) {
             if (!S.client || S.client.id !== c.id || currentFolderId() !== fid) return;
-            S.items = r.items; S.itemsFor = fid;
+            S.items = items; S.itemsFor = fid;
             renderFilesBody();
         }).catch(function (err) {
             if (currentFolderId() !== fid) return;
@@ -646,7 +750,7 @@
     function newFolder() {
         promptBox('New folder', 'Folder name', '', 'Create').then(function (name) {
             if (!name) return;
-            return api('createFolder', { clientId: S.client.id, parentId: currentFolderId(), name: name }).then(function () {
+            return makeFolder(S.client, currentFolderId(), name, false).then(function () {
                 toast('Folder created.'); loadItems();
             }).catch(function (err) { toast(err.message, true); });
         });
@@ -919,7 +1023,7 @@
             var k = key;
             parent = parent.then(function (pid) {
                 if (!job.folderCache[k]) {
-                    job.folderCache[k] = api('createFolder', { clientId: job.client.id, parentId: pid, name: name, reuse: true }).then(function (r) { return r.id; });
+                    job.folderCache[k] = makeFolder(job.client, pid, name, true).then(function (r) { return r.id; });
                     job.folderCache[k].catch(function () { delete job.folderCache[k]; });
                 }
                 return job.folderCache[k];
@@ -933,7 +1037,7 @@
         if (!batch.listing[folderId]) {
             batch.listing[folderId] = (S.client && S.client.id === client.id && S.itemsFor === folderId)
                 ? Promise.resolve(S.items.slice())
-                : api('list', { clientId: client.id, folderId: folderId }).then(function (r) { return r.items; });
+                : listFolder(client, folderId);
             batch.listing[folderId].catch(function () { delete batch.listing[folderId]; });
         }
         return batch.listing[folderId];
@@ -990,19 +1094,27 @@
     }
     function uploadNew(job) {
         var c = job.client, folderId = job.folderId;
+        if (job.size && direct(c)) {
+            return sessionFor(c, { folderId: folderId, name: job.name, size: job.size, mimeType: job.file.type || 'application/octet-stream' })
+                .then(function (url) { return inSlot(function () { return resumable(job, url); }); })
+                .then(function (f) { var size = Number(f.size) || job.size; bump(c, size); pendSize(c, size, 1); }, function (err) {
+                    if (err.network && job.sent === 0 && job.size <= SMALL_LIMIT) return small(job);   // browser blocked the direct path
+                    throw err;
+                });
+        }
         return Promise.resolve().then(function () {
             if (!job.size) return small(job);
             return api('startUpload', {
                 clientId: c.id, folderId: folderId, name: job.name, size: job.size,
                 mimeType: job.file.type || 'application/octet-stream', origin: location.origin
             }).then(function (r) {
-                return resumable(job, r.uploadUrl).catch(function (err) {
+                return inSlot(function () { return resumable(job, r.uploadUrl); }).catch(function (err) {
                     if (err.network && job.sent === 0 && job.size <= SMALL_LIMIT) return small(job);   // browser blocked the direct path
                     throw err;
                 });
-            }).then(function (fileId) {
-                if (!fileId) return;
-                return api('finishUpload', { clientId: c.id, fileId: fileId }).then(function (r) {
+            }).then(function (f) {
+                if (!f) return;
+                return api('finishUpload', { clientId: c.id, fileId: f.id }).then(function (r) {
                     bump(c, r.item ? r.item.size : job.size);
                 });
             });
@@ -1024,7 +1136,7 @@
         }).then(function () { job.sent = job.size; bump(job.client, job.size); return null; });
     }
 
-    /* Sends the file straight to Google in pieces. Resolves with the new file id. */
+    /* Sends the file straight to Google in pieces. Resolves with Google's answer: { id, size, md5Checksum, ... }. */
     function resumable(job, url) {
         var size = job.size, tries = 0;
         function put(start) {
@@ -1058,7 +1170,7 @@
         return m ? Number(m[1]) + 1 : (r === null && fallback !== undefined ? fallback : 0);
     }
     function idFrom(x) {
-        try { var j = JSON.parse(x.responseText); if (j.id) return j.id; } catch (e) {}
+        try { var j = JSON.parse(x.responseText); if (j.id) return j; } catch (e) {}
         throw new Error('Upload finished but Google did not return the file. Refresh to check.');
     }
     function xhrPut(url, blob, range, onProgress) {
@@ -1114,6 +1226,7 @@
     });
     function uploadsFinished() {
         var failed = queue.filter(function (j) { return j.state === 'err'; }).length;
+        flushSizes();
         if (failed) toast(failed + ' file' + (failed === 1 ? '' : 's') + ' could not be uploaded. See the list for the reason.', true);
         else toast('Upload complete.');
         if (S.view === 'files' && S.client) { renderFiles(); loadItems(); }
@@ -1139,17 +1252,29 @@
             }).then(function (r) { job.sent = job.size; return { id: r.id, size: r.size, md5: r.md5 }; });
         };
         if (!job.size && !o.fileId) return viaScripts();
+        if (direct(c)) {
+            return sessionFor(c, { folderId: o.folderId, name: job.name, size: job.size, mimeType: mime, fileId: o.fileId || '' })
+                .then(function (url) { return inSlot(function () { return job.size ? resumable(job, url) : xhrPut(url, null, 'bytes */0').then(idFrom); }); })
+                .then(function (f) {
+                    var size = Number(f.size) || 0;
+                    pendSize(c, size - (o.fileId ? Number(o.oldSize) || 0 : 0), o.fileId ? 0 : 1);
+                    return { id: f.id, size: size, md5: f.md5Checksum || '' };
+                }, function (err) {
+                    if (err.network && !o.fileId && job.sent === 0 && job.size <= SMALL_LIMIT) return viaScripts();
+                    throw err;
+                });
+        }
         return api('startUpload', { clientId: c.id, folderId: o.folderId, fileId: o.fileId || '', name: job.name, size: job.size, mimeType: mime, origin: location.origin })
             .then(function (r) {
-                var send = job.size ? resumable(job, r.uploadUrl) : xhrPut(r.uploadUrl, null, 'bytes */0').then(idFrom);
+                var send = inSlot(function () { return job.size ? resumable(job, r.uploadUrl) : xhrPut(r.uploadUrl, null, 'bytes */0').then(idFrom); });
                 return send.catch(function (err) {
                     if (err.network && !o.fileId && job.sent === 0 && job.size <= SMALL_LIMIT) return null;   // fall back below
                     throw err;
                 });
             })
-            .then(function (fileId) {
-                if (!fileId) return viaScripts();
-                return api('finishUpload', { clientId: c.id, fileId: fileId, replaced: !!o.fileId, oldSize: o.oldSize || 0 })
+            .then(function (f) {
+                if (!f) return viaScripts();
+                return api('finishUpload', { clientId: c.id, fileId: f.id, replaced: !!o.fileId, oldSize: o.oldSize || 0 })
                     .then(function (r) { return { id: r.item.id, size: r.item.size, md5: r.item.md5 }; });
             });
     }
@@ -1540,44 +1665,77 @@
         api('rescan').then(function (r) {
             var msg = 'Rescan done: ' + r.added + ' new, ' + r.updated + ' updated, ' + r.missing + ' not found.';
             if (r.offline && r.offline.length) msg += ' Not reachable: ' + r.offline.join(', ') + '.';
-            toast(msg, !!(r.offline && r.offline.length));
-            return refreshAll();
+            return refreshAll().then(function () { return countSizes(msg); });
         }).catch(function (err) { toast(err.message, true); }).then(function () { spin(b, false); });
     });
 
-    $('vSizes').addEventListener('click', function () {
-        var list = S.clients.filter(function (c) { return c.status === 'ok'; });
-        if (!list.length) return;
-        var stop = false, done = 0, failed = 0;
-        var body = el('<div><p>Counting the real size of each client folder. This takes a few seconds per folder.</p>' +
-            '<div class="v-meter" style="margin:1rem 0 .5rem"><span class="vault" id="vSzBar" style="width:0%"></span></div><p class="v-muted v-small" id="vSzText">Starting…</p></div>');
+    $('vSizes').addEventListener('click', function () { countSizes(''); });
+
+    /* Counts the real size of every client folder. With the new agent each drive is counted in one sweep
+       (seconds, a few calls); older agents are counted folder by folder through the master. */
+    function countSizes(intro) {
+        var drives = S.drives.filter(function (d) { return d.online !== false; });
+        if (!drives.length) { toast('No drive can be reached right now.', true); return Promise.resolve(); }
+        var rows = {}, stop = false, foreign = [];
+        var line = function (d, html) { rows[d.id] = html; paintRows(); };
+        var body = el('<div>' + (intro ? '<p>' + esc(intro) + '</p>' : '') + '<p>Counting the real size of each client folder.</p><ul class="v-check-list" id="vSzList"></ul><div id="vSzForeign"></div></div>');
+        function paintRows() {
+            var ul = body.querySelector('#vSzList');
+            if (ul) ul.innerHTML = drives.map(function (d) { return '<li>' + (rows[d.id] || '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': waiting…') + '</li>'; }).join('');
+        }
+        paintRows();
         S.busy++;
-        modal({ title: 'Recalculating sizes', body: body, locked: true, actions: [
+        modal({ title: 'Counting sizes', body: body, locked: true, wide: true, actions: [
             { label: 'Stop', cls: 'v-btn--ghost', id: 'vSzStop', onClick: function (b) { stop = true; b.disabled = true; return false; } },
             { label: 'Close', id: 'vSzClose', value: true }
         ] });
         $('vSzClose').disabled = true;
-        var idx = 0;
-        function worker() {
-            if (stop || idx >= list.length) return Promise.resolve();
-            var c = list[idx++];
-            return api('refreshSize', { clientId: c.id }).then(function (r) { c.sizeBytes = r.sizeBytes; c.files = r.files; }, function () { failed++; })
-                .then(function () {
-                    done++;
-                    var bar = $('vSzBar'); if (bar) bar.style.width = (done / list.length * 100) + '%';
-                    var t = $('vSzText'); if (t) t.textContent = done + ' of ' + list.length + ' checked' + (failed ? ' · ' + failed + ' could not be read' : '');
-                    return worker();
-                });
-        }
-        Promise.all([worker(), worker(), worker()]).then(function () {
+        var one = function (d) {
+            if (stop) { line(d, '<i class="fas fa-minus"></i> ' + esc(d.label) + ': stopped'); return Promise.resolve(); }
+            line(d, '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': counting…');
+            if (Number(d.v) >= 4) {
+                return agentApi(d.id, 'sizes', {}).then(function (r) {
+                    return api('saveSizes', { driveId: d.id, sizes: r.sizes }).then(function (sv) {
+                        if (r.foreign && r.foreign.files) foreign.push({ d: d, f: r.foreign });
+                        line(d, '<i class="fas fa-check" style="color:var(--teal)"></i> ' + esc(d.label) + ': ' + sv.updated + ' client folder' + (sv.updated === 1 ? '' : 's') + ' counted');
+                    });
+                }).catch(function (err) { line(d, '<i class="fas fa-triangle-exclamation" style="color:#b7791f"></i> ' + esc(d.label) + ': ' + esc(err.message)); });
+            }
+            // older agent: one folder at a time through the master
+            var list = S.clients.filter(function (c) { return c.driveId === d.id && c.status === 'ok'; }), idx = 0, done = 0, failed = 0;
+            var worker = function () {
+                if (stop || idx >= list.length) return Promise.resolve();
+                var c = list[idx++];
+                return api('refreshSize', { clientId: c.id }).then(function (r) { c.sizeBytes = r.sizeBytes; c.files = r.files; }, function () { failed++; })
+                    .then(function () { done++; line(d, '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': ' + done + ' of ' + list.length + ' counted' + (failed ? ' · ' + failed + ' could not be read' : '')); return worker(); });
+            };
+            return Promise.all([worker(), worker(), worker()]).then(function () {
+                line(d, '<i class="fas fa-check" style="color:var(--teal)"></i> ' + esc(d.label) + ': ' + (done - failed) + ' client folders counted' + (failed ? ' · ' + failed + ' could not be read' : '') +
+                    ' <span class="v-muted v-small">(update this drive’s agent to count in one go)</span>');
+            });
+        };
+        return Promise.all(drives.map(one)).then(function () {
+            if (foreign.length) {
+                var box = body.querySelector('#vSzForeign');
+                box.innerHTML = foreign.map(function (x) {
+                    var owners = x.f.list.map(function (i) { return i.owner; }).filter(function (e, i, a) { return e && a.indexOf(e) === i; });
+                    return '<p class="v-bk-warn"><i class="fas fa-triangle-exclamation"></i> ' + x.f.files.toLocaleString('en-IN') + ' file' + (x.f.files === 1 ? '' : 's') +
+                        ' (' + bytes(x.f.bytes) + ') inside ' + esc(x.d.label) + (x.f.files === 1 ? ' belongs' : ' belong') + ' to another Google account (' + owners.map(esc).join(', ') + '), so ' +
+                        (x.f.files === 1 ? 'it uses' : 'they use') + ' that account’s storage, not ' + esc(x.d.label) + '’s. ' + (x.f.files === 1 ? 'It is' : 'They are') + ' still in the vault and in the backups. ' +
+                        'This happens when files are put into a drive’s “SA Vault” folder while signed in to a different account.</p>' +
+                        '<details><summary class="v-small">Show the files</summary><ul class="v-small">' + x.f.list.map(function (i) {
+                            return '<li>' + esc(i.client) + ' › ' + esc(i.name) + ' <span class="v-muted">(' + bytes(i.size) + ', ' + esc(i.owner) + ')</span></li>';
+                        }).join('') + (x.f.files > x.f.list.length ? '<li>…and ' + (x.f.files - x.f.list.length) + ' more</li>' : '') + '</ul></details>';
+                }).join('');
+            }
             S.busy--;
             modalLocked = false;
             $('vSzClose').disabled = false;
-            var s = $('vSzStop'); if (s) s.remove();
+            var st = $('vSzStop'); if (st) st.remove();
             $('vModalTitle').textContent = 'Sizes updated';
             return refreshAll();
         });
-    });
+    }
 
     $('vExport').addEventListener('click', function () {
         var rows = [['Name', 'Type', 'Drive', 'Drive account', 'Size (MB)', 'Files', 'Status', 'Updated']];
@@ -1680,6 +1838,7 @@
     window.SAV = {
         S: S, api: api, toast: toast, modal: modal, closeModal: closeModal, confirmBox: confirmBox, esc: esc, bytes: bytes, date: date,
         el: el, spin: spin, show: show, uploadOne: uploadOne, refreshAll: refreshAll, loadOverview: loadOverview, driveLabel: driveLabel,
+        makeFolder: makeFolder, flushSizes: flushSizes, direct: direct, agentApi: agentApi, UPLOAD_JOBS: PARALLEL,
         driveOf: driveOf, wait: wait, unlockModal: function () { modalLocked = false; }
     };
 
