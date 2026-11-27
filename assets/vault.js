@@ -96,7 +96,9 @@
 
     var LIMIT_MSG = 'Google’s daily limit for this account is used up. It resets within 24 hours; nothing is lost. Opening folders still works.';
     function friendly(msg) { return /too many times for one day|Service invoked too many/i.test(msg || '') ? LIMIT_MSG : msg; }
+    var READ_ONLY = /^(overview|clients|list|activity|downloadTicket|refreshSize|trashList|getSettings|status|noteUploads|logNote|backupDone|saveSizes|inventory|login|verifyOtp)$/;
     function api(action, params) {
+        if (!READ_ONLY.test(action)) treeStale(params && params.clientId);
         var body = Object.assign({ action: action, token: S.token }, params || {});
         var call = window.VAULT_MOCK ? Promise.resolve(window.VAULT_MOCK(body)) :
             fetch(CFG.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' })
@@ -149,7 +151,34 @@
     function makeFolder(c, parentId, name, reuse) {
         if (c.status === 'moving') return Promise.reject(new Error('"' + c.name + '" is being moved to another drive. Try again after the move finishes.'));
         if (!direct(c)) return api('createFolder', { clientId: c.id, parentId: parentId, name: name, reuse: !!reuse });
+        treeStale(c.id);
         return agentApi(c.driveId, 'createFolder', { withinId: c.folderId, parentId: parentId || c.folderId, name: name, reuse: !!reuse });
+    }
+
+    /* Folder tree: once a client is open, its whole tree loads in the background in one call, so going into
+       sub-folders and back needs no further calls. Any change in that client makes it load again. */
+    var trees = {}, treeDirty = {}, TREE_FRESH = 3 * 60 * 1000;
+    function loadTree(c) {
+        var d = driveOf(c.driveId);
+        if (!direct(c) || !d || Number(d.v) < 5) return;
+        var t = trees[c.id];
+        if (t && (t.loading || Date.now() - t.at < TREE_FRESH)) return;
+        var stamp = Date.now();
+        trees[c.id] = { loading: true };
+        agentApi(c.driveId, 'tree', { withinId: c.folderId }).then(function (r) {
+            if (!r.complete || (treeDirty[c.id] || 0) >= stamp) { delete trees[c.id]; return; }
+            var kids = {};
+            kids[c.folderId] = [];
+            r.items.forEach(function (it) {
+                if (it.isFolder) kids[it.id] = kids[it.id] || [];
+                (kids[it.parent] = kids[it.parent] || []).push(it);
+            });
+            trees[c.id] = { at: Date.now(), kids: kids, count: r.items.length };
+        }, function () { delete trees[c.id]; });
+    }
+    function treeStale(clientId) {
+        if (clientId) { delete trees[clientId]; treeDirty[clientId] = Date.now(); }
+        else { Object.keys(trees).forEach(function (k) { treeDirty[k] = Date.now(); }); trees = {}; }
     }
 
     /* Upload sessions are asked for in batches: files that start around the same time share one call. */
@@ -169,6 +198,7 @@
         clearTimeout(q.timer); q.timer = 0;
         var batch = q.items.splice(0, 20);
         if (!batch.length) return;
+        treeStale(cid);
         if (q.items.length) q.timer = setTimeout(function () { flushSessions(cid); }, 0);
         agentApi(q.c.driveId, 'uploadSessions', { withinId: q.c.folderId, origin: location.origin, items: batch.map(function (b) { return b.spec; }) })
             .then(function (r) {
@@ -366,7 +396,7 @@
     /* ---------------------------------------------------------------
        App shell
        --------------------------------------------------------------- */
-    var TITLES = { files: 'Files', storage: 'Storage', backup: 'Server backup', activity: 'Activity', settings: 'Settings' };
+    var TITLES = { files: 'Files', storage: 'Storage', backup: 'Server backup', background: 'Background', activity: 'Activity', settings: 'Settings' };
 
     function boot() {
         $('vLogin').hidden = true;
@@ -409,6 +439,7 @@
         $('vApp').classList.remove('nav-open');
         render();
         if (view === 'activity') loadActivity();
+        if (view === 'background') loadBackground();
         window.scrollTo(0, 0);
     }
     function render() {
@@ -488,12 +519,19 @@
     }
     function loadItems() {
         var c = S.client, fid = currentFolderId();
+        var t = trees[c.id];
+        if (t && t.kids && t.kids[fid] && Date.now() - t.at < TREE_FRESH) {
+            S.items = t.kids[fid].slice(); S.itemsFor = fid;           // instant: from the client's tree
+            renderFilesBody();
+            return Promise.resolve();
+        }
         S.items = []; S.itemsFor = '';
         renderFilesBody(true);
         return listFolder(c, fid).then(function (items) {
             if (!S.client || S.client.id !== c.id || currentFolderId() !== fid) return;
             S.items = items; S.itemsFor = fid;
             renderFilesBody();
+            loadTree(c);
         }).catch(function (err) {
             if (currentFolderId() !== fid) return;
             $('vFiles').innerHTML = '<div class="v-empty"><i class="fas fa-triangle-exclamation"></i><strong>Could not open this folder</strong>' + esc(err.message) +
@@ -1665,75 +1703,175 @@
         api('rescan').then(function (r) {
             var msg = 'Rescan done: ' + r.added + ' new, ' + r.updated + ' updated, ' + r.missing + ' not found.';
             if (r.offline && r.offline.length) msg += ' Not reachable: ' + r.offline.join(', ') + '.';
-            return refreshAll().then(function () { return countSizes(msg); });
+            toast(msg, !!(r.offline && r.offline.length));
+            return refreshAll();
         }).catch(function (err) { toast(err.message, true); }).then(function () { spin(b, false); });
     });
 
     $('vSizes').addEventListener('click', function () { countSizes(''); });
 
-    /* Counts the real size of every client folder. With the new agent each drive is counted in one sweep
-       (seconds, a few calls); older agents are counted folder by folder through the master. */
-    function countSizes(intro) {
+    /* "Recalculate sizes": a full recount. With agent version 5 each drive counts its client folders a batch at a
+       time (about 40 seconds per call, so it never hits Google's 6-minute limit). Older agents count one client
+       folder at a time through the master. Normally not needed: each drive's size timer keeps sizes up to date. */
+    function countSizes() {
         var drives = S.drives.filter(function (d) { return d.online !== false; });
         if (!drives.length) { toast('No drive can be reached right now.', true); return Promise.resolve(); }
         var rows = {}, stop = false, foreign = [];
+        var body = el('<div><p>Counting the real size of every client folder. You can keep using the vault in another tab.</p><ul class="v-check-list" id="vSzList"></ul><div id="vSzForeign"></div></div>');
         var line = function (d, html) { rows[d.id] = html; paintRows(); };
-        var body = el('<div>' + (intro ? '<p>' + esc(intro) + '</p>' : '') + '<p>Counting the real size of each client folder.</p><ul class="v-check-list" id="vSzList"></ul><div id="vSzForeign"></div></div>');
         function paintRows() {
             var ul = body.querySelector('#vSzList');
             if (ul) ul.innerHTML = drives.map(function (d) { return '<li>' + (rows[d.id] || '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': waiting…') + '</li>'; }).join('');
         }
         paintRows();
         S.busy++;
-        modal({ title: 'Counting sizes', body: body, locked: true, wide: true, actions: [
+        modal({ title: 'Recalculating sizes', body: body, locked: true, wide: true, actions: [
             { label: 'Stop', cls: 'v-btn--ghost', id: 'vSzStop', onClick: function (b) { stop = true; b.disabled = true; return false; } },
             { label: 'Close', id: 'vSzClose', value: true }
         ] });
         $('vSzClose').disabled = true;
+        var ok = '<i class="fas fa-check" style="color:var(--teal)"></i> ', warn = '<i class="fas fa-triangle-exclamation" style="color:#b7791f"></i> ', busy = '<i class="fas fa-circle-notch fa-spin"></i> ';
         var one = function (d) {
-            if (stop) { line(d, '<i class="fas fa-minus"></i> ' + esc(d.label) + ': stopped'); return Promise.resolve(); }
-            line(d, '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': counting…');
-            if (Number(d.v) >= 4) {
-                return agentApi(d.id, 'sizes', {}).then(function (r) {
-                    return api('saveSizes', { driveId: d.id, sizes: r.sizes }).then(function (sv) {
-                        if (r.foreign && r.foreign.files) foreign.push({ d: d, f: r.foreign });
-                        line(d, '<i class="fas fa-check" style="color:var(--teal)"></i> ' + esc(d.label) + ': ' + sv.updated + ' client folder' + (sv.updated === 1 ? '' : 's') + ' counted');
-                    });
-                }).catch(function (err) { line(d, '<i class="fas fa-triangle-exclamation" style="color:#b7791f"></i> ' + esc(d.label) + ': ' + esc(err.message)); });
+            var list = S.clients.filter(function (c) { return c.driveId === d.id && c.status === 'ok'; });
+            if (!list.length) { line(d, ok + esc(d.label) + ': no client folders'); return Promise.resolve(); }
+            var done = 0, failed = 0;
+            if (Number(d.v) >= 5) {
+                var left = list.map(function (c) { return c.folderId; }), found = { files: 0, bytes: 0, folders: [] };
+                var step = function () {
+                    if (stop) { line(d, warn + esc(d.label) + ': stopped after ' + done + ' of ' + list.length); return Promise.resolve(); }
+                    if (!left.length) {
+                        var note = done + ' client folder' + (done === 1 ? '' : 's') + ' counted';
+                        if (found.files) foreign.push({ d: d, f: found });
+                        line(d, ok + esc(d.label) + ': ' + note);
+                        return agentApi(d.id, 'countClients', { folderIds: [], clearForeign: !found.files }).then(function () {
+                            return api('saveSizes', { driveId: d.id, sizes: [], log: note });
+                        }).catch(function () {});
+                    }
+                    line(d, busy + esc(d.label) + ': ' + done + ' of ' + list.length + ' counted…');
+                    return agentApi(d.id, 'countClients', { folderIds: left.slice(0, 200) }).then(function (r) {
+                        var got = r.sizes.map(function (x) { return x[0]; });
+                        left = left.filter(function (id) { return got.indexOf(id) < 0; });
+                        done += r.sizes.length;
+                        found.files += r.foreign.files; found.bytes += r.foreign.bytes; found.folders = found.folders.concat(r.foreign.folders);
+                        return r.sizes.length ? api('saveSizes', { driveId: d.id, sizes: r.sizes }) : null;
+                    }).then(step);
+                };
+                return step().catch(function (err) { line(d, warn + esc(d.label) + ': ' + esc(err.message) + (done ? ' (' + done + ' counted before that)' : '')); });
             }
             // older agent: one folder at a time through the master
-            var list = S.clients.filter(function (c) { return c.driveId === d.id && c.status === 'ok'; }), idx = 0, done = 0, failed = 0;
+            var idx = 0;
             var worker = function () {
                 if (stop || idx >= list.length) return Promise.resolve();
                 var c = list[idx++];
                 return api('refreshSize', { clientId: c.id }).then(function (r) { c.sizeBytes = r.sizeBytes; c.files = r.files; }, function () { failed++; })
-                    .then(function () { done++; line(d, '<i class="fas fa-circle-notch fa-spin"></i> ' + esc(d.label) + ': ' + done + ' of ' + list.length + ' counted' + (failed ? ' · ' + failed + ' could not be read' : '')); return worker(); });
+                    .then(function () { done++; line(d, busy + esc(d.label) + ': ' + done + ' of ' + list.length + ' counted' + (failed ? ' · ' + failed + ' could not be read' : '')); return worker(); });
             };
             return Promise.all([worker(), worker(), worker()]).then(function () {
-                line(d, '<i class="fas fa-check" style="color:var(--teal)"></i> ' + esc(d.label) + ': ' + (done - failed) + ' client folders counted' + (failed ? ' · ' + failed + ' could not be read' : '') +
-                    ' <span class="v-muted v-small">(update this drive’s agent to count in one go)</span>');
+                line(d, ok + esc(d.label) + ': ' + (done - failed) + ' client folders counted' + (failed ? ' · ' + failed + ' could not be read' : '') +
+                    ' <span class="v-muted v-small">(update this drive’s agent to count faster)</span>');
             });
         };
         return Promise.all(drives.map(one)).then(function () {
             if (foreign.length) {
-                var box = body.querySelector('#vSzForeign');
-                box.innerHTML = foreign.map(function (x) {
-                    var owners = x.f.list.map(function (i) { return i.owner; }).filter(function (e, i, a) { return e && a.indexOf(e) === i; });
+                body.querySelector('#vSzForeign').innerHTML = foreign.map(function (x) {
+                    var names = x.f.folders.map(function (fid) { var c = S.clients.filter(function (y) { return y.folderId === fid; })[0]; return c ? c.name : ''; }).filter(Boolean);
                     return '<p class="v-bk-warn"><i class="fas fa-triangle-exclamation"></i> ' + x.f.files.toLocaleString('en-IN') + ' file' + (x.f.files === 1 ? '' : 's') +
-                        ' (' + bytes(x.f.bytes) + ') inside ' + esc(x.d.label) + (x.f.files === 1 ? ' belongs' : ' belong') + ' to another Google account (' + owners.map(esc).join(', ') + '), so ' +
-                        (x.f.files === 1 ? 'it uses' : 'they use') + ' that account’s storage, not ' + esc(x.d.label) + '’s. ' + (x.f.files === 1 ? 'It is' : 'They are') + ' still in the vault and in the backups. ' +
-                        'This happens when files are put into a drive’s “SA Vault” folder while signed in to a different account.</p>' +
-                        '<details><summary class="v-small">Show the files</summary><ul class="v-small">' + x.f.list.map(function (i) {
-                            return '<li>' + esc(i.client) + ' › ' + esc(i.name) + ' <span class="v-muted">(' + bytes(i.size) + ', ' + esc(i.owner) + ')</span></li>';
-                        }).join('') + (x.f.files > x.f.list.length ? '<li>…and ' + (x.f.files - x.f.list.length) + ' more</li>' : '') + '</ul></details>';
+                        ' (' + bytes(x.f.bytes) + ') inside ' + esc(x.d.label) + (x.f.files === 1 ? ' belongs' : ' belong') + ' to another Google account, so ' +
+                        (x.f.files === 1 ? 'it uses' : 'they use') + ' that account’s storage, not ' + esc(x.d.label) + '’s. ' + (x.f.files === 1 ? 'It is' : 'They are') +
+                        ' still in the vault and in the backups. This happens when files are put into a drive’s “SA Vault” folder while signed in to a different account. In: ' +
+                        names.slice(0, 15).map(esc).join(', ') + (names.length > 15 ? ' and ' + (names.length - 15) + ' more' : '') + '.</p>';
                 }).join('');
             }
             S.busy--;
             modalLocked = false;
             $('vSzClose').disabled = false;
             var st = $('vSzStop'); if (st) st.remove();
-            $('vModalTitle').textContent = 'Sizes updated';
+            $('vModalTitle').textContent = stop ? 'Stopped' : 'Sizes updated';
             return refreshAll();
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Background: everything that runs on its own, on Google and in this browser
+       --------------------------------------------------------------- */
+    var bgTimer = 0;
+    function ago(iso) {
+        var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+        return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago';
+    }
+    function loadBackground() {
+        clearInterval(bgTimer);
+        bgTimer = setInterval(function () { if (S.view === 'background' && !document.hidden) loadBackground(); else clearInterval(bgTimer); }, 60000);
+        var box = $('vBg');
+        if (!box.innerHTML) box.innerHTML = '<div class="v-loading"><i class="fas fa-spinner fa-spin"></i> Loading…</div>';
+        var drives = S.drives.slice();
+        return Promise.all([api('status').catch(function (e) { return { error: e.message }; })].concat(drives.map(function (d) {
+            if (d.online === false) return Promise.resolve({ error: 'Not reachable right now' });
+            if (Number(d.v) < 5) return Promise.resolve({ old: true });
+            return agentApi(d.id, 'status', {}).catch(function (e) { return { error: e.message }; });
+        }))).then(function (res) {
+            if (S.view !== 'background') return;
+            var ms = res[0], html = '';
+            html += '<h2 class="v-h2">On Google</h2><p class="v-muted v-small">These run on Google’s servers by themselves, even when the vault is closed and your computer is off. They only read; they never change or delete anything.</p><div class="v-bg-grid">';
+            drives.forEach(function (d, i) {
+                var st = res[i + 1] || {};
+                var head = '<div class="v-bg-card"><div class="v-bg-title"><strong>' + esc(d.label) + '</strong> <span class="v-muted v-small">' + esc(d.email || '') + '</span></div>';
+                if (st.error) { html += head + '<p class="v-bk-warn"><i class="fas fa-triangle-exclamation"></i> ' + esc(st.error) + '</p></div>'; return; }
+                if (st.old) { html += head + '<p class="v-muted">This drive’s agent is an older version, so it has no size timer. Update it (guide: “Updating to version 5”).</p></div>'; return; }
+                var last = (st.runs || [])[0];
+                var lines = [];
+                lines.push(st.timer === true ? '<span class="v-badge ok">Size timer on</span> every ' + st.every + ' minutes' :
+                    st.timer === false ? '<span class="v-badge warn">Size timer off</span> In this drive’s agent script, run “setup” once and click Allow.' :
+                        '<span class="v-badge warn">Needs permission</span> In this drive’s agent script, run “setup” once and click Allow.');
+                if (last) {
+                    var what = last.note ? esc(last.note) : (last.ch ? last.ch + ' change' + (last.ch === 1 ? '' : 's') + ' in Drive' : 'No changes in Drive');
+                    if (last.n) what += ' · ' + last.n + ' client folder' + (last.n === 1 ? '' : 's') + ' recounted';
+                    lines.push('Last run: ' + ago(last.t) + ' · ' + what + ' · took ' + last.s + ' s');
+                    if (last.e) lines.push('<span class="v-bk-warn-inline"><i class="fas fa-triangle-exclamation"></i> ' + esc(last.e) + ' (it tries again on the next run)</span>');
+                    if (st.timer === true) {
+                        var next = Math.max(0, Math.round((new Date(last.t).getTime() + st.every * 60000 - Date.now()) / 60000));
+                        lines.push('Next run: ' + (next <= 1 ? 'any moment' : 'in about ' + next + ' min'));
+                    }
+                } else if (st.timer === true) lines.push('First run: within ' + st.every + ' minutes');
+                if (st.todo) lines.push((st.started ? '' : 'First count: ') + st.todo + ' client folder' + (st.todo === 1 ? '' : 's') + ' still to count (continues on the next runs)');
+                var t = st.today || {};
+                lines.push('Today: timer ran ' + (Math.round((t.sec || 0) / 6) / 10) + ' min of its ' + Math.round(st.capSec / 60) + '-minute daily cap (Google allows 90) · ' + (t.runs || 0) + ' runs');
+                lines.push('Outside connections today: about ' + (t.fetch || 0).toLocaleString('en-IN') + ' of Google’s ~20,000 (uploads and backup downloads use these)');
+                if (st.foreign) lines.push('<span class="v-bk-warn-inline">Files from another Google account were found inside this drive (see Recalculate sizes). They are included in backups.</span>');
+                var runs = (st.runs || []).slice(0, 12).map(function (r) {
+                    return '<tr><td>' + esc(new Date(r.t).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })) + '</td><td class="num">' + (r.ch || 0) +
+                        '</td><td class="num">' + (r.n || 0) + '</td><td class="num">' + (r.s || 0) + ' s</td><td>' + esc(r.e || r.note || '') + '</td></tr>';
+                }).join('');
+                html += head + '<ul class="v-bg-lines">' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>' +
+                    (runs ? '<details><summary class="v-small">Recent runs</summary><div class="v-plan-wrap"><table class="v-plan-table"><thead><tr><th>When</th><th class="num">Changes</th><th class="num">Recounted</th><th class="num">Took</th><th>Note</th></tr></thead><tbody>' + runs + '</tbody></table></div></details>' : '') + '</div>';
+            });
+            html += '<div class="v-bg-card"><div class="v-bg-title"><strong>Main script</strong> <span class="v-muted v-small">office account 1</span></div><ul class="v-bg-lines">';
+            if (ms.error) html += '<li><span class="v-bk-warn-inline">' + esc(ms.error) + '</span></li>';
+            else {
+                html += '<li>Status email: ' + (ms.health === true ? '<span class="v-badge ok">On</span> checks on the 1st of each month; sends the quarterly email, and an alert any month a drive needs attention' :
+                    ms.health === false ? '<span class="v-badge">Off</span> run “installHealthCheck” in the master script to turn it on' : 'unknown') + '</li>';
+                html += '<li>Outside connections today: about ' + ((ms.today && ms.today.fetch) || 0).toLocaleString('en-IN') + ' of Google’s ~20,000 (each time the vault opens it checks every drive once)</li>';
+            }
+            html += '</ul></div></div>';
+
+            // In this browser
+            var bk = window.SAVBackup && window.SAVBackup.info ? window.SAVBackup.info() : null;
+            var waiting = queue.filter(function (j) { return j.state === 'wait' || j.state === 'run'; }).length;
+            var pend = Object.keys(pendingSizes).length;
+            html += '<h2 class="v-h2" style="margin-top:1.4rem">In this browser</h2><p class="v-muted v-small">These run only while the vault is open in this tab.</p><div class="v-bg-card"><ul class="v-bg-lines">';
+            if (!bk || !bk.supported) html += '<li>Automatic server backup: not available in this browser (needs Chrome or Edge on a computer)</li>';
+            else {
+                html += '<li>Automatic server backup: ' + (bk.running ? '<span class="v-badge ok">Running now</span> ' + esc(bk.running) :
+                    bk.auto ? '<span class="v-badge ok">On</span> every ' + bk.every + ' minutes while this page is open on a computer connected to the office server' : '<span class="v-badge">Off</span> turned off on the Server backup page') + '</li>';
+                html += '<li>Server folders: ' + bk.folders.map(function (f) { return esc(f.label) + ' — ' + (f.chosen ? (f.reachable ? 'connected' : 'not reachable right now') : 'not chosen'); }).join(' · ') + '</li>';
+                if (S.backup && S.backup.down) html += '<li>Last backup to the server: ' + ago(S.backup.down.time) + '</li>';
+            }
+            html += '<li>Uploads: ' + (waiting ? waiting + ' file' + (waiting === 1 ? '' : 's') + ' uploading or waiting' : 'none running') + '</li>';
+            html += '<li>Size updates waiting to be saved: ' + (pend ? pend + ' client folder' + (pend === 1 ? '' : 's') + ' (saved within 15 seconds)' : 'none') + '</li>';
+            html += '<li>Folder trees kept for quick opening: ' + Object.keys(trees).filter(function (k) { return trees[k].kids; }).length + ' client' + (Object.keys(trees).length === 1 ? '' : 's') + ' (refreshed after 3 minutes or any change)</li>';
+            html += '</ul></div><div class="v-row" style="margin-top:1rem"><button class="v-btn v-btn--ghost v-btn--sm" id="vBgRefresh"><i class="fas fa-rotate"></i> Refresh</button><span class="v-muted v-small">Updates by itself every minute while open.</span></div>';
+            box.innerHTML = html;
+            $('vBgRefresh').onclick = function () { loadBackground(); };
         });
     }
 

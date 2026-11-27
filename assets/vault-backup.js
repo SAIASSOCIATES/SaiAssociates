@@ -1494,6 +1494,12 @@
         $('vBk').addEventListener('click', function () { V().show('backup'); });
     }
 
-    window.SAVBackup = { onOverview: onOverview, render: render, sendSelected: sendSelected, backupNow: backupNow, startUp: startUp, state: B, safeName: safeName };
+    /* For the Background page. */
+    function info() {
+        return { supported: SUPPORTED, auto: autoOn(), every: Math.round(AUTO_EVERY / 60000),
+            running: B.running ? (B.running.phase || 'working') : (B.waiting ? 'waiting for you to confirm' : ''),
+            folders: ORDER.map(function (k) { return { label: SCOPES[k].label, chosen: !!B.f[k].h, reachable: !!B.f[k].reachable }; }) };
+    }
+    window.SAVBackup = { onOverview: onOverview, render: render, sendSelected: sendSelected, backupNow: backupNow, startUp: startUp, state: B, safeName: safeName, info: info };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
 })();

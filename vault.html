@@ -15,7 +15,7 @@
          ================================================================= -->
     <script>
         window.VAULT_CONFIG = {
-            api: 'https://script.google.com/macros/s/AKfycbznLv4SfXohNZUzd2Putlv97RFnfcHYsRQkgF8RzgiJ_ivq9o18ol4dvky-MWHkVZPHxg/exec'
+            api: 'PASTE_MASTER_WEB_APP_URL_HERE'
         };
     </script>
 </head>
@@ -69,6 +69,7 @@
                 <button class="v-nav-btn" data-view="files"><i class="fas fa-folder-open"></i> Files</button>
                 <button class="v-nav-btn" data-view="storage"><i class="fas fa-hard-drive"></i> Storage</button>
                 <button class="v-nav-btn" data-view="backup"><i class="fas fa-server"></i> Server backup</button>
+                <button class="v-nav-btn" data-view="background"><i class="fas fa-gears"></i> Background</button>
                 <button class="v-nav-btn" data-view="activity"><i class="fas fa-clock-rotate-left"></i> Activity</button>
                 <button class="v-nav-btn" data-view="settings"><i class="fas fa-gear"></i> Settings</button>
             </nav>
@@ -235,6 +236,11 @@
                     </div>
                     <button class="v-btn v-btn--ghost" id="bkUpCheck"><i class="fas fa-upload"></i> Check what would be copied</button>
                 </div>
+            </section>
+
+            <!-- Background -->
+            <section class="v-view" id="view-background" hidden>
+                <div id="vBg"></div>
             </section>
 
             <!-- Activity -->
